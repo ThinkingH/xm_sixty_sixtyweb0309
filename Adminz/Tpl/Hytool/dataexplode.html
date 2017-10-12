@@ -1,0 +1,92 @@
+<!DOCTYPE html PUBLIC "-//W3C//Dtd html 4.0 Transitional//EN">
+<html>
+<head>
+<meta http-equiv=Content-Type content="text/html; charset=utf-8">
+<load href="__PUBLIC__/Css/main.css" />
+
+<script type="text/javascript" src="__PUBLIC__/Js/jquery.min.js"></script>
+<script type="text/javascript" src="__PUBLIC__/Js/themain.js"></script>
+<script type="text/javascript">
+$("document").ready(function(){
+	$("#submit").click(function(){
+		if(confirm('确认提交处理数据吗')) {
+			//
+		}else {
+			return false;
+		}
+	})
+	
+});
+
+
+</script>
+</head>
+
+<body>
+<div class="hy_daohangtiao">
+当前位置&nbsp;#&nbsp;处理工具&nbsp;#&nbsp;数据切割提取
+</div>
+
+
+
+
+<form action="__APP__/Hytool/dataexplode" method="post" >
+
+<table class="table-edit">
+	<tr>
+		<td width="150">
+			特别说明:<br/>
+			手机号以换行分隔，每行一个手机号
+			<b>(本工具主要用于手机号省份统计)</b><br/>
+		</td>
+		<td width="1000">
+			<textarea cols="150" rows="24" name="data">{$data}</textarea>
+		</td>
+	</tr>
+	<tr>
+		<td>行分隔符</td>
+		<td>
+			<input type="text" name="hangfengefu" value="{$hangfengefu}" maxlength="50" />
+			<font color="red" size="-1">制表符用\t，换行符用\n</font>
+		</td>
+	</tr>
+	<tr>
+		<td>列分隔符</td>
+		<td>
+			<input type="text" name="fengefu" value="{$fengefu}" maxlength="50" />
+			<font color="red" size="-1">制表符用\t，换行符用\n</font>
+		</td>
+	</tr>
+	<tr>
+		<td>取出列，用|分隔，从0开始</td>
+		<td>
+			<input type="text" name="quchulie" value="{$quchulie}"  maxlength="50"/>
+		</td>
+	</tr>
+	<tr>
+		<td>连接符</td>
+		<td>
+			<input type="text" name="lianjiefu" value="{$lianjiefu}"  maxlength="50"/>
+			<font color="red" size="-1">制表符用\t，换行符用\n</font>
+		</td>
+	</tr>
+	
+	
+</table>
+<br/><br/>
+
+<input type="submit" id="submit" class="yubutton yuwhite" name="submit" style="margin:15px 0px 0px 10px;" value="确认提交" />
+<br/><br/>
+
+</form>
+
+<br/><br/>
+<b>处理结果:</b><br/>
+<textarea cols="160" rows="24" name="data">{$mainechostring}</textarea>
+
+<br/><br/><br/><br/><br/><br/>
+End!
+
+</body>
+
+</html>

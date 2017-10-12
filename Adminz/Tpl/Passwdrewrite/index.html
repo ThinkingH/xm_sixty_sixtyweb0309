@@ -1,0 +1,119 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<load href="__PUBLIC__/Css/main.css" />
+
+<script type="text/javascript" src="__PUBLIC__/Js/jquery.min.js"></script>
+<script type="text/javascript" src="__PUBLIC__/Js/themain.js"></script>
+<script type="text/javascript" src="__PUBLIC__/Js/md5.js"></script>
+<script type="text/javascript">
+$("document").ready(function(){
+	
+	$("#submit").click(function(){
+		var passwd    = $("#passwd").val();
+		var repasswd  = $("#repasswd").val();
+		var oldpasswd = $("#oldpasswd").val();
+		
+		passwd    = $.trim(passwd);
+		repasswd  = $.trim(repasswd);
+		oldpasswd = $.trim(oldpasswd);
+		
+		
+		if(passwd.length<6) {
+			alert('新密码长度必须大于6位');
+			return false;
+		}
+		if(repasswd.length<6) {
+			alert('重复新密码长度必须大于6位');
+			return false;
+		}
+		if(passwd!=repasswd) {
+			alert('两次密码不一致');
+			return false;
+		}
+		
+		if(confirm('确定要修改密码吗？')) {
+			var md5_passwd = hex_md5(passwd);
+			var md5_repasswd = hex_md5(repasswd);
+			var md5_oldpasswd = hex_md5(oldpasswd);
+			
+			$("#passwd").val(md5_passwd);
+			$("#repasswd").val(md5_repasswd);
+			$("#oldpasswd").val(md5_oldpasswd);
+			
+			
+		}else {
+			return false;
+		}
+		
+		
+	});
+	
+});
+
+
+</script>
+
+</head>
+
+<body>
+<div class="hy_daohangtiao">
+当前位置&nbsp;#&nbsp;用户操作&nbsp;#&nbsp;用户密码修改
+</div>
+
+
+<form method="post" action="__APP__/Passwdrewrite/rewritepasswd" >
+
+<table class="table-edit" width="800">
+
+<tr>
+	<td width="150px" align="right">用户名：</td>
+	<td width="650px"><b>{$username}</b></td>
+</tr>
+<tr>
+	<td align="right">姓名：</td>
+	<td><b>{$xingming}</b></td>
+</tr>
+<tr>
+	<td align="right" colspan="2">&nbsp;</td>
+</tr>
+<tr>
+	<td align="right">请输入原密码：</td>
+	<td>
+		<input type="password" name="oldpasswd" id="oldpasswd" size="32" maxlength="32" onkeydown="if(event.keyCode=='32'){return false;}" />
+	</td>
+</tr>
+<tr>
+	<td align="right" colspan="2">&nbsp;</td>
+</tr>
+<tr>
+	<td align="right">请输入新密码：</td>
+	<td >
+		<input type="password" name="passwd" id="passwd" size="32" maxlength="32" onkeydown="if(event.keyCode=='32'){return false;}" />
+	</td>
+</tr>
+<tr>
+	<td  align="right">请再次输入新密码：</td>
+	<td >
+		<input type="password" name="repasswd" id="repasswd" size="32" maxlength="32" onkeydown="if(event.keyCode=='32'){return false;}" />
+	</td>
+</tr>
+<tr>
+	<td align="right" colspan="2">&nbsp;</td>
+</tr>
+<tr>
+	<td colspan="2">
+		<input type="submit" class="yubutton yuwhite" id="submit" name="submit" value="修改密码" style="margin-left:120px;" />
+	</td>
+</tr>
+
+</table>
+
+
+</form>
+<br/><br/><br/><br/><br/><br/>
+End!
+
+</body>
+</html>

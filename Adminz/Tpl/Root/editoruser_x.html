@@ -1,0 +1,148 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<load href="__PUBLIC__/Css/main.css" />
+
+<script type="text/javascript" src="__PUBLIC__/Js/jquery.min.js"></script>
+<script type="text/javascript" src="__PUBLIC__/Js/themain.js"></script>
+<script type="text/javascript" src="__PUBLIC__/Js/md5.js"></script>
+<script type="text/javascript">
+$("document").ready(function(){
+	
+	$("#submitedit").click(function(){
+		
+		var passwd = $("#resetpasswd").val();
+		var repasswd = $("#resetrepasswd").val();
+		
+		passwd    = $.trim(passwd);
+		repasswd  = $.trim(repasswd);
+		
+		
+		if(passwd!='' && passwd.length<6) {
+			alert('新密码长度必须大于6位');
+			return false;
+		}
+		if(passwd!='' && repasswd.length<6) {
+			alert('重复新密码长度必须大于6位');
+			return false;
+		}
+		if(passwd!=repasswd) {
+			alert('两次密码不一致');
+			return false;
+		}
+		
+		
+		
+		if(confirm("您确认要编辑此用户吗？此编辑涉及到重要用户数据，请小心操作。")) {
+			if(passwd!='') {
+				var md5_passwd = hex_md5(passwd);
+				$("#resetpasswd").val(md5_passwd);
+			}
+			if(repasswd!='') {
+				var md5_repasswd = hex_md5(repasswd);
+				$("#resetrepasswd").val(md5_repasswd);
+			}
+			
+			//alert('ok');
+		}else {
+			return false;
+		}
+		
+	});
+	
+	
+	$("#submitdel").click(function(){
+		if(confirm("您确认要删除此用户吗？删除用户将会导致用户无法使用，请小心操作，删除用户前请将用户禁用")) {
+			//alert('ok');
+			
+		}else {
+			return false;
+		}
+	});
+	
+});
+
+
+</script>
+</head>
+
+
+<body>
+<div class="hy_daohangtiao">
+当前位置&nbsp;#&nbsp;系统管理&nbsp;#&nbsp;编辑操作用户&nbsp;#&nbsp;用户信息修改页面
+</div>
+
+
+<a href="javascript:history.go(-1);" class="yubutton yuwhite">返回操作用户编辑查看列表</a>
+<br/>
+<br/>
+
+<form action="__APP__/Root/editoruser_xx" method="post" >
+	
+	&nbsp;&nbsp;&nbsp;
+	
+	
+	<br/><br/>
+	<table class="table-edit" >
+		<tr>
+			<td width="150" align="right"><b>用户名:</b></td>
+			<td width="650">
+				{$list['username']}
+				<input type="hidden" name="username" value="{$list['username']}" />
+			</td>
+			
+		</tr>
+		<tr>
+			<td align="right"><b>姓名:</b></td>
+			<td>
+				<input type="text" name="xingming" value="{$list['xingming']}" />
+				
+			</td>
+		</tr>
+		<tr>
+			<td align="right"><b>重置密码:</b></td>
+			<td>
+				<input type="password" name="resetpasswd" id="resetpasswd" onkeydown="if(event.keyCode=='32'){return false;}" />
+				&nbsp;<font color="purple" size="-1" ><b>注：如果您不需要重置该用户密码，请不要填写重置密码选项</b></font>
+			</td>
+		</tr>
+		<tr>
+			<td align="right"><b>再次输入重置密码:</b></td>
+			<td><input type="password" name="resetrepasswd" id="resetrepasswd" onkeydown="if(event.keyCode=='32'){return false;}" /></td>
+		</tr>
+		<tr>
+			<td align="right"><b>用户权限:</b></td>
+			<td>
+				<select name="rootflag">
+					{$rootflag_show}
+				</select>
+			</td>
+		</tr>
+		<tr>
+			<td align="right"><b>锁定状态:</b></td>
+			<td>
+				<select name="lockflag">
+					{$lockflag_show}
+				</select>
+				<font color="red" size="-1">所有被禁用的用户均不能登陆该系统，同时超级管理员不允许被禁用</font>
+			</td>
+		</tr>
+	</table>
+	
+<input type="submit" name="submitedit" id="submitedit" class="yubutton yuwhite" value="提交修改" style="margin-left:20px;margin-top:20px;" />
+</form>
+
+<form method="post" action="__APP__/Root/deluser_x" style="margin:0px;padding:0px;">
+	<input type="hidden" name="username" value="{$list['username']}" />
+	<input type="submit" name="submitdel" id="submitdel" class="yubuttons yuwhite" value="删除此用户" style="margin-left:20px;margin-top:50px;" style="margin-left:20px;margin-top:20px;" />
+</form>
+
+
+<br/><br/><br/><br/><br/><br/>
+End!
+
+</body>
+</html>
+
+

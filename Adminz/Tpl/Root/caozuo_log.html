@@ -1,0 +1,109 @@
+<!DOCTYPE html PUBLIC "-//W3C//Dtd html 4.0 Transitional//EN">
+<html>
+<head>
+<meta http-equiv=Content-Type content="text/html; charset=utf-8">
+<load href="__PUBLIC__/Css/main.css" />
+
+<script type="text/javascript" src="__PUBLIC__/Js/jquery.min.js"></script>
+<script language="javascript" type="text/javascript" src="__PUBLIC__/Js/datexxx/WdatePicker.js"></script>
+<script type="text/javascript" src="__PUBLIC__/Js/themain.js"></script>
+<script type="text/javascript">
+$("document").ready(function(){
+	
+	
+});
+
+
+</script>
+</head>
+
+<body>
+<div class="hy_daohangtiao">
+当前位置&nbsp;#&nbsp;系统管理&nbsp;#&nbsp;操作日志记录
+</div>
+
+
+<form action="__APP__/Root/caozuo_log" method="get" >
+<table class="table-head" >
+<tr>
+	<td align="center">开始日期</td>
+	<td align="center">开始时间</td>
+	<td align="center">结束日期</td>
+	<td align="center">结束时间</td>
+	<td align="center">操作者</td>
+	<td align="center">操作模块模糊匹配</td>
+	<td align="center">数据模糊匹配</td>
+	<td align="center"></td>
+</tr>
+<tr>
+	<td>
+		<input type="text" size="12" maxlength="10" name="date_s" value="{$date_s}" onclick="WdatePicker()" />
+	</td>
+	<td>
+		<input type="text" size="8" maxlength="8" name="s_time" value="{$s_time}"  />
+	</td>
+	<td>
+		<input type="text" size="12" maxlength="10" name="date_e" value="{$date_e}" onclick="WdatePicker()" />
+	</td>
+	<td>
+		<input type="text" size="8" maxlength="8" name="e_time" value="{$e_time}"  />
+	</td>
+	
+	<td>
+		<input type="text" size="12" maxlength="11" name="who" value="{$who}"  />
+	</td>
+	<td>
+		<input type="text" size="24" maxlength="50" name="ttype" value="{$ttype}"  />
+	</td>
+	<td>
+		<input type="text" size="24" maxlength="50" name="shuju" value="{$shuju}"  />
+	</td>
+	<td>
+		<input type="submit" class="yubuttons yuwhite" name="submit_select" value="查询指定匹配内容" />
+	</td>
+</tr>
+</table>
+</form>
+<br/>
+
+<table class="table-list" width="1600">
+<thead>
+	<tr>
+		<td width="70"><b>唯一标识id(递减)</b></td>
+		<td width="90"><b>操作者标识</b></td>
+		<td width="240"><b>操作模块</b></td>
+		<td width="900"><b>操作内容</b></td>
+		<td width="160"><b>操作时间</b></td>
+		
+		
+	</tr>
+</thead>
+
+<tbody>
+	<volist name="list" id="vo" empty="没有对应数据" >
+	<tr>
+		<td>{$vo.id}</td>
+		<td>{$vo.who}</td>
+		<td>{$vo.ttype}</td>
+		<td>{$vo.content}</td>
+		<td>{$vo.create_datetime}</td>
+		
+		
+	</tr>
+	</volist>
+	
+	
+</tbody>
+
+</table>
+
+<br/><br/>
+
+<center>{$page}</center>
+
+<br/><br/><br/><br/><br/><br/>
+End!
+
+</body>
+
+</html>
