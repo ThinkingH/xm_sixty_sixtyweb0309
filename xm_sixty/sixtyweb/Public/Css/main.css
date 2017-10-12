@@ -1,0 +1,278 @@
+@charset "UTF-8";
+
+body {
+	margin: 0px
+}
+p {
+	margin: 0px
+}
+body {
+	color: #000; background-color: #fff
+}
+body {
+	font-size: 12px; line-height: 150%; font-family: "Verdana", "arial", "Helvetica", "sans-serif"
+}
+table {
+	font-size: 12px; line-height: 150%; font-family: "Verdana", "arial", "Helvetica", "sans-serif"
+}
+input {
+	font-size: 12px; font-family: "Verdana", "arial", "Helvetica", "sans-serif"
+}
+select {
+	font-size: 12px; font-family: "Verdana", "arial", "Helvetica", "sans-serif"
+}
+textarea {
+	font-size: 12px; font-family: "Verdana", "arial", "Helvetica", "sans-serif"
+}
+a:link {
+	color: #00006E; text-decoration: none
+}
+a:visited {
+	color: #00006E; text-decoration: none
+}
+a:hover {
+	color: #FF6600; text-decoration: underline
+}
+
+
+/*****************************************************/
+table form {
+    padding: 0;
+    margin: auto;
+}
+table.table-head,
+table.table-list,
+table.table-edit {
+    margin: auto 2px;
+    border-spacing: 0;
+    border-collapse: collapse;
+    word-break: break-all;
+    word-wrap: break-word;
+    font-size: 12px;
+    line-height: 1.42857143;
+    table-layout:fixed;
+	word-break:break-all;
+	word-wrap:break-word;
+}
+table.table-head {
+    border: 1px solid #cdcdcd;
+    background-color: #D9EDF7;
+}
+table.table-head tr {
+    min-height: 40px;
+    background-color: #d9edf7;
+    color: #000;
+}
+table.table-head tr td {
+    padding: 6px;
+    border: 1px solid #cdcdcd;
+}
+table.table-list {
+    border: 1px solid #878787;
+    background-color: #D9EDF7;
+}
+table.table-list > thead > tr {
+    height: 40px;
+    background-color: #CEDDF7;
+    color: #000;
+    font-weight: bold;
+}
+table.table-list > thead > tr > td {
+	height: 40px;
+    border: 1px solid #878787;
+    padding: 4px;
+}
+table.table-list tr,
+table.table-list > tbody > tr {
+    color: #000;
+}
+table.table-list > tbody > tr:hover {
+    background-color: #E5F6DE!important;
+}
+table.table-list tr td,
+table.table-list > tbody > tr > td {
+    padding: 4px;
+    border: 1px solid #878787;
+}
+table.table-list > tbody > tr > td:hover {
+    background-color: #E5F6DE!important;
+}
+table.table-list > tfoot > tr {
+    background-color:#DFE5F7;
+    color: #000;
+}
+table.table-list > tfoot > tr >td {
+    color: #000;
+}
+table.table-edit {
+    border: 1px solid #cdcdcd;
+    background-color: #D9EDF7;
+}
+table.table-edit tr {
+    color: #000;
+}
+table.table-edit tr:hover {
+    background-color: #E5F6DE!important;
+}
+table.table-edit tr td {
+    padding: 9px;
+    border: 1px solid #cdcdcd;
+}
+
+
+
+
+/* white 按钮颜色布局 */
+.yuwhite {  
+    color: purple;
+    border: solid 1px #b7b7b7;  
+    background: #fafafa;
+    background: -webkit-gradient(linear, left top, left bottom, from(#fafafa), to(#e4e4e4));  
+    background: -moz-linear-gradient(top,  #fafafa,  #e4e4e4);  
+    filter:  progid:DXImageTransform.Microsoft.gradient(startColorstr='#fafafa', endColorstr='#e4e4e4');  
+}
+.yuwhite:hover {  
+    background: #e4e4e4;
+    background: -webkit-gradient(linear, left top, left bottom, from(#fafafa), to(#d2d2d2));  
+    background: -moz-linear-gradient(top,  #fafafa,  #d2d2d2);  
+    filter:  progid:DXImageTransform.Microsoft.gradient(startColorstr='#fafafa', endColorstr='#d2d2d2');  
+}  
+.yuwhite:active {  
+    color: #828282;
+    background: -webkit-gradient(linear, left top, left bottom, from(#e4e4e4), to(#fafafa));  
+    background: -moz-linear-gradient(top,  #e4e4e4,  #fafafa);  
+    filter:  progid:DXImageTransform.Microsoft.gradient(startColorstr='#ededed', endColorstr='#fafafa');  
+}  
+.yuwhite:disabled {
+	color:grey;
+    border: solid 1px #b7b7b7;  
+    background: #fafafa;
+    background: -webkit-gradient(linear, left top, left bottom, from(#fafafa), to(#e4e4e4));  
+    background: -moz-linear-gradient(top,  #fafafa,  #e4e4e4);  
+    filter:  progid:DXImageTransform.Microsoft.gradient(startColorstr='#fafafa', endColorstr='#e4e4e4');  
+}
+
+/****************************************************************/
+.yubutton {  
+    margin: 1px 2px;  
+    outline: none;  
+    cursor: default;  
+    text-align: center;  
+    text-decoration: none;  
+    padding: .75em 2em .8em;
+	outline: none;
+	display: inline-block;
+	*display: inline;
+	zoom: 1;
+	
+	border:0px purple\9;
+	border-collapse:collapse\9;
+	border-style:solid\9;
+	_background-color:#D5D1FF;
+}
+.yubutton:hover {  
+    text-decoration: none;
+	color:black;
+	_background-color:#E8FAFF;
+}  
+.yubutton:active {  
+    position: relative;  
+    top: 1px;
+}
+.yubutton:disabled {
+	color:grey;
+}
+
+/****************************************************************/
+.yubuttons {
+	margin:1px 2px; 
+	padding:.29em .8em .35em .8em;
+	border:0px purple\9;
+	border-collapse:collapse\9;
+	border-style:solid\9;
+	_background-color:#D5D1FF;
+}
+.yubuttons:hover {  
+    text-decoration: none;
+	color:black;
+	_background-color:#E8FAFF;
+}  
+.yubuttons:active {  
+    position: relative;  
+    top: 1px;
+}
+.yubuttons:disabled {
+	color:grey;
+}
+
+/****************************************************************/
+.yubuttonss {
+	margin:1px 2px; 
+	padding:.18em .4em .22em .4em;
+	border:0px purple\9;
+	border-collapse:collapse\9;
+	border-style:solid\9;
+	_background-color:#D5D1FF;
+}
+.yubuttonss:hover {  
+    text-decoration: none;
+	color:black;
+	_background-color:#E8FAFF;
+}  
+.yubuttonss:active {  
+    position: relative;  
+    top: 1px;
+}
+.yubuttonss:disabled {
+	color:grey;
+}
+
+/****************************************************************/
+/*每月分量和sp代码省份管理页面的背景颜色类*/
+.yu_commandlimit_color {
+	background-color:#BEBEFF;
+}
+/*每月分量和sp代码省份管理页面的背景颜色类_删除标记的深灰色*/
+.yu_commandlimit_del_color {
+	background-color:#AAAAAA;
+}
+
+/*针对Relationview页面中的选中变色，单独编写的背景颜色改变类*/
+.yu_Relationview_select_change {
+	background-color:#FFFFD7;
+}
+
+/*鼠标停留在某表格的td上时，修改该行的背景颜色*/
+.yu_mourse_stop_change {
+	background-color:#CCFFC0;
+}
+
+
+/***********************************************************************************/
+/*顶部栏目层级标识导航条样式*/
+.hy_daohangtiao {
+	box-sizing:border-box;
+	font-size:12px;
+	font-weight:bold;
+	padding:5px 8px;
+	width:100%;
+	background-color:#F8F8FF;
+	border-bottom:1px solid;
+	border-color:#DDDDDD;
+	margin-bottom:30px;
+}
+
+
+
+
+
+/***************************************************************************/
+
+
+
+
+
+
+
+
+

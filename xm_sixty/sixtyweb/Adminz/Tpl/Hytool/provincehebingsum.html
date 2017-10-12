@@ -1,0 +1,67 @@
+<!DOCTYPE html PUBLIC "-//W3C//Dtd html 4.0 Transitional//EN">
+<html>
+<head>
+<meta http-equiv=Content-Type content="text/html; charset=utf-8">
+<load href="__PUBLIC__/Css/main.css" />
+
+<script type="text/javascript" src="__PUBLIC__/Js/jquery.min.js"></script>
+<script type="text/javascript" src="__PUBLIC__/Js/themain.js"></script>
+<script type="text/javascript">
+$("document").ready(function(){
+	$("#submit").click(function(){
+		if(confirm('确认提交处理数据吗')) {
+			//
+		}else {
+			return false;
+		}
+	})
+	
+});
+
+
+</script>
+</head>
+
+<body>
+<div class="hy_daohangtiao">
+当前位置&nbsp;#&nbsp;处理工具&nbsp;#&nbsp;省份去重求和统计
+</div>
+
+
+
+<form action="__APP__/Hytool/provincehebingsum" method="post" >
+
+<table class="table-edit">
+	<tr>
+		<td width="200">
+			特别说明:<br/>
+			数据行必须以换行符分隔<br/>
+			数据列必须以水平制表符分隔<br/>
+			第一列必须为省份，后续的数据列为数字字符串<br/>
+			最多只支持6列数字字符列，多余数据列不做处理<br/>
+			请直接从excel中选择复制后直接粘贴于此处<br/>
+			<b>(本工具主要用于多个省份字段的数据去重累加求和)</b><br/>
+		</td>
+		<td width="1000">
+			<textarea cols="120" rows="30" name="data">{$data}</textarea>
+		</td>
+	</tr>
+	
+	
+</table>
+<br/><br/>
+
+<input type="submit" id="submit" class="yubutton yuwhite" name="submit" style="margin:15px 0px 0px 10px;" value="确认提交" />
+<br/><br/>
+
+</form>
+
+<br/><br/>
+<b>处理结果:</b><br/>
+<textarea cols="150" rows="30" name="data">{$showdata}</textarea>
+<br/><br/><br/><br/><br/><br/>
+End!
+
+</body>
+
+</html>

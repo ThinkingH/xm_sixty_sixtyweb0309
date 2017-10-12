@@ -1,0 +1,57 @@
+﻿<!DOCTYPE html PUBLIC "-//W3C//Dtd html 4.0 Transitional//EN">
+<html>
+<head>
+<meta http-equiv=Content-Type content="text/html; charset=utf-8">
+
+<load href="__PUBLIC__/Css/main.css" />
+
+<script type="text/javascript" src="__PUBLIC__/Js/jquery.min.js"></script>
+<script type="text/javascript" src="__PUBLIC__/Js/themain.js"></script>
+<script type="text/javascript">
+$("document").ready(function(){
+	
+});
+
+</script>
+
+</head>
+<body>
+<div class="hy_daohangtiao">
+当前位置：用户操作&nbsp;#&nbsp;当前用户信息
+</div>
+
+<div style="margin:50px;">
+<div style="margin:10px;font-size:28px;font-weight:bold;">
+	欢迎进入<php>echo HY_SYSTEM_NAME;</php>
+</div>
+
+<table class="table-head" width="420" style="margin-top:60px;">
+	<tr>
+		<td align="right" width="120">姓名：</td>
+		<td width="300">{$xingming}</td>
+	</tr>
+	<tr>
+		<td align="right">登陆帐号：</td>
+		<td>{$username}</td>
+	</tr>
+	<tr>
+		<td align="right">最近在线时间：</td>
+		<td>{$lastLoginTime}</td>
+	</tr>
+	<tr>
+		<td align="right">最近在线ip地址：</td>
+		<td>{$lastLoginIp}</td>
+	</tr>
+
+</table>
+
+
+
+</div>
+
+
+
+
+
+</body>
+</html>

@@ -1,0 +1,65 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<load href="__PUBLIC__/Css/main.css" />
+
+<script type="text/javascript" src="__PUBLIC__/Js/jquery.min.js"></script>
+<script type="text/javascript" src="__PUBLIC__/Js/themain.js"></script>
+<script type="text/javascript" src="__PUBLIC__/Js/jquery.textareaCounter.js"></script>
+<script type="text/javascript">
+$("document").ready(function(){
+	
+	var options = {
+		'maxCharacterSize': 200,
+		'originalStyle': 'originalTextareaInfo',
+		'warningStyle' : 'warningTextareaInfo',
+		'warningNumber': 40,
+		'displayFormat' : ' #input/#max '
+	};
+	$('#gonggao').textareaCount(options);
+	
+	
+	$("#submit_add").click(function(){
+		
+		if(confirm("您确认要发布公告吗？")) {
+			//alert('ok');
+		}else {
+			return false;
+		}
+		
+	});
+});
+
+
+</script>
+</head>
+
+
+<body>
+<div class="hy_daohangtiao">
+当前位置&nbsp;#&nbsp;系统管理&nbsp;#&nbsp;管理公告修改
+</div>
+
+
+<form name="form1" method="post" action="__APP__/Root/gonggao_x" >
+请输入要发布的信息：<br/>
+<textarea name="gonggao" id="gonggao" cols="120" rows="8" >{$gonggao}</textarea>
+<br/><br/>&nbsp;&nbsp;&nbsp;&nbsp;
+<input type="submit" name="submit" id="submit_add" class="yubutton yuwhite" value="确认发布" />
+
+</form>
+<br/><br/>
+{$userstr}
+
+
+
+
+
+<br/><br/><br/><br/><br/><br/>
+End!
+
+</body>
+</html>
+
+

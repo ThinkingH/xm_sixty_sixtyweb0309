@@ -1,0 +1,132 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<load href="__PUBLIC__/Css/main.css" />
+
+<script type="text/javascript" src="__PUBLIC__/Js/jquery.min.js"></script>
+<script type="text/javascript" src="__PUBLIC__/Js/themain.js"></script>
+<script type="text/javascript" src="__PUBLIC__/Js/md5.js"></script>
+<script type="text/javascript">
+$("document").ready(function(){
+	
+	$("#submit_add").click(function(){
+		var username = $("#username").val();
+		var passwd   = $("#passwd").val();
+		var repasswd = $("#repasswd").val();
+		
+		username  = $.trim(username);
+		passwd    = $.trim(passwd);
+		repasswd  = $.trim(repasswd);
+		
+		
+		if(username==''){
+			alert('用户名不能为空！');
+			return false;
+		}
+		if(passwd.length<6) {
+			alert('新密码长度必须大于6位');
+			return false;
+		}
+		if(repasswd.length<6) {
+			alert('重复新密码长度必须大于6位');
+			return false;
+		}
+		if(repasswd!=passwd) {
+			alert('两次密码不一致！');
+			return false;
+		}
+		
+		
+		if(confirm("您确认要添加此用户吗？")) {
+			var md5_passwd = hex_md5(passwd);
+			var md5_repasswd = hex_md5(repasswd);
+			
+			$("#passwd").val(md5_passwd);
+			$("#repasswd").val(md5_repasswd);
+			
+			
+			//alert('ok');
+		}else {
+			return false;
+		}
+		
+		
+	});
+});
+
+
+</script>
+</head>
+
+<body>
+<div class="hy_daohangtiao">
+当前位置&nbsp;#&nbsp;系统管理&nbsp;#&nbsp;编辑操作用户&nbsp;#&nbsp;用户信息添加页面
+</div>
+
+
+<a href="javascript:history.go(-1);" class="yubutton yuwhite">返回操作用户编辑查看列表</a>
+<br/>
+
+<form name="form1" method="post" action="__APP__/Root/adduser_x" >
+<br/><br/>
+<table class="table-edit" width="850">
+
+	<tr>
+		<td width="150" align="right">请输入用户名：</td>
+		<td width="700">
+			<input type="text" name="username" id="username" maxlength="24" onkeydown="if(event.keyCode=='32'){return false;}" />
+			<font color="orange" size="-2">
+				用户名只能由字母数字下划线和中划线构成，且长度必须在4到24位之间
+			</font>
+		</td>
+	</tr>
+	<tr>
+		<td align="right">请输入用户真实姓名：</td>
+		<td>
+			<input type="text" name="xingming" id="xingming" maxlength="20"  />
+			<font color="orange" size="-2">
+				姓名不能重复
+			</font>
+		</td>
+	</tr>
+	<tr>
+		<td align="right">请输入密码：</td>
+		<td>
+			<input type="password" name="passwd" id="passwd" maxlength="30" onkeydown="if(event.keyCode=='32'){return false;}" />
+			<font color="orange" size="-2">
+				密码长度必须大于等于6位
+			</font>
+		</td>
+	</tr>
+	<tr>
+		<td align="right">请再次输入密码：</td>
+		<td>
+			<input type="password" name="repasswd" id="repasswd" maxlength="30" onkeydown="if(event.keyCode=='32'){return false;}" />
+		</td>
+	</tr>
+	<tr>
+		<td colspan="2" >
+			<font color="red" size="-2">
+				&nbsp;&nbsp;特别说明：创建用户后，用户会默认为普通用户权限，如果想要进行权限修改，请从用户编辑操作浏览页面的【编辑按钮】进入进行修改
+			</font>
+		</td>
+		
+	</tr>
+	<tr>
+		<td colspan="2">
+			<input type="submit" name="submit" id="submit_add" class="yubutton yuwhite" value="添加用户" style="margin-left:120px;" />
+		</td>
+	</tr>
+
+</table>
+
+</form>
+
+<br/><br/><br/><br/><br/><br/>
+End!
+
+</body>
+</html>
+
+

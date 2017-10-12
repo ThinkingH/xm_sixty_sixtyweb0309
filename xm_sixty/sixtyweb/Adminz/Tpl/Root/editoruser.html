@@ -1,0 +1,69 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<load href="__PUBLIC__/Css/main.css" />
+
+<script type="text/javascript" src="__PUBLIC__/Js/jquery.min.js"></script>
+<script type="text/javascript" src="__PUBLIC__/Js/themain.js"></script>
+<script type="text/javascript">
+
+
+</script>
+
+</head>
+
+
+<body>
+<div class="hy_daohangtiao">
+当前位置&nbsp;#&nbsp;系统管理&nbsp;#&nbsp;编辑操作用户&nbsp;#&nbsp;用户信息浏览页面
+</div>
+
+
+<a href="__APP__/Root/adduser" class="yubutton yuwhite">添加操作用户</a>
+<br/><br/>
+
+
+<table class="table-list" width="1200">
+<thead>
+<tr>
+	<td width="120"><b>用户名</b></td>
+	<td width="100"><b>姓名</b></td>
+	<td width="160"><b>最近一次检测---在线时间</b></td>
+	<td width="160"><b>最近一次检测---ip地址</b></td>
+	<td width="120"><b>用户权限</b></td>
+	<td width="100"><b>是否被禁用</b></td>
+	<td width="100"><b>在线状态</b></td>
+	<td width="100"></td>
+</tr>
+</thead>
+
+<tbody>
+<volist name="list" id="vo" empty="没有对应数据" >
+	<tr>
+		<td>{$vo.username}</td>
+		<td>{$vo.xingming}</td>
+		<td>{$vo.lastLoginTime}</td>
+		<td>{$vo.lastLoginIp}</td>
+		<td>{$vo.rootflag}</td>
+		<td>{$vo.lockflag}</td>
+		<td>{$vo.state}</td>
+		<td>
+			<form action="__APP__/Root/editoruser_x" method="post" style="margin:0px" >
+				<input type="hidden" name="edit_username_val" value="{$vo.username}" />
+				<input type="submit" class="yubuttons yuwhite" name="edituserbutton" value="编辑" />
+			</form>
+		</td>
+	</tr>
+</volist>
+</tbody>
+
+</table>
+
+<br/><br/><br/><br/><br/><br/>
+End!
+
+</body>
+</html>
+
+
