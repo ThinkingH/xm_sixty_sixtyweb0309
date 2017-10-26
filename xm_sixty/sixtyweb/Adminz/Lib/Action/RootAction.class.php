@@ -2,8 +2,8 @@
 
 class RootAction extends Action {
 	//渠道信息模块
-	
-	
+
+
 	//定义各模块锁定级别
 	private $lock_editoruser    = '9';
 	private $lock_editoruser_x  = '9';
@@ -103,7 +103,7 @@ class RootAction extends Action {
 		$Model = new Model();
 		
 		$list = $Model -> table('user_admin') -> field('username,xingming,lockflag,rootflag') -> where("username='".$username_edit."'") -> find();
-		
+
 		
 		//start--------------------------------------------------------------
 		//动态生成权限下拉选项

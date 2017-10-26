@@ -101,6 +101,12 @@ class MenuAction extends Action {
 								array('t', '退出系统'    ,  '/Login/logout' , ),
 						),
 				),
+                array(
+                        'murl_name' => '用户管理',
+                        'curl_name' => array(
+                                array('f', '用户列表', '/User/index'),
+                        ),
+                ),
 		);
 		
 		
