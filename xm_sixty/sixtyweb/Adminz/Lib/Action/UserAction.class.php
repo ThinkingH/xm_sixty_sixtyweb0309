@@ -24,77 +24,79 @@ class UserAction extends Action{
         //=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
 
         //获取信息
-        $where_name = trim($this->_post('find_nickname'));
-        $where_phone = trim($this->_post('find_phone'));
-        $get_sta_day = trim($this->_post('find_sta_date'));
-        $get_end_day = trim($this->_post('find_end_date'));
+        $where_name = trim($this->_request('find_nickname'));
+        $where_phone = trim($this->_request('find_phone'));
+        $get_sta_day = trim($this->_request('find_sta_date'));
+        $get_end_day = trim($this->_request('find_end_date'));
 
         //准备where条件数组
-        if(!($where_name || $where_phone || $where_sta_day || $where_end_day))
+        if(!($where_name || $where_phone || $get_sta_day || $get_end_day))
         {
             $condition = '';
-
-        }else{
-
-            if($where_end_day && !$where_sta_day)
-            {
+        }else {
+            if ($get_end_day && !$get_sta_day) {
+                //准备where条件数组
                 $where_end_day = $get_end_day . ' 23:59:59';
-                $condition = array('nickname'=>array('like','%'.$where_name.'%'),'phone'=>array('like','%'.$where_phone.'%'),
-                    'create_datetime'=>array('ELT',$where_end_day));
-            }elseif (!$where_end_day && $where_sta_day)
-            {
+                $condition = array('nickname' => array('like', '%' . $where_name . '%'), 'phone' => array('like', '%' . $where_phone . '%'),
+                    'create_datetime' => array('ELT', $where_end_day));
+            } elseif (!$get_end_day && $get_sta_day) {
+                //准备where条件数组
                 $where_sta_day = $get_sta_day . ' 00:00:00';
-                $condition = array('nickname'=>array('like','%'.$where_name.'%'),'phone'=>array('like','%'.$where_phone.'%'),
-                    'create_datetime'=>array('EGT',$where_sta_day)
+                $condition = array('nickname' => array('like', '%' . $where_name . '%'), 'phone' => array('like', '%' . $where_phone . '%'),
+                    'create_datetime' => array('EGT', $where_sta_day)
                 );
-            }elseif ($where_end_day && $where_sta_day)
-            {
+            } elseif ($get_end_day && $get_sta_day) {
+                //准备where条件数组
                 $where_end_day = $get_end_day . ' 23:59:59';
                 $where_sta_day = $get_sta_day . ' 00:00:00';
-                $condition = array('nickname'=>array('like','%'.$where_name.'%'),'phone'=>array('like','%'.$where_phone.'%'),
-                    'create_datetime'=>array('between',array($where_sta_day,$where_end_day)));
-            }elseif (!$where_end_day && !$where_sta_day)
-            {
-
-                $condition = array('nickname'=>array('like','%'.$where_name.'%'),'phone'=>array('like','%'.$where_phone.'%'),
-                    );
+                $condition = array('nickname' => array('like', '%' . $where_name . '%'), 'phone' => array('like', '%' . $where_phone . '%'),
+                    'create_datetime' => array('between', array($where_sta_day, $where_end_day)));
+            } elseif (!$get_end_day && !$get_sta_day) {
+                //准备where条件数组
+                $condition = array('nickname' => array('like', '%' . $where_name . '%'), 'phone' => array('like', '%' . $where_phone . '%'),
+                );
             }
         }
 
         $Model = new Model();
-//      执行查询
-        $list = $Model -> table('sixty_user') -> field('nickname,touxiang,sex,email,phone,userlevel,birthday,create_datetime')
-            ->where($condition) -> select();
+        //执行查询
+        $list = $Model->table('sixty_user')->field('nickname,touxiang,sex,email,phone,userlevel,birthday,create_datetime')
+            ->where($condition)->limit($Page->firstRow . ',' . $Page->listRows)->select();
 
-//      改变查询数据中性别字段
-        foreach($list as $key => $value)
-        {
-            if($list[$key]['sex'] == 1)
-            {
+        //改变查询数据中性别字段
+        foreach ($list as $key => $value) {
+            if ($list[$key]['sex'] == 1) {
                 $list[$key]['sex'] = '男';
             }
-            if($list[$key]['sex'] == 2)
-            {
+            if ($list[$key]['sex'] == 2) {
                 $list[$key]['sex'] = '女';
             }
-            if($list[$key]['sex'] == 3)
-            {
+            if ($list[$key]['sex'] == 3) {
                 $list[$key]['sex'] = '保密';
             }
         }
 
+
         import('ORG.Page');// 导入分页类
-        $count = count($list);// 查询满足要求的总记录数
-        $Page = new Page($count,100);// 实例化分页类 传入总记录数和每页显示的记录数
+        $count = $Model->table('sixty_user')
+            ->where($condition)
+            ->count();// 查询满足要求的总记录数
+        $Page = new Page($count, 100);// 实例化分页类 传入总记录数和每页显示的记录数
         $show = $Page->show();// 分页显示输出
         // 进行分页数据查询 注意limit方法的参数要使用Page类的属性
-        $this->assign('page',$show);// 赋值分页输出
+        $this->assign('page', $show);// 赋值分页输出
+
+        //执行SQL查询语句
+        $list = $Model->table('sixty_user')
+            ->where($condition)
+            ->limit($Page->firstRow . ',' . $Page->listRows)
+            ->select();
+
 
         //准备要传递的数据数组
         $find_where = array('find_nickname' => $where_name, 'find_phone' => $where_phone, 'find_sta_date' => $get_sta_day, 'find_end_date' => $get_end_day);
-        $this -> assign('list',$list);
-        $this -> assign('find_where',$find_where);
-//        $show       = $Page->show();
+        $this->assign('list', $list);
+        $this->assign('find_where', $find_where);
         // 输出模板
         $this->display();
     }

@@ -107,6 +107,12 @@ class MenuAction extends Action {
                                 array('f', '用户列表', '/User/index'),
                         ),
                 ),
+                array(
+                        'murl_name' => '视频管理',
+                        'curl_name' => array(
+                                array('f', '视频列表', '/Video/index'),
+                        ),
+                ),
 		);
 		
 		
