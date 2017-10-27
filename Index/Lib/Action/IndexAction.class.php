@@ -204,7 +204,6 @@ class IndexAction extends Action
         }
     }
 
-
     /**
      * 美食详情接口
      */
