@@ -1,0 +1,143 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <load href="__PUBLIC__/Css/main.css" />
+
+    <script type="text/javascript" src="__PUBLIC__/Js/jquery.min.js"></script>
+    <script type="text/javascript" src="__PUBLIC__/Js/themain.js"></script>
+    <script type="text/javascript" src="__PUBLIC__/Js/md5.js"></script>
+    <script type="text/javascript">
+        $("document").ready(function(){
+
+            $("#submitedit").click(function(){
+
+                var phone = $("#phone").val();
+                var email = $("#email").val();
+
+                if(phone.length<11) {
+                    alert('手机号码长度必须是11位');
+                    return false;
+                }
+
+                if (!/^\w+([-+.]\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*$/.test(email)) {
+                    alert('邮箱格式不正确');
+                    return false;
+                }
+
+
+                if(confirm("您确认要编辑此用户吗？此编辑涉及到重要用户数据，请小心操作。")) {
+                    if(passwd!='') {
+                        var md5_passwd = hex_md5(passwd);
+                        $("#resetpasswd").val(md5_passwd);
+                    }
+                    if(repasswd!='') {
+                        var md5_repasswd = hex_md5(repasswd);
+                        $("#resetrepasswd").val(md5_repasswd);
+                    }
+
+                    //alert('ok');
+                }else {
+                    return false;
+                }
+
+            });
+
+
+            $("#submitdel").click(function(){
+                if(confirm("您确认要删除此用户吗？删除用户将会导致用户无法使用，请小心操作，删除用户前请将用户禁用")) {
+                    //alert('ok');
+
+                }else {
+                    return false;
+                }
+            });
+
+        });
+
+
+    </script>
+</head>
+
+
+<body>
+<div class="hy_daohangtiao">
+    当前位置&nbsp;#&nbsp;用户管理&nbsp;#&nbsp;编辑操作用户&nbsp;#&nbsp;用户信息修改页面
+</div>
+
+
+<a href="javascript:history.go(-1);" class="yubutton yuwhite">返回操作用户编辑查看列表</a>
+<br/>
+<br/>
+
+<form action="__APP__/User/edituser_do" method="post" >
+
+    &nbsp;&nbsp;&nbsp;
+
+
+    <br/><br/>
+    <table class="table-edit" >
+        <tr>
+            <td width="150" align="right"><b>用户昵称:</b></td>
+            <td width="650">
+                {$list['nickname']}
+                <input type="hidden" name="nickname" value="{$list['nickname']}" />
+            </td>
+
+        </tr>
+        <tr>
+            <td align="right"><b>手机号:</b></td>
+            <td>
+                <input type="text" name="phone" id="phone" value="{$list['phone']}" />
+
+            </td>
+        </tr>
+        <tr>
+            <td align="right"><b>邮箱:</b></td>
+            <td>
+                <input type="text" name="email" id="email" value="{$list['email']}" />
+
+            </td>
+        </tr>
+
+        <tr>
+            <td align="right"><b>QQ:</b></td>
+            <td>
+                <input type="text" name="qq" id="qq" value="{$list['qq']}" />
+
+            </td>
+        </tr>
+        <tr>
+            <td align="right"><b>微信:</b></td>
+            <td>
+                <input type="text" name="weixin_openid" id="openid" value="{$list['openid']}" />
+            </td>
+        </tr>
+
+        <tr>
+            <td align="right"><b>用户锁定状态:</b></td>
+            <td>
+                <select name="is_lock">
+                    {$is_lock}
+                </select>
+                <font color="red" size="-1">被禁用的用户不能登陆系统</font>
+            </td>
+        </tr>
+    </table>
+
+    <input type="submit" name="submitedit" id="submitedit" class="yubutton yuwhite" value="提交修改" style="margin-left:20px;margin-top:20px;" />
+</form>
+
+<form method="post" action="__APP__/User/deluser_do" style="margin:0px;padding:0px;">
+    <input type="hidden" name="del_nickname" value="{$list['nickname']}" />
+    <input type="submit" name="submitdel" id="submitdel" class="yubuttons yuwhite" value="删除此用户" style="margin-left:20px;margin-top:50px;" style="margin-left:20px;margin-top:20px;" />
+</form>
+
+
+<br/><br/><br/><br/><br/><br/>
+End!
+
+</body>
+</html>
+
+
