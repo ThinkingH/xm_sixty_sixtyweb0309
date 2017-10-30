@@ -24,7 +24,7 @@
 <br/>
 <br/>
 <form action="__APP__/Video/index" method="post">
-    <table class="table-list">
+    <table class="table-head">
         <tr>
             <td>主标题查询</td>
             <td>子标题查询</td>
@@ -67,7 +67,8 @@
 <table class="table-list" width="1200">
     <thead>
     <tr>
-        <td width="50">操作</td>
+        <td width="100">操作</td>
+        <td width="50">ID</td>
         <td width="120"><b>主标题</b></td>
         <td width="100"><b>子标题</b></td>
         <td width="160"><b>介绍</b></td>
@@ -81,6 +82,9 @@
         <td width="100"><b>花费金额</b></td>
         <td width="120"><b>提示说明</b></td>
         <td width="150"><b>创建时间</b></td>
+        <td width="150"><b>材料</b></td>
+        <td width="150"><b>步骤</b></td>
+        <!--<td width="150"><b>评论</b></td>-->
 
     </tr>
     </thead>
@@ -93,7 +97,12 @@
                     <input type="hidden" name="video_id" value="{$vo.id}" />
                     <input type="submit" class="yubuttons yuwhite" name="edituserbutton" value="编辑" />
                 </form>
+                <form action="__APP__/Pinglun/video_to_pinglun" method="post" style="margin:0px" >
+                    <input type="hidden" name="video_id" value="{$vo.id}" />
+                    <input type="submit" class="yubuttons yuwhite" name="pinglunbutton" value="查看评论" />
+                </form>
             </td>
+            <td>{$vo.id}</td>
             <td>{$vo.biaoti}</td>
             <td>{$vo.biaotichild}</td>
             <td>{$vo.jieshao}</td>
@@ -101,13 +110,20 @@
             <td>{$vo.classify2}</td>
             <td>{$vo.classify3}</td>
             <td>{$vo.classify4}</td>
-            <td>{$vo.showimg}</td>
+            <td><img style="width: 100px; height: 100px;" src="{$vo.showimg}"/></td>
+            <!--<td><img style="width: 50px; height: 50px;" src="images\20171030144243_169.jpg"/></td>-->
             <td>{$vo.videosavename}</td>
             <td>{$vo.maketime}</td>
             <td>{$vo.huafeimoney}</td>
             <td>{$vo.tishishuoming}</td>
             <td>{$vo.create_datetime}</td>
-
+            <td>{$vo.cailiao}</td>
+            <td>{$vo.buzhou}</td>
+            <!--<td>-->
+                <!--<foreach name="vo['pinglun']" item="val">-->
+                <!--{$val.vid}<br/>-->
+                <!--</foreach>-->
+            <!--</td>-->
         </tr>
     </volist>
     </tbody>

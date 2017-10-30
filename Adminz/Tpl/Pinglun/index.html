@@ -16,7 +16,7 @@
 
 <body>
 <div class="hy_daohangtiao">
-    当前位置&nbsp;#&nbsp;用户管理&nbsp;#&nbsp;用户列表&nbsp;#&nbsp;用户信息浏览页面
+    当前位置&nbsp;#&nbsp;视频管理&nbsp;#&nbsp;视频列表&nbsp;#&nbsp;评论浏览页面
 </div>
 
 
@@ -26,7 +26,7 @@
 <form action="__APP__/User/index" method="post">
     <table class="table-head">
         <tr>
-            <td>昵称查询:<input type="text" name="find_nickname" value="{$find_where.find_nickname}" /></td>
+            <td>评论用户昵称查询:<input type="text" name="find_nickname" value="{$find_where.find_nickname}" /></td>
             <td>手机号查询:<input style="width:100px;" type="text" name="find_phone" value="{$find_where.find_phone}" /></td>
             <td>起始注册日期:<input style="width:90px;" type="text" name="find_sta_date" onclick="WdatePicker()" value="{$find_where.find_sta_date}" /></td>
             <td>终止注册日期:<input style="width:90px;" type="text" name="find_end_date" onclick="WdatePicker()" value="{$find_where.find_end_date}" /></td>
@@ -63,7 +63,7 @@
                     <input type="submit" class="yubuttons yuwhite" name="edituserbutton" value="编辑" />
                 </form>
             </td>
-            <td>{$vo.nickname}</td>
+            <td>{$vo.content}</td>
             <td>{$vo.phone}</td>
             <td>{$vo.email}</td>
             <td>{$vo.sex}</td>
