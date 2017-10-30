@@ -359,7 +359,7 @@ class UserAction extends Action{
 
         $Model = new Model();
 
-        //判断用于昵称是否为空
+        //判断提交是否为空
         if($submitdel == '')
         {
             echo "<script>alert('非法进入此页面');history.go(-1);</script>";
@@ -377,7 +377,7 @@ class UserAction extends Action{
         $sql_nickname = "select is_lock, nickname from sixty_user where nickname='".$nickname."'";
         $result_nickname = $Model -> query($sql_nickname);
 
-        //检查用户昵称是否存在
+        //判断用户昵称是否存在
         if(!$result_nickname) {
             echo "<script>alert('此昵称不存在');history.go(-1);</script>";
             $this -> error('此昵称不存在');
