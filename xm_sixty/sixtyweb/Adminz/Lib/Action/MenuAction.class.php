@@ -113,6 +113,12 @@ class MenuAction extends Action {
                                 array('f', '视频列表', '/Video/index'),
                         ),
                 ),
+                array(
+                    'murl_name' => '网站配置',
+                    'curl_name' => array(
+                        array('f', '网站配置', '/Webconfig/index'),
+                    ),
+                ),
 		);
 		
 		
