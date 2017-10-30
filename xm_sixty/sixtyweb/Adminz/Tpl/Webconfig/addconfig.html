@@ -1,0 +1,90 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <load href="__PUBLIC__/Css/main.css" />
+
+    <script type="text/javascript" src="__PUBLIC__/Js/jquery.min.js"></script>
+    <script type="text/javascript" src="__PUBLIC__/Js/themain.js"></script>
+    <script type="text/javascript" src="__PUBLIC__/Js/md5.js"></script>
+    <script type="text/javascript">
+        $("document").ready(function(){
+
+            $("#submit_add").click(function(){
+
+                var name = $("#name").val();
+                var key1 = $("#key1").val();
+                var val1 = $("#val1").val();
+
+                if(name == '') {
+                    alert('名称不能为空！');
+                    return false;
+                }
+
+                if(key1 == '') {
+                    alert('配置项不能为空！');
+                    return false;
+                }
+
+                if(val1 == '') {
+                    alert('配置信息不能为空！');
+                    return false;
+                }
+
+            });
+
+        });
+
+
+    </script>
+</head>
+
+
+<body>
+<div class="hy_daohangtiao">
+    当前位置&nbsp;#&nbsp;用户管理&nbsp;#&nbsp;编辑网站配置&nbsp;#&nbsp;网站配置修改页面
+</div>
+
+
+<a href="javascript:history.go(-1);" class="yubutton yuwhite">返回网站配置列表</a>
+<br/>
+<br/>
+
+<form action="__APP__/Webconfig/addconfig_do" method="post" >
+
+    &nbsp;&nbsp;&nbsp;
+
+
+    <br/><br/>
+    <table class="table-edit" >
+        <tr>
+            <td width="150" align="right"><b>配置名称:</b></td>
+            <td width="650">
+                <input type="text" name="addconfig_name" id="name" />
+            </td>
+
+        </tr>
+        <tr>
+            <td align="right"><b>配置项:</b></td>
+            <td>
+                <input type="text" name="addconfig_key1" id="key1"/>
+            </td>
+        </tr>
+        <tr>
+            <td align="right"><b>配置详情:</b></td>
+            <td>
+                <input type="text" name="addconfig_val1" id="val1"/>
+            </td>
+        </tr>
+
+    </table>
+    <input type="submit" name="submit" id="submit_add" class="yubutton yuwhite" value="添加配置" style="margin-left:20px;margin-top:20px;" />
+</form>
+
+<br/><br/><br/><br/><br/><br/>
+End!
+
+</body>
+</html>
+
+

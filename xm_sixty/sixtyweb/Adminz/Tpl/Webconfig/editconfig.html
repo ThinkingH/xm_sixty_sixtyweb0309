@@ -1,0 +1,108 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <load href="__PUBLIC__/Css/main.css" />
+
+    <script type="text/javascript" src="__PUBLIC__/Js/jquery.min.js"></script>
+    <script type="text/javascript" src="__PUBLIC__/Js/themain.js"></script>
+    <script type="text/javascript" src="__PUBLIC__/Js/md5.js"></script>
+    <script type="text/javascript">
+        $("document").ready(function(){
+
+            $("#submitedit").click(function(){
+
+                var name = $("#name").val();
+
+                if(name == '') {
+                    alert('名称不能为空！');
+                    return false;
+                }
+
+                if(confirm("您确认要编辑此条网站配置吗？此编辑涉及到重要用户数据，请小心操作。")) {
+                    if(passwd!='') {
+                        var md5_passwd = hex_md5(passwd);
+                        $("#resetpasswd").val(md5_passwd);
+                    }
+                    if(repasswd!='') {
+                        var md5_repasswd = hex_md5(repasswd);
+                        $("#resetrepasswd").val(md5_repasswd);
+                    }
+                }else {
+                    return false;
+                }
+
+            });
+
+
+            $("#submitdel").click(function(){
+                if(confirm("您确认要删除此条网站配置吗？")) {
+                    //alert('ok');
+
+                }else {
+                    return false;
+                }
+            });
+
+        });
+
+
+    </script>
+</head>
+
+
+<body>
+<div class="hy_daohangtiao">
+    当前位置&nbsp;#&nbsp;用户管理&nbsp;#&nbsp;编辑网站配置&nbsp;#&nbsp;网站配置修改页面
+</div>
+
+
+<a href="javascript:history.go(-1);" class="yubutton yuwhite">返回网站配置列表</a>
+<br/>
+<br/>
+
+<form action="__APP__/Webconfig/editconfig_do" method="post" >
+
+    &nbsp;&nbsp;&nbsp;
+
+
+    <br/><br/>
+    <table class="table-edit" >
+        <tr>
+            <td width="150" align="right"><b>配置名称:</b></td>
+            <td width="650">
+                <input type="text" name="editconfig_name" id="name" value="{$list['name']}" />
+            </td>
+
+        </tr>
+        <tr>
+            <td align="right"><b>配置项:</b></td>
+            <td>
+                <input type="text" name="editconfig_key1" id="key1" value="{$list['key1']}" />
+            </td>
+        </tr>
+        <tr>
+            <td align="right"><b>配置详情:</b></td>
+            <td>
+                <input type="text" name="editconfig_val1" id="val1" value="{$list['val1']}" />
+            </td>
+        </tr>
+
+    </table>
+    <input type="hidden" name="editconfig_id" value="{$list['id']}" />
+    <input type="submit" name="submitedit" id="submitedit" class="yubutton yuwhite" value="提交修改" style="margin-left:20px;margin-top:20px;" />
+</form>
+
+<form method="post" action="__APP__/Webconfig/delconfig_do" style="margin:0px;padding:0px;">
+    <input type="hidden" name="delconfig_id" value="{$list['id']}" />
+    <input type="submit" name="submitdel" id="submitdel" class="yubuttons yuwhite" value="删除此配置" style="margin-left:20px;margin-top:50px;" style="margin-left:20px;margin-top:20px;" />
+</form>
+
+
+<br/><br/><br/><br/><br/><br/>
+End!
+
+</body>
+</html>
+
+
