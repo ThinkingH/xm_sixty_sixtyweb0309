@@ -17,7 +17,6 @@ $("document").ready(function(){
 		var phone = $("#phone").val();
 		var email = $("#email").val();
 		var birthday = $("#birthday").val();
-		var sex = $("#sex").val();
 
         nickname  = $.trim(nickname);
 		passwd    = $.trim(passwd);
@@ -38,10 +37,6 @@ $("document").ready(function(){
 
         if (!/^\w+([-+.]\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*$/.test(email)) {
             alert('邮箱格式不正确');
-            return false;
-        }
-        if(!$(':radio[name=sex]:checked').length) {
-            alert('请选择性别');
             return false;
         }
         if(birthday==''){
@@ -68,15 +63,13 @@ $("document").ready(function(){
 			
 			$("#passwd").val(md5_passwd);
 			$("#repasswd").val(md5_repasswd);
-
-
-			//alert('ok');
 		}else {
 			return false;
 		}
 
 
 	});
+
 });
 
 
@@ -85,20 +78,31 @@ $("document").ready(function(){
 
 <body>
 <div class="hy_daohangtiao">
-当前位置&nbsp;#&nbsp;用户管理&nbsp;#&nbsp;编辑操作用户&nbsp;#&nbsp;用户信息添加页面
+当前位置&nbsp;#&nbsp;用户管理&nbsp;#&nbsp;添加操作用户&nbsp;#&nbsp;用户信息添加页面
 </div>
 
 
 <a href="javascript:history.go(-1);" class="yubutton yuwhite">返回用户查看列表</a>
 <br/>
 
-<form name="form1" method="post" action="__APP__/User/adduser_x" >
+<form name="form1" method="post" action="__APP__/User/adduser_x{$echourl}" enctype="multipart/form-data">
 <br/><br/>
-<table class="table-edit" width="850">
-
+<table class="table-edit" width="600">
 	<tr>
-		<td width="150" align="right">请输入用户昵称：</td>
-		<td width="700">
+		<td width="110" align="right">请选择该用户状态：</td>
+		<td width="490">
+			<select name="lock">
+				{$userlock_show}
+			</select>
+
+			<font color="orange" size="-2">
+
+			</font>
+		</td>
+	</tr>
+	<tr>
+		<td align="right">请输入用户昵称：</td>
+		<td>
 			<input type="text" name="nickname" id="nickname" maxlength="24" onkeydown="if(event.keyCode=='32'){return false;}" />
 			<font color="orange" size="-2">
 				用户名只能由字母数字下划线和中划线构成，且长度必须在4到24位之间
@@ -106,32 +110,32 @@ $("document").ready(function(){
 		</td>
 	</tr>
 	<tr>
-		<td width="150" align="right">请输入手机号：</td>
-		<td width="700">
-			<input type="text" name="phone" id="phone" maxlength="24" onkeydown="if(event.keyCode=='32'){return false;}" />
+		<td align="right">请输入手机号：</td>
+		<td>
+			<input size="13" type="text" name="phone" id="phone" maxlength="11" onkeydown="if(event.keyCode=='32'){return false;}" />
 			<font color="orange" size="-2">
 				手机号为11位
 			</font>
 		</td>
 	</tr>
 	<tr>
-		<td width="150" align="right">请输入邮箱：</td>
-		<td width="700">
-			<input style="width:250px;" type="text" name="email" id="email" maxlength="24"/>
+		<td align="right">请输入邮箱：</td>
+		<td>
+			<input size="22" type="text" name="email" id="email" maxlength="25"/>
 		</td>
 	</tr>
 	<tr>
-		<td width="150" align="right">请输入QQ号码：</td>
-		<td width="700">
+		<td align="right">请输入QQ号码：</td>
+		<td >
 			<input type="text" name="qq" id="qq" maxlength="24"/>
 		</td>
 	</tr>
 	<tr>
 		<td align="right">性别:</td>
 		<td>
-			<input type="radio" name="sex" id="sex1" maxlength="20" value="1">男</input>
-			<input type="radio" name="sex" id="sex2" maxlength="20" value="2">女</input>
-			<input type="radio" name="sex" id="sex3" maxlength="20" value="3">保密</input>
+			<select name="sex">
+				{$usersex_show}
+			</select>
 		</td>
 	</tr>
 	<tr>
@@ -168,7 +172,7 @@ $("document").ready(function(){
 	</tr>
 	<tr>
 		<td colspan="2">
-			<input type="submit" name="submit" id="submit_add" class="yubutton yuwhite" value="添加用户" style="margin-left:120px;" />
+			<input type="submit" name="submit" id="submit_add" class="yubutton yuwhite" value="添加用户" style="margin-left:250px;" />
 		</td>
 	</tr>
 

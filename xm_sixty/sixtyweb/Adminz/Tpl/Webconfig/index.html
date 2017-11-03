@@ -19,13 +19,14 @@
     <a href="__APP__/Webconfig/addconfig" class="yubutton yuwhite">添加网站配置</a>
     <br/>
     <br/>
-    <table class="table-list" width="450">
+    <table class="table-list" width="1000">
         <thead>
         <tr>
             <td width="50">操作</td>
-            <td width="100"><b>配置名</b></td>
-            <td width="100"><b>配置项</b></td>
-            <td width="300"><b>配置信息</b></td>
+            <td width="50">ID</td>
+            <td width="200"><b>配置名</b></td>
+            <td width="300"><b>配置项</b></td>
+            <td width="400"><b>配置信息</b></td>
         </tr>
         </thead>
 
@@ -39,6 +40,7 @@
                     </form>
                 </td>
                 <!--<td>{$vo.name}</td>-->
+                <td>{$vo.id}</td>
                 <td>{$vo.name}</td>
                 <td>{$vo.key1}</td>
                 <td>{$vo.val1}</td>

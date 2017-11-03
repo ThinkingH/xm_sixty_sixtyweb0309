@@ -23,46 +23,63 @@ class UserAction extends Action{
         $this->loginjudgeshow($this->lock_index);
         //=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
 
+        //拼接URL地址，并返回到页面
+        $echourl = func_baseurlcreate($_GET);
+        $this->assign('echourl',$echourl);
+
         //获取信息
-        $where_name = trim($this->_request('find_nickname'));
-        $where_phone = trim($this->_request('find_phone'));
-        $get_sta_day = trim($this->_request('find_sta_date'));
-        $get_end_day = trim($this->_request('find_end_date'));
+        $where_id = trim($this->_get('find_id'));
+        $where_name = trim($this->_get('find_nickname'));
+        $where_phone = trim($this->_get('find_phone'));
+        $get_sta_day = trim($this->_get('find_sta_date'));
+        $get_end_day = trim($this->_get('find_end_date'));
+        $lock = trim($this->_get('lock'));
+
+        //判断用户状态是否选择
+        if($lock == '')
+        {
+            $lock = 4;
+        }
 
         //准备where条件数组
-        if(!($where_name || $where_phone || $get_sta_day || $get_end_day))
+        $condition = "nickname like '" . $where_name . "%' and phone like '". $where_phone ."%'";
+        if($where_id != '')
         {
-            $condition = '';
-        }else {
-            if ($get_end_day && !$get_sta_day) {
-                //准备where条件数组
-                $where_end_day = $get_end_day . ' 23:59:59';
-                $condition = array('nickname' => array('like', '%' . $where_name . '%'), 'phone' => array('like', '%' . $where_phone . '%'),
-                    'create_datetime' => array('ELT', $where_end_day));
-            } elseif (!$get_end_day && $get_sta_day) {
-                //准备where条件数组
-                $where_sta_day = $get_sta_day . ' 00:00:00';
-                $condition = array('nickname' => array('like', '%' . $where_name . '%'), 'phone' => array('like', '%' . $where_phone . '%'),
-                    'create_datetime' => array('EGT', $where_sta_day)
-                );
-            } elseif ($get_end_day && $get_sta_day) {
-                //准备where条件数组
-                $where_end_day = $get_end_day . ' 23:59:59';
-                $where_sta_day = $get_sta_day . ' 00:00:00';
-                $condition = array('nickname' => array('like', '%' . $where_name . '%'), 'phone' => array('like', '%' . $where_phone . '%'),
-                    'create_datetime' => array('between', array($where_sta_day, $where_end_day)));
-            } elseif (!$get_end_day && !$get_sta_day) {
-                //准备where条件数组
-                $condition = array('nickname' => array('like', '%' . $where_name . '%'), 'phone' => array('like', '%' . $where_phone . '%'),
-                );
-            }
+            $condition .= "and id = '". $where_id ."'";
+        }
+        if($get_sta_day != '')
+        {
+            $where_sta_day = $get_sta_day . ' 00:00:00';
+            $condition .= "and create_datetime >= '" . $where_sta_day . "'";
+        }
+        if($get_end_day != '')
+        {
+            $where_end_day = $get_end_day . ' 23:59:59';
+            $condition .= "and create_datetime <= '" . $where_end_day . "'";
+        }
+        if($lock != 4)
+        {
+            $condition .= "and is_lock = '". $lock ."'";
         }
 
         $Model = new Model();
-        //执行查询
-        $list = $Model->table('sixty_user')->field('nickname,touxiang,sex,email,phone,userlevel,birthday,create_datetime')
-            ->where($condition)->limit($Page->firstRow . ',' . $Page->listRows)->select();
 
+        //分页
+        import('ORG.Page');// 导入分页类
+        $count = $Model->table('sixty_user')
+            ->where($condition)
+            ->order('create_datetime DESC')
+            ->count();// 查询满足要求的总记录数
+        $Page = new Page($count, 100);// 实例化分页类 传入总记录数和每页显示的记录数
+        $show = $Page->show();// 分页显示输出
+        // 进行分页数据查询 注意limit方法的参数要使用Page类的属性
+        $this->assign('page', $show);// 赋值分页输出
+
+        //执行查询
+        $list = $Model->table('sixty_user')->field('id, is_lock, openid, nickname, touxiang, sex, email, phone, 
+        userlevel, birthday, create_datetime, keyong_money, dongjie_money, keyong_jifen, dongjie_jifen, describes,
+        qq,weixin,remark, jiguangid')
+            ->where($condition) ->order('create_datetime DESC') ->limit($Page->firstRow . ',' . $Page->listRows)->select();
         //改变查询数据中性别字段
         foreach ($list as $key => $value) {
             if ($list[$key]['sex'] == 1) {
@@ -74,29 +91,45 @@ class UserAction extends Action{
             if ($list[$key]['sex'] == 3) {
                 $list[$key]['sex'] = '保密';
             }
+            if($list[$key]['is_lock'] == 1)
+            {
+                $list[$key]['is_lock'] = "<span style='background-color: green; padding: 3px;'>1-已启用</span>";
+            }else{
+                $list[$key]['is_lock'] = "<span style='background-color: red; padding: 3px;'>2-已禁用</span>";
+            }
         }
 
+        //start--------------------------------------------------------------
+        //动态生成权限下拉选项
+        $rootarr = array(
+            '4' => '4-全选',
+            '1' => '1-已启用',
+            '2' => '2-已禁用',
+        );
 
-        import('ORG.Page');// 导入分页类
-        $count = $Model->table('sixty_user')
-            ->where($condition)
-            ->count();// 查询满足要求的总记录数
-        $Page = new Page($count, 100);// 实例化分页类 传入总记录数和每页显示的记录数
-        $show = $Page->show();// 分页显示输出
-        // 进行分页数据查询 注意limit方法的参数要使用Page类的属性
-        $this->assign('page', $show);// 赋值分页输出
+        $rootflag_show = '';
+        foreach($rootarr as $keyr => $valr) {
+            $rootflag_show .= '<option value="'.$keyr.'" ';
+            if($keyr==$lock) {
+                $rootflag_show .= ' selected="selected"';
+            }
+            $rootflag_show .= '>'.$valr.'</option>';
 
-        //执行SQL查询语句
-        $list = $Model->table('sixty_user')
-            ->where($condition)
-            ->limit($Page->firstRow . ',' . $Page->listRows)
-            ->select();
-
+        }
+        $this -> assign('rootflag_show',$rootflag_show);
+        //end--------------------------------------------------------------
 
         //准备要传递的数据数组
-        $find_where = array('find_nickname' => $where_name, 'find_phone' => $where_phone, 'find_sta_date' => $get_sta_day, 'find_end_date' => $get_end_day);
-        $this->assign('list', $list);
+        $find_where = array(
+            'find_nickname' => $where_name,
+            'find_phone' => $where_phone,
+            'find_sta_date' => $get_sta_day,
+            'find_end_date' => $get_end_day,
+            'find_id' => $where_id,
+            );
         $this->assign('find_where', $find_where);
+        $this->assign('list', $list);
+
         // 输出模板
         $this->display();
     }
@@ -110,7 +143,48 @@ class UserAction extends Action{
         //判断用户是否登陆
         $this->loginjudgeshow($this->lock_adduser);
         //=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
+        //拼接URL
+        $echourl = func_baseurlcreate($_GET);
+        $this->assign('echourl',$echourl);
 
+        //start--------------------------------------------------------------
+        //动态生成权限下拉选项
+        $userarr = array(
+            '1' => '1-启用',
+            '2' => '2-禁用',
+        );
+
+        $userlock_show = '';
+        foreach($userarr as $keyr => $valr) {
+            $userlock_show .= '<option value="'.$keyr.'" ';
+            if($keyr==$lock) {
+                $userlock_show .= ' selected="selected"';
+            }
+            $userlock_show .= '>'.$valr.'</option>';
+
+        }
+        $this -> assign('userlock_show',$userlock_show);
+        //end--------------------------------------------------------------
+
+        //start--------------------------------------------------------------
+        //动态生成权限下拉选项
+        $sexarr = array(
+            '3' => '3-保密',
+            '1' => '1-男',
+            '2' => '2-女',
+        );
+
+        $usersex_show = '';
+        foreach($sexarr as $keyr => $valr) {
+            $usersex_show .= '<option value="'.$keyr.'" ';
+            if($keyr==$lock) {
+                $usersex_show .= ' selected="selected"';
+            }
+            $usersex_show .= '>'.$valr.'</option>';
+
+        }
+        $this -> assign('usersex_show',$usersex_show);
+        //end--------------------------------------------------------------
 
         // 输出模板
         $this->display();
@@ -126,6 +200,10 @@ class UserAction extends Action{
         $this->loginjudgeshow($this->lock_adduser_x);
         //=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
 
+        //拼接URL地址，并返回到页面
+        $echourl = func_baseurlcreate($_GET);
+        $this->assign('echourl',$echourl);
+
         //获取提交的数据
         $nickname = trim($this->_post('nickname'));
         $phone = trim($this->_post('phone'));
@@ -134,7 +212,7 @@ class UserAction extends Action{
         $sex = trim($this->_post('sex'));
         $birthday = trim($this->_post('birthday'));
         $passwd = trim($this->_post('passwd'));
-
+        $lock = trim($this->_post('lock'));
         //数据库初始化
         $Model = new Model();
         //判断该用户名是否存在
@@ -180,9 +258,9 @@ class UserAction extends Action{
                         $data['email'] = $email;
                         $data['qq'] = $qq;
                         $data['sex'] = $sex;
+                        $data['is_lock'] = $lock;
                         $data['birthday'] = $birthday;
                         $data['create_datetime'] = date('Y-m-d H:i:s',time());
-
                         //执行添加语句
                         $ret = $Model->table('sixty_user')->add($data);
 
@@ -191,8 +269,8 @@ class UserAction extends Action{
                         hy_caozuo_logwrite($templogs,__CLASS__.'---'.__FUNCTION__);
 
                         if($ret) {
-                            echo "<script>alert('数据添加成功!');window.location.href='".__APP__."/User/index';</script>";
-                            $this -> success('数据添加成功!','__APP__/User/index');
+                            echo "<script>alert('数据添加成功!');window.location.href='".__APP__.'/User/index'.$echourl."';</script>";
+                            $this -> success('数据添加成功!','__APP__'.$echourl);
                         }else {
                             echo "<script>alert('数据添加失败，系统错误!');history.go(-1);</script>";
                             $this -> error('数据添加失败，系统错误!');
@@ -212,6 +290,9 @@ class UserAction extends Action{
         //判断用户是否登陆
         $this->loginjudgeshow($this->lock_edituser);
         //=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
+        //拼接URL
+        $echourl = func_baseurlcreate($_GET);
+        $this->assign('echourl',$echourl);
 
         //获取提交数据
         $nickname = trim($this->_post('edit_nickname'));
@@ -219,12 +300,11 @@ class UserAction extends Action{
         //根据昵称查询用户信息
         $Model = new Model();
         $list = $Model -> table('sixty_user')
-            -> field('is_lock, phone, email, nickname, sex, birthday, qq, remark ,openid')
+            -> field('id, is_lock, phone, email, nickname, sex, birthday, qq, remark ,openid, touxiang')
             -> where("nickname='".$nickname."'") -> find();
 
         //发送给模板
         $this->assign('list',$list);
-
         //start--------------------------------------------------------------
         //动态生成权限下拉选项
         $is_lock = '';
@@ -233,14 +313,13 @@ class UserAction extends Action{
         if($list['is_lock'] == 1) {
             $is_lock .= ' selected="selected"';
         }
-        $is_lock .= '>未禁用</option>';
+        $is_lock .= '>已启用</option>';
 
         $is_lock .= '<option value="-1" ';
         if($list['is_lock'] == -1) {
             $is_lock .= ' selected="selected"';
         }
         $is_lock .= '>已禁用</option>';
-
         //发送给模板
         $this -> assign('is_lock',$is_lock);
         //end--------------------------------------------------------------
@@ -258,10 +337,14 @@ class UserAction extends Action{
         //判断用户是否登陆
         $this->loginjudgeshow($this->lock_edit_do);
         //=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
+        //拼接URL
+        $echourl = func_baseurlcreate($_GET);
+        $this->assign('echourl',$echourl);
 
         //获取提交数据
         $nickname = trim($this->_post('nickname'));
         $phone = trim($this->_post('phone'));
+        $email = trim($this->_post('email'));
         $qq = trim($this->_post('qq'));
         $openid = trim($this->_post('weixin_openid'));
         $is_lock = trim($this->_post('is_lock'));
@@ -277,6 +360,7 @@ class UserAction extends Action{
             echo "<script>alert('此昵称用户不存在');history.go(-1);</script>";
             $this -> error('此昵称用户不存在');
         }
+
 
         //检查手机号是否存在
         $sql_phone = "select nickname from sixty_user where phone='".$phone."'" ;
@@ -318,6 +402,18 @@ class UserAction extends Action{
             }
         }
 
+        //检查邮箱是否存在
+        $sql_email = "select nickname from sixty_user where email='".$email."'";
+        $result_email = $Model -> query($sql_email);
+        if($result_email) {
+            $res = $result_email[0]['nickname'];
+            if($res != $nickname)
+            {
+                echo "<script>alert('此微邮箱已被注册，请使用其他邮箱');history.go(-1);</script>";
+                $this -> error('此邮箱已被注册，请使用其他邮箱');
+            }
+        }
+
         //把要存入的数据放入数组
         $datauser = array();
         $datauser['nickname'] = $nickname;
@@ -325,6 +421,7 @@ class UserAction extends Action{
         $datauser['qq'] = $qq;
         $datauser['openid'] = $openid;
         $datauser['is_lock'] = $is_lock;
+        $datauser['email'] = $email;
 
         //执行更新语句
         $result = $Model -> table('sixty_user') -> where("nickname='".$nickname."'")->save($datauser);
@@ -337,7 +434,7 @@ class UserAction extends Action{
             echo "<script>alert('用户信息修改失败！');history.go(-1);</script>";
             $this -> error('用户信息修改失败！');
         }else{
-            echo "<script>alert('用户信息修改操作执行完成!');window.location.href='".__APP__."/User/index';</script>";
+            echo "<script>alert('用户信息修改操作执行完成!');window.location.href='" .__APP__. '/User/index'.$echourl."';</script>";
             $this ->success('用户信息修改操作执行完成!','__APP__/User/index');
         }
 
@@ -353,6 +450,11 @@ class UserAction extends Action{
         //判断用户是否登陆
         $this->loginjudgeshow($this->lock_deluser_do);
         //=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
+        //拼接URL
+        $echourl = func_baseurlcreate($_GET);
+        $this->assign('echourl',$echourl);
+
+
         //获取要删除账户的用户昵称
         $nickname = trim($this->_post('del_nickname'));
         $submitdel = trim($this->_post('submitdel'));
@@ -393,6 +495,7 @@ class UserAction extends Action{
         //执行删除操作
         $del_result = $Model -> table('sixty_user') -> where("nickname='".$nickname."'") -> delete();
 
+        //写入日志
         $templogs = $Model->getlastsql();
         hy_caozuo_logwrite($templogs,__CLASS__.'---'.__FUNCTION__);
 
@@ -412,6 +515,7 @@ class UserAction extends Action{
 
         //=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
         //判断用户是否登陆
+        //=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
         $lockarr = loginjudge($lock_key);
         if($lockarr['grade']=='C') {
             //通过
@@ -424,8 +528,9 @@ class UserAction extends Action{
             exit('系统错误，为确保系统安全，禁止登入系统');
         }
         //=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
-
-
     }
+
 }
+
+
 

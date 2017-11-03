@@ -20,15 +20,15 @@
 </div>
 
 
-<a href="__APP__/Video/addvideo" class="yubutton yuwhite">添加视频</a>
+<a href="__APP__/Video/addvideo{$echourl}" class="yubutton yuwhite">添加视频</a>
 <br/>
 <br/>
-<form action="__APP__/Video/index" method="post">
+<form action="__APP__/Video/index{$echourl}" method="get">
     <table class="table-head">
         <tr>
-            <td>主标题查询</td>
-            <td>子标题查询</td>
-            <td>制作时间查询</td>
+            <td>状态查询</td>
+            <td>ID查询</td>
+            <td>标题查询</td>
             <td>分类1</td>
             <td>分类2</td>
             <td>分类3</td>
@@ -38,9 +38,13 @@
             <td>操作</td>
         </tr>
         <tr>
+            <td>
+                <select name="find_flag">
+                    {$flag_show}
+                </select>
+            </td>
+            <td><input style="width:70px;" type="text" name="find_id" value="{$find_id}" /></td>
             <td><input style="width:200px;" type="text" name="find_biaoti" value="{$find_biaoti}" /></td>
-            <td><input style="width:200px;" type="text" name="find_biaotichild" value="{$find_biaotichild}" /></td>
-            <td><input style="width:80px;" type="text" name="find_maketime" value="{$find_maketime}" /></td>
             <td><input style="width:80px;" type="text" name="find_classify1" value="{$find_classify1}" /></td>
             <td><input style="width:80px;" type="text" name="find_classify2" value="{$find_classify2}" /></td>
             <td><input style="width:80px;" type="text" name="find_classify3" value="{$find_classify3}" /></td>
@@ -48,15 +52,6 @@
             <td><input style="width:90px;" type="text" name="find_sta_date" onclick="WdatePicker()" value="{$find_sta_date}" /></td>
             <td><input style="width:90px;" type="text" name="find_end_date" onclick="WdatePicker()" value="{$find_end_date}" /></td>
             <td><input type="submit" class="yubuttons yuwhite" name="edituserbutton" value="查询" /></td>
-        </tr>
-        <tr>
-
-        </tr>
-        <tr>
-
-        </tr>
-        <tr>
-
         </tr>
     </table>
 
@@ -67,25 +62,26 @@
 <table class="table-list" width="1200">
     <thead>
     <tr>
-        <td width="100">操作</td>
+        <td width="50">操作</td>
         <td width="50">ID</td>
-        <td width="120"><b>主标题</b></td>
-        <td width="100"><b>子标题</b></td>
-        <td width="160"><b>介绍</b></td>
-        <td width="50"><b>分类1</b></td>
-        <td width="50"><b>分类2</b></td>
-        <td width="50"><b>分类3</b></td>
-        <td width="50"><b>分类4</b></td>
+        <td width="50">是否开启</td>
+        <td width="150"><b>主标题</b></td>
+        <td width="200"><b>子标题</b></td>
+        <td width="100"><b>分类1</b></td>
+        <td width="100"><b>分类2</b></td>
+        <td width="100"><b>分类3</b></td>
+        <td width="100"><b>分类4</b></td>
+        <td width="150"><b>信息合集</b></td>
         <td width="120"><b>展示图片</b></td>
+        <td width="150"><b>创建时间</b></td>
+        <td width="160"><b>介绍</b></td>
+        <td width="200"><b>材料</b></td>
+        <td width="200"><b>步骤</b></td>
         <td width="120"><b>视频存储名称</b></td>
         <td width="70"><b>制作时间</b></td>
         <td width="100"><b>花费金额</b></td>
+        <td width="100"><b>适用人数</b></td>
         <td width="120"><b>提示说明</b></td>
-        <td width="150"><b>创建时间</b></td>
-        <td width="150"><b>材料</b></td>
-        <td width="150"><b>步骤</b></td>
-        <!--<td width="150"><b>评论</b></td>-->
-
     </tr>
     </thead>
 
@@ -93,37 +89,40 @@
     <volist name="list" id="vo" empty="没有对应数据" >
         <tr>
             <td>
-                <form action="__APP__/Video/editvideo" method="post" style="margin:0px" >
+                <form action="__APP__/Video/editvideo{$echourl}" method="post" style="margin:0px" >
                     <input type="hidden" name="video_id" value="{$vo.id}" />
-                    <input type="submit" class="yubuttons yuwhite" name="edituserbutton" value="编辑" />
+                    <input type="submit" class="yubuttonss yuwhite" name="edituserbutton" value="编辑" />
                 </form>
-                <form action="__APP__/Pinglun/video_to_pinglun" method="post" style="margin:0px" >
+                <form action="__APP__/Pinglun/pinglun" method="get" style="margin:0px" >
                     <input type="hidden" name="video_id" value="{$vo.id}" />
-                    <input type="submit" class="yubuttons yuwhite" name="pinglunbutton" value="查看评论" />
+                    <input type="submit" class="yubuttonss yuwhite" name="pinglunbutton" value="评论" />
                 </form>
+                <form action="__APP__/Pinglun/tougao{$echourl}" method="get" style="margin:0px" >
+                    <input type="hidden" name="video_id" value="{$vo.id}" />
+                    <input type="submit" class="yubuttonss yuwhite" name="pinglunbutton" value="投稿" />
+                </form>
+
             </td>
             <td>{$vo.id}</td>
+            <td>{$vo.flag}</td>
             <td>{$vo.biaoti}</td>
             <td>{$vo.biaotichild}</td>
-            <td>{$vo.jieshao}</td>
             <td>{$vo.classify1}</td>
             <td>{$vo.classify2}</td>
             <td>{$vo.classify3}</td>
             <td>{$vo.classify4}</td>
+            <td>{$vo.msgjihe}</td>
             <td><img style="width: 100px; height: 100px;" src="{$vo.showimg}"/></td>
             <!--<td><img style="width: 50px; height: 50px;" src="images\20171030144243_169.jpg"/></td>-->
+            <td>{$vo.create_datetime}</td>
+            <td>{$vo.jieshao}</td>
+            <td>{$vo.cailiao}</td>
+            <td>{$vo.buzhou}</td>
             <td>{$vo.videosavename}</td>
             <td>{$vo.maketime}</td>
             <td>{$vo.huafeimoney}</td>
+            <td>{$vo.fenshu}</td>
             <td>{$vo.tishishuoming}</td>
-            <td>{$vo.create_datetime}</td>
-            <td>{$vo.cailiao}</td>
-            <td>{$vo.buzhou}</td>
-            <!--<td>-->
-                <!--<foreach name="vo['pinglun']" item="val">-->
-                <!--{$val.vid}<br/>-->
-                <!--</foreach>-->
-            <!--</td>-->
         </tr>
     </volist>
     </tbody>

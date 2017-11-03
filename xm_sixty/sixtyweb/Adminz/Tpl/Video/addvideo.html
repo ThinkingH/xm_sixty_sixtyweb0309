@@ -17,18 +17,14 @@
                 }else {
                     return false;
                 }
-
-
             });
         });
 
         function localImgLoad() {
             var src = this.files[0];
-            var self = $(this);
             var read = new FileReader();
             read.onload = function(e) {
-                var html = "<img src=" + e.target.result + " alt='' style='width: 100px;height: 100px;'/>";
-                self.parent().append(html);
+                $("#showimg").attr('src',e.target.result);
                 document.getElementById('localBase64StrContainer').value = e.target.result;
             }
             read.readAsDataURL(src)
@@ -38,19 +34,30 @@
 
 <body>
 <div class="hy_daohangtiao">
-    当前位置&nbsp;#&nbsp;视频管理&nbsp;#&nbsp;视频操作&nbsp;#&nbsp;添加视频
+    当前位置&nbsp;#&nbsp;视频管理&nbsp;#&nbsp;添加视频操作&nbsp;#&nbsp;添加视频页面
 </div>
 
 
 <a href="javascript:history.go(-1);" class="yubutton yuwhite">返回视频列表</a>
 <br/>
 
-<form name="form1" method="post" action="__APP__/Video/addvideo_do" enctype="multipart/form-data">
+<form name="form1" method="post" action="__APP__/Video/addvideo_do{$echourl}" enctype="multipart/form-data">
     <br/><br/>
-    <table class="table-edit" width="850">
+    <table class="table-edit" width="950">
 
         <tr>
-            <td width="120" align="right">填写视频主标题：</td>
+            <td width="100" align="right">是否启用该视频：</td>
+            <td >
+                <select name="flag">
+                    {$videoflag_show}
+                </select>
+                <font color="orange" size="-2">
+                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;选择是否启用该视频
+                </font>
+            </td>
+        </tr>
+        <tr>
+            <td align="right">填写视频主标题：</td>
             <td width="850">
                 <input style="width:400px;" type="text" maxlength="50" name="biaoti" id="biaoti" onkeydown="if(event.keyCode=='32'){return false;}" />
                 <font color="orange" size="-2">
@@ -59,7 +66,7 @@
             </td>
         </tr>
         <tr>
-            <td width="120" align="right">填写视频子标题：</td>
+            <td align="right">填写视频子标题：</td>
             <td width="850">
                 <input style="width:700px;" type="text" name="biaotichild" id="phobiaotichildne" maxlength="100" onkeydown="if(event.keyCode=='32'){return false;}" />
                 <!--<br/>-->
@@ -69,32 +76,32 @@
             </td>
         </tr>
         <tr>
-            <td width="120" align="right">选择视频分类1：</td>
+            <td align="right">选择视频分类1：</td>
             <td width="850">
                 <input style="width:250px;" type="text" name="classify1" id="classify1" maxlength="24" onkeydown="if(event.keyCode=='32'){return false;}"/>
             </td>
         </tr>
         <tr>
-            <td width="120" align="right">选择视频分类2：</td>
+            <td align="right">选择视频分类2：</td>
             <td width="850">
                 <input style="width:250px;" type="text" name="classify2" id="classify2" maxlength="24" onkeydown="if(event.keyCode=='32'){return false;}"/>
             </td>
         </tr>
         <tr>
-            <td width="120" align="right">选择视频分类3：</td>
+            <td align="right">选择视频分类3：</td>
             <td width="850">
                 <input style="width:250px;" type="text" name="classify3" id="classify3" maxlength="24" onkeydown="if(event.keyCode=='32'){return false;}"/>
             </td>
         </tr>
         <tr>
-            <td width="120" align="right">选择视频分类4：</td>
+            <td align="right">选择视频分类4：</td>
             <td width="850">
                 <input style="width:250px;" type="text" name="classify4" id="classify4" maxlength="24" onkeydown="if(event.keyCode=='32'){return false;}"/>
             </td>
         </tr>
 
         <tr>
-            <td width="120" align="right">填写视频介绍：</td>
+            <td align="right">填写视频介绍：</td>
             <td width="850">
                 <textarea rows="10" cols="40" style="resize: none;"
                           maxlength="200" onchange="this.value=this.value.substring(0, 200)"
@@ -110,7 +117,7 @@
             <td>
                 <input style="width:100px;" type="text" id="maketime" name="maketime" maxlength="20"/>
                 <font color="orange" size="-2" onkeydown="if(event.keyCode=='32'){return false;}">
-                    请直接填入制作时间（单位分钟）如：1
+                    请直接填入制作时间（单位分钟）如：1小时
                 </font>
             </td>
         </tr>
@@ -119,7 +126,16 @@
             <td>
                 <input style="width:100px;" type="text" id="huafeimoney" name="huafeimoney" maxlength="20" onkeydown="if(event.keyCode=='32'){return false;}"/>
                 <font color="orange" size="-2">
-                    请直接填入金额（单位元）如：1
+                    请直接填入金额（单位元）如：10元
+                </font>
+            </td>
+        </tr>
+        <tr>
+            <td align="right">填写适用人数</td>
+            <td>
+                <input style="width:100px;" type="text" id="huafeimoney" name="huafeimoney" maxlength="20" onkeydown="if(event.keyCode=='32'){return false;}"/>
+                <font color="orange" size="-2">
+                    请填写适用人数（单位元）如：2人份
                 </font>
             </td>
         </tr>
@@ -138,10 +154,9 @@
         <tr style="height: 200px;">
             <td width="120" align="right">上传视频图片：</td>
             <td width="850">
-                    本地图片预览：
-                    <input type="file" onchange="localImgLoad.call(this)"name="showimg"/>
-                    <br/>
-                    <br/>
+                <img id="showimg" src="" style="width: 100px; height: 100px;">
+                <br/>
+                <input type="file" onchange="localImgLoad.call(this)"name="showimg"/>
             </td>
         </tr>
         <tr>
@@ -150,11 +165,13 @@
                 <input style="width:250px;" type="file" name="video" id="video"/>
             </td>
         </tr>
+
         <tr>
             <td colspan="2">
-                <input type="submit" name="submit" id="submit_add" class="yubutton yuwhite" value="添加视频" style="margin-left:120px;" />
+                <input type="submit" name="submit" id="submit_add" class="yubutton yuwhite" value="添加视频" style="margin-left:400px;" />
             </td>
         </tr>
+
     </table>
 
 </form>

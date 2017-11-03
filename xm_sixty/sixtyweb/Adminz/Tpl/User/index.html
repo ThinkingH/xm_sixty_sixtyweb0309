@@ -20,14 +20,20 @@
 </div>
 
 
-<a href="__APP__/User/adduser" class="yubutton yuwhite">添加用户</a>
+<a href="__APP__/User/adduser{$echourl}" class="yubutton yuwhite">添加用户</a>
 <br/>
 <br/>
-<form action="__APP__/User/index" method="post">
+<form action="__APP__/User/index{$echourl}" method="get">
     <table class="table-head">
         <tr>
-            <td>昵称查询:<input type="text" name="find_nickname" value="{$find_where.find_nickname}" /></td>
-            <td>手机号查询:<input style="width:100px;" type="text" name="find_phone" value="{$find_where.find_phone}" /></td>
+            <td>状态查询:
+                <select name="lock">
+                    {$rootflag_show}
+                </select>
+            </td>
+            <td>ID查询:<input style="width: 80px;" type="text" name="find_id" value="{$find_where.find_id}" maxlength="7" /></td>
+            <td>昵称查询:<input type="text" name="find_nickname" value="{$find_where.find_nickname}" maxlength="50" /></td>
+            <td>手机号查询:<input style="width:110px;" type="text" name="find_phone" value="{$find_where.find_phone}" maxlength="11"/></td>
             <td>起始注册日期:<input style="width:90px;" type="text" name="find_sta_date" onclick="WdatePicker()" value="{$find_where.find_sta_date}" /></td>
             <td>终止注册日期:<input style="width:90px;" type="text" name="find_end_date" onclick="WdatePicker()" value="{$find_where.find_end_date}" /></td>
             <td><input type="submit" class="yubuttons yuwhite" name="submit_select" value="查询" /></td>
@@ -41,15 +47,29 @@
 <table class="table-list" width="1200">
     <thead>
     <tr>
-        <td width="100">操作</td>
+        <td width="50">操作</td>
+        <td width="50">ID</td>
+        <td width="100">状态</td>
         <td width="120"><b>用户昵称</b></td>
         <td width="100"><b>电话</b></td>
-        <td width="160"><b>邮箱</b></td>
+        <td width="100"><b>微信openid标识</b></td>
+        <td width="80"><b>头像</b></td>
+        <td width="150"><b>注册时间</b></td>
+        <td width="200"><b>邮箱</b></td>
+        <td width="100"><b>微信</b></td>
+        <td width="120"><b>QQ</b></td>
+        <td width="100"><b>极光推送</b></td>
+        <td width="50"><b>用户等级</b></td>
+        <td width="100"><b>备注</b></td>
+        <td width="100"><b>描述</b></td>
+        <td width="100"><b>手机类型</b></td>
         <td width="50"><b>性别</b></td>
         <td width="100"><b>生日</b></td>
-        <td width="50"><b>用户等级</b></td>
-        <td width="120"><b>注册时间</b></td>
-        <td width="120"><b>头像</b></td>
+        <td width="100"><b>可用金额</b></td>
+        <td width="100"><b>冻结金额</b></td>
+        <td width="100"><b>可用积分</b></td>
+        <td width="100"><b>冻结积分</b></td>
+
 
     </tr>
     </thead>
@@ -58,20 +78,33 @@
     <volist name="list" id="vo" empty="没有对应数据" >
         <tr>
             <td>
-                <form action="__APP__/User/edituser" method="post" style="margin:0px" >
+                <form action="__APP__/User/edituser{$echourl}" method="post" style="margin:0px" >
                     <input type="hidden" name="edit_nickname" value="{$vo.nickname}" />
                     <input type="submit" class="yubuttons yuwhite" name="edituserbutton" value="编辑" />
                 </form>
             </td>
+            <td>{$vo.id}</td>
+            <td>{$vo.is_lock}</td>
+
             <td>{$vo.nickname}</td>
             <td>{$vo.phone}</td>
+            <td>{$vo.openid}</td>
+            <td><img src="{$vo.touxiang}" style="height: 70px; width: 70px;"></td>
+            <td>{$vo.create_datetime}</td>
             <td>{$vo.email}</td>
+            <td>{$vo.weixin}</td>
+            <td>{$vo.qq}</td>
+            <td>{$vo.jiguangid}</td>
+            <td>{$vo.userlevel}</td>
+            <td>{$vo.remark}</td>
+            <td>{$vo.describes}</td>
+            <td>{$vo.phonetype}</td>
             <td>{$vo.sex}</td>
             <td>{$vo.birthday}</td>
-            <td>{$vo.userlevel}</td>
-            <td>{$vo.create_datetime}</td>
-            <td>{$vo.touxiang}</td>
-
+            <td>{$vo.keyong_money}</td>
+            <td>{$vo.dongjie_money}</td>
+            <td>{$vo.keyong_jifen}</td>
+            <td>{$vo.dongjie_jifen}</td>
         </tr>
     </volist>
     </tbody>

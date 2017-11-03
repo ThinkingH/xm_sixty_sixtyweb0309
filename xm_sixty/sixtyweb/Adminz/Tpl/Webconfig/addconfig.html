@@ -42,7 +42,7 @@
 
 <body>
 <div class="hy_daohangtiao">
-    当前位置&nbsp;#&nbsp;用户管理&nbsp;#&nbsp;编辑网站配置&nbsp;#&nbsp;网站配置修改页面
+    当前位置&nbsp;#&nbsp;网站管理&nbsp;#&nbsp;编辑网站配置&nbsp;#&nbsp;网站配置修改页面
 </div>
 
 
@@ -58,27 +58,31 @@
     <br/><br/>
     <table class="table-edit" >
         <tr>
-            <td width="150" align="right"><b>配置名称:</b></td>
-            <td width="650">
-                <input type="text" name="addconfig_name" id="name" />
+            <td width="60" align="right"><b>配置名称:</b></td>
+            <td width="600">
+                <input type="text" name="addconfig_name" id="name" maxlength="30" style="width: 300px;"/>
             </td>
-
         </tr>
         <tr>
             <td align="right"><b>配置项:</b></td>
             <td>
-                <input type="text" name="addconfig_key1" id="key1"/>
+                <input type="text" name="addconfig_key1" id="key1" maxlength="50" size="50"/>
             </td>
         </tr>
         <tr>
             <td align="right"><b>配置详情:</b></td>
             <td>
-                <input type="text" name="addconfig_val1" id="val1"/>
+                <input type="text" name="addconfig_val1" id="val1" maxlength="100" size="80"/>
+                <!--<textarea rows="3" cols="50" name="addconfig_val1" style="resize: none"></textarea>-->
             </td>
         </tr>
-
+        <tr>
+            <td colspan="2">
+                <input type="submit" name="submit" id="submit_add" class="yubutton yuwhite" value="添加配置" style="margin-left:260px;margin-top:0px;" />
+            </td>
+        </tr>
     </table>
-    <input type="submit" name="submit" id="submit_add" class="yubutton yuwhite" value="添加配置" style="margin-left:20px;margin-top:20px;" />
+
 </form>
 
 <br/><br/><br/><br/><br/><br/>
