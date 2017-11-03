@@ -1,5 +1,45 @@
 <?php
 
+//七牛图片上传
+function upload_qiniu($bucket,$filepath,$savename,$rewrite='no'){
+	$qiniurl = QINIUURL.'hy_upload.php';
+	$dataarr = array(
+			'bucket'   => $bucket,
+			'filepath' => $filepath,
+			'savename' => $savename,
+			'rewrite' => $rewrite,
+	);
+	$datastr = hy_urlcreate($dataarr);
+	//模拟数据访问
+	$res = hy_vpost($qiniurl,$datastr,$header=array(),$timeout=5000 );
+	
+	if(''!=$res && substr($res,0,1)!='#'){
+		$truepath = json_decode($res, true);
+		//$arr = unserialize(BUCKETSTR);//获取七牛访问链接
+		$filename= $truepath['key'];
+		return $filename;
+	}else{
+		return false;
+	}
+}
+
+
+//七牛图片删除
+function delete_qiniu($bucket,$delname){
+	$qiniurl = QINIUURL.'hy_delete.php';
+	$dataarr = array(
+			'delbucket'   => $bucket,
+			'delname' => $delname,
+	);
+	$datastr = hy_urlcreate($dataarr);
+	//模拟数据访问
+	$res = hy_vpost($qiniurl,$datastr,$header=array(),$timeout=5000 );
+	if(''!=$res && substr($res,0,1)!='#'){
+		return true;
+	}else{
+		return false;
+	}
+}
 
 
 //自动获取文件类型并返回新的后缀文件路径名称
