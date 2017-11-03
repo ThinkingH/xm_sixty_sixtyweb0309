@@ -46,6 +46,38 @@ class MenuAction extends Action {
 								array('f', '数据切割提取' ,  '/Hytool/dataexplode' , ),
 						),
 				),
+                array(
+                    'murl_name' => '用户管理',
+                    'curl_name' => array(
+                        array('f', '用户列表', '/User/index'),
+                    ),
+                ),
+                array(
+                    'murl_name' => '视频管理',
+                    'curl_name' => array(
+                        array('f', '视频列表', '/Video/index'),
+                    ),
+                ),
+                array(
+                    'murl_name' => '评论管理',
+                    'curl_name' => array(
+                        array('f', '评论列表', '/Pinglun/pinglun'),
+                        array('f', '投稿列表', '/Pinglun/tougao'),
+                    ),
+                ),
+                array(
+                'murl_name' => '分类合集',
+                'curl_name' => array(
+                    array('f', '合集信息', '/Gather/index'),
+                    array('f', '分类信息', '/Classmsg/index'),
+                    ),
+                ),
+                array(
+                    'murl_name' => '网站配置',
+                    'curl_name' => array(
+                        array('f', '网站配置', '/Webconfig/index'),
+                    ),
+                ),
 				array(
 						'murl_name' => '系统管理',
 						'curl_name' => array(
@@ -63,39 +95,6 @@ class MenuAction extends Action {
 								array('t', '退出系统'    ,  '/Login/logout' , ),
 						),
 				),
-                array(
-                        'murl_name' => '用户管理',
-                        'curl_name' => array(
-                                array('f', '用户列表', '/User/index'),
-                        ),
-                ),
-                array(
-                        'murl_name' => '视频管理',
-                        'curl_name' => array(
-                                array('f', '视频列表', '/Video/index'),
-                        ),
-                ),
-                array(
-                    'murl_name' => '评论管理',
-                    'curl_name' => array(
-                        array('f', '评论列表', '/Pinglun/pinglun'),
-                        array('f', '投稿列表', '/Pinglun/tougao'),
-                    ),
-                ),
-                array(
-                    'murl_name' => '网站配置',
-                    'curl_name' => array(
-                        array('f', '网站配置', '/Webconfig/index'),
-                    ),
-                ),
-                array(
-                'murl_name' => '分类合集',
-                'curl_name' => array(
-                        array('f', '合集信息', '/Gather/index'),
-                        array('f', '分类信息', '/Class/index'),
-                ),
-
-            ),
 		);
 		
 		

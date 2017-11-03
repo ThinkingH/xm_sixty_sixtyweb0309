@@ -94,28 +94,47 @@
         <tr>
             <td align="right">选择视频分类1：</td>
             <td width="700">
-                <input style="width:250px;" type="text" name="classify1" id="classify1" value="{$list.classify1}" maxlength="24" onkeydown="if(event.keyCode=='32'){return false;}"/>
+                <!--<input style="width:250px;" type="text" name="classify1" id="classify1" value="{$list.classify1}" maxlength="24" onkeydown="if(event.keyCode=='32'){return false;}"/>-->
+                <select name="classify1">
+                    {$one_select}
+                </select>
             </td>
         </tr>
         <tr>
             <td align="right">选择视频分类2：</td>
             <td width="700">
-                <input style="width:250px;" type="text" name="classify2" id="classify2" value="{$list.classify2}" maxlength="24" onkeydown="if(event.keyCode=='32'){return false;}"/>
+                <!--<input style="width:250px;" type="text" name="classify2" id="classify2" value="{$list.classify2}" maxlength="24" onkeydown="if(event.keyCode=='32'){return false;}"/>-->
+                <select name="classify2">
+                    {$two_select}
+                </select>
             </td>
         </tr>
         <tr>
             <td align="right">选择视频分类3：</td>
             <td width="700">
-                <input style="width:250px;" type="text" name="classify3" id="classify3" value="{$list.classify3}" maxlength="24" onkeydown="if(event.keyCode=='32'){return false;}"/>
+                <!--<input style="width:250px;" type="text" name="classify3" id="classify3" value="{$list.classify3}" maxlength="24" onkeydown="if(event.keyCode=='32'){return false;}"/>-->
+                <select name="classify3">
+                    {$three_select}
+                </select>
             </td>
         </tr>
         <tr>
             <td align="right">选择视频分类4：</td>
             <td width="700">
-                <input style="width:250px;" type="text" name="classify4" id="classify4" value="{$list.classify4}" maxlength="24" onkeydown="if(event.keyCode=='32'){return false;}"/>
+                <!--<input style="width:250px;" type="text" name="classify4" id="classify4" value="{$list.classify4}" maxlength="24" onkeydown="if(event.keyCode=='32'){return false;}"/>-->
+                <select name="classify4">
+                    {$four_select}
+                </select>
             </td>
         </tr>
-
+        <tr>
+            <td align="right">选择视频合集：</td>
+            <td width="850">
+                <select name="edit_msgjihe">
+                    {$heji_arr}
+                </select>
+            </td>
+        </tr>
         <tr>
             <td align="right">填写视频介绍：</td>
             <td width="700">
@@ -180,7 +199,7 @@
         <tr>
             <td width="150" align="right">上传视频：</td>
             <td width="700">
-                <input style="width:250px;" type="file" name="video" id="video" onkeydown="if(event.keyCode=='32'){return false;}"/>
+                <input style="width:250px;" type="text" name="ecit_videosavename" id="edit_videosavename" onkeydown="if(event.keyCode=='32'){return false;}"/>
             </td>
         </tr>
         <tr>

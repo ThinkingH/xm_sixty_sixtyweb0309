@@ -127,7 +127,7 @@ class GatherAction extends Action{
             $upload = new UploadFile();// 实例化上传类
             $upload->maxSize  = 3145728 ;// 设置附件上传大小
             $upload->allowExts  = array('jpg', 'gif', 'png', 'jpeg');// 设置附件上传类型
-            $upload->savePath =  BASEDIR.'Public/Images/gather_showimg//';// 设置附件上传目录
+            $upload->savePath =  BASEDIR.'Public/Images/gather_showimg/';// 设置附件上传目录
             if(!$upload->upload()) {// 上传错误提示错误信息
                 echo "<script>alert('图片上传失败!');history.go(-1);</script>";
                 $this -> error('图片上传失败!');
