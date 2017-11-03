@@ -15,6 +15,7 @@
                 var phone = $("#phone").val();
                 var email = $("#email").val();
 
+
                 if(phone.length<11) {
                     alert('手机号码长度必须是11位');
                     return false;
@@ -27,16 +28,7 @@
 
 
                 if(confirm("您确认要编辑此用户吗？此编辑涉及到重要用户数据，请小心操作。")) {
-                    if(passwd!='') {
-                        var md5_passwd = hex_md5(passwd);
-                        $("#resetpasswd").val(md5_passwd);
-                    }
-                    if(repasswd!='') {
-                        var md5_repasswd = hex_md5(repasswd);
-                        $("#resetrepasswd").val(md5_repasswd);
-                    }
 
-                    //alert('ok');
                 }else {
                     return false;
                 }
@@ -46,7 +38,6 @@
 
             $("#submitdel").click(function(){
                 if(confirm("您确认要删除此用户吗？删除用户将会导致用户无法使用，请小心操作，删除用户前请将用户禁用")) {
-                    //alert('ok');
 
                 }else {
                     return false;
@@ -70,7 +61,7 @@
 <br/>
 <br/>
 
-<form action="__APP__/User/edituser_do" method="post" >
+<form action="__APP__/User/edituser_do{$echourl}" method="post" >
 
     &nbsp;&nbsp;&nbsp;
 
@@ -78,24 +69,29 @@
     <br/><br/>
     <table class="table-edit" >
         <tr>
-            <td width="150" align="right"><b>用户昵称:</b></td>
+            <td width="80" align="right"><b>用户ID:</b></td>
+            <td width="650">
+                {$list['id']}
+            </td>
+        </tr>
+        <tr>
+            <td align="right"><b>用户昵称:</b></td>
             <td width="650">
                 {$list['nickname']}
                 <input type="hidden" name="nickname" value="{$list['nickname']}" />
             </td>
-
         </tr>
         <tr>
             <td align="right"><b>手机号:</b></td>
             <td>
-                <input type="text" name="phone" id="phone" value="{$list['phone']}" />
+                <input type="text" name="phone" id="phone" value="{$list['phone']}" maxlength="11" />
 
             </td>
         </tr>
         <tr>
             <td align="right"><b>邮箱:</b></td>
             <td>
-                <input type="text" name="email" id="email" value="{$list['email']}" />
+                <input style="width:250px;" type="text" name="email" id="email" value="{$list['email']}" maxlength="50"/>
 
             </td>
         </tr>
@@ -103,7 +99,7 @@
         <tr>
             <td align="right"><b>QQ:</b></td>
             <td>
-                <input type="text" name="qq" id="qq" value="{$list['qq']}" />
+                <input type="text" name="qq" id="qq" value="{$list['qq']}" maxlength="24" />
 
             </td>
         </tr>
@@ -123,15 +119,21 @@
                 <font color="red" size="-1">被禁用的用户不能登陆系统</font>
             </td>
         </tr>
+        <tr>
+            <td colspan="2">
+                <input type="submit" name="submitedit" id="submitedit" class="yubutton yuwhite" value="提交修改" style="margin-left:90px;" />
+</form>
+<form method="post" action="__APP__/User/deluser_do{$echourl}" style="margin:0px;padding:0px;display: inline;">
+    <input type="hidden" name="del_nickname" value="{$list['nickname']}" />
+    <input type="submit" name="submitdel" id="submitdel" class="yubuttons yuwhite" value="删除此用户" style="margin-left:380px;" />
+</form>
+            </td>
+        </tr>
     </table>
 
-    <input type="submit" name="submitedit" id="submitedit" class="yubutton yuwhite" value="提交修改" style="margin-left:20px;margin-top:20px;" />
-</form>
 
-<form method="post" action="__APP__/User/deluser_do" style="margin:0px;padding:0px;">
-    <input type="hidden" name="del_nickname" value="{$list['nickname']}" />
-    <input type="submit" name="submitdel" id="submitdel" class="yubuttons yuwhite" value="删除此用户" style="margin-left:20px;margin-top:50px;" style="margin-left:20px;margin-top:20px;" />
-</form>
+
+
 
 
 <br/><br/><br/><br/><br/><br/>

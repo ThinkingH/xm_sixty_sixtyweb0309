@@ -343,4 +343,26 @@ function loginjudge($ylock = '135') {
 	
 }
 
+//get参数传入url数据
+function func_baseurlcreate($get=array()) {
+    if(!is_array($get) || count($get)<=0) {
+        return '';
+    }else {
+        foreach($get as $keyg => $valg) {
+            if(substr($keyg,0,6)!='submit' && $keyg!='_URL_') {
+                if(is_array($valg)) {
+                    foreach($valg as $valcc) {
+                        $yuurl .= $keyg.'[]='.urlencode($valcc).'&';
+                    }
 
+                }else {
+                    $yuurl .= $keyg.'='.urlencode($valg).'&';
+                }
+            }
+        }
+        $yuurl = rtrim($yuurl,'&');
+
+        return '?'.$yuurl;
+
+    }
+}

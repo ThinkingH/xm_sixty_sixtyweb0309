@@ -20,6 +20,14 @@
 
 
             });
+
+            $("#submitdel").click(function(){
+                if(confirm("您确认要删除此用户吗？删除用户将会导致用户无法使用，请小心操作，删除用户前请将用户禁用")) {
+
+                }else {
+                    return false;
+                }
+            });
         });
 
         function localImgLoad() {
@@ -38,19 +46,35 @@
 
 <body>
 <div class="hy_daohangtiao">
-    当前位置&nbsp;#&nbsp;视频管理&nbsp;#&nbsp;视频操作&nbsp;#&nbsp;编辑视频
+    当前位置&nbsp;#&nbsp;视频管理&nbsp;#&nbsp;编辑视频操作&nbsp;#&nbsp;编辑视频页面
 </div>
 
 
 <a href="javascript:history.go(-1);" class="yubutton yuwhite">返回视频列表</a>
 <br/>
 
-<form name="form1" method="post" action="__APP__/Video/editvideo_do" enctype="multipart/form-data">
+<form name="form1" method="post" action="__APP__/Video/editvideo_do{$echourl}" enctype="multipart/form-data">
     <br/><br/>
     <table class="table-edit" width="850">
-
         <tr>
-            <td width="150" align="right">填写视频主标题：</td>
+            <td width="100" align="right">视频ID：</td>
+            <td width="700">
+                {$list.id}
+            </td>
+        </tr>
+        <tr>
+            <td align="right">是否启用该视频：</td>
+            <td >
+                <select name="flag">
+                    {$videoflag_show}
+                </select>
+                <font color="orange" size="-2">
+                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;选择是否启用该视频
+                </font>
+            </td>
+        </tr>
+        <tr>
+            <td align="right">填写视频主标题：</td>
             <td width="700">
                 <input style="width:500px;" type="text" maxlength="20" name="biaoti" id="biaoti" value="{$list.biaoti}" onkeydown="if(event.keyCode=='32'){return false;}" />
                 <font color="orange" size="-2">
@@ -59,7 +83,7 @@
             </td>
         </tr>
         <tr>
-            <td width="150" align="right">填写视频子标题：</td>
+            <td align="right">填写视频子标题：</td>
             <td width="700">
                 <input style="width:500px;" type="text" name="biaotichild" id="biaotichild" value="{$list.biaotichild}" maxlength="20" onkeydown="if(event.keyCode=='32'){return false;}" />
                 <font color="orange" size="-2">
@@ -68,32 +92,32 @@
             </td>
         </tr>
         <tr>
-            <td width="150" align="right">选择视频分类1：</td>
+            <td align="right">选择视频分类1：</td>
             <td width="700">
                 <input style="width:250px;" type="text" name="classify1" id="classify1" value="{$list.classify1}" maxlength="24" onkeydown="if(event.keyCode=='32'){return false;}"/>
             </td>
         </tr>
         <tr>
-            <td width="150" align="right">选择视频分类2：</td>
+            <td align="right">选择视频分类2：</td>
             <td width="700">
                 <input style="width:250px;" type="text" name="classify2" id="classify2" value="{$list.classify2}" maxlength="24" onkeydown="if(event.keyCode=='32'){return false;}"/>
             </td>
         </tr>
         <tr>
-            <td width="150" align="right">选择视频分类3：</td>
+            <td align="right">选择视频分类3：</td>
             <td width="700">
                 <input style="width:250px;" type="text" name="classify3" id="classify3" value="{$list.classify3}" maxlength="24" onkeydown="if(event.keyCode=='32'){return false;}"/>
             </td>
         </tr>
         <tr>
-            <td width="150" align="right">选择视频分类4：</td>
+            <td align="right">选择视频分类4：</td>
             <td width="700">
                 <input style="width:250px;" type="text" name="classify4" id="classify4" value="{$list.classify4}" maxlength="24" onkeydown="if(event.keyCode=='32'){return false;}"/>
             </td>
         </tr>
 
         <tr>
-            <td width="150" align="right">填写视频介绍：</td>
+            <td align="right">填写视频介绍：</td>
             <td width="700">
                 <textarea rows="10" cols="40" style="resize: none;"
                           maxlength="200" onchange="this.value=this.value.substring(0, 200)"
@@ -107,7 +131,7 @@
         <tr>
             <td align="right">填写制作时间:</td>
             <td>
-                <input style="width:50px;" type="text" id="maketime" name="maketime" maxlength="3" value="{$list.maketime}"/>
+                <input style="width:100px;" type="text" id="maketime" name="maketime" maxlength="10" value="{$list.maketime}"/>
                 <font color="orange" size="-2" onkeydown="if(event.keyCode=='32'){return false;}">
                     请直接填入制作时间（单位分钟）如：1
                 </font>
@@ -116,9 +140,18 @@
         <tr>
             <td align="right">填写花费金额</td>
             <td>
-                <input style="width:70px;" type="text" id="huafeimoney" name="huafeimoney" maxlength="6" value="{$list.huafeimoney}" onkeydown="if(event.keyCode=='32'){return false;}"/>
+                <input style="width:100px;" type="text" id="huafeimoney" name="huafeimoney" maxlength="10" value="{$list.huafeimoney}" onkeydown="if(event.keyCode=='32'){return false;}"/>
                 <font color="orange" size="-2">
                     请直接填入金额（单位元）如：1
+                </font>
+            </td>
+        </tr>
+        <tr>
+            <td align="right">填写适用人数</td>
+            <td>
+                <input style="width:100px;" type="text" id="fenshu" name="fenshu" maxlength="20"  value="{$list.fenshu}" onkeydown="if(event.keyCode=='32'){return false;}"/>
+                <font color="orange" size="-2">
+                    请填写适用人数（单位元）如：2人份
                 </font>
             </td>
         </tr>
@@ -153,17 +186,19 @@
         <tr>
             <td colspan="2">
                 <input type="hidden" name="id" id="id" value="{$list.id}"  />
-                <input type="submit" name="submit" id="submit_add" class="yubutton yuwhite" value="提交修改" style="margin-left:120px;" />
-            </td>
+                <input type="submit" name="submit" id="submit_add" class="yubutton yuwhite" value="提交修改" style="margin-left:112px;" />
+            </form>
+<form method="post" action="__APP__/Video/delvideo_do{$echourl}" style="display:inline;margin:0px;padding:0px; width: 100px; height: 50px;">
+    <input type="hidden" name="del_id" value="{$list.id}" />
+    <input type="submit" name="submitdel" id="submitdel" class="yubuttons yuwhite" value="删除此视频" style="margin-left: 440px;margin-top:10px; "/>
+</form></td>
+
         </tr>
     </table>
 
-</form>
 
-<form method="post" action="__APP__/Video/delvideo_do" style="margin:0px;padding:0px;">
-    <input type="hidden" name="del_id" value="{$list.id}" />
-    <input type="submit" name="submitdel" id="submitdel" class="yubuttons yuwhite" value="删除此用户" style="margin-left:20px;margin-top:50px;" style="margin-left:20px;margin-top:20px;" />
-</form>
+
+
 <br/><br/><br/><br/><br/><br/>
 End!
 

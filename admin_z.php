@@ -1,10 +1,12 @@
 <?php
-	
+
+	define('BASEDIR',dirname(__FILE__).'/');
+
 	//自定义session前缀，主要用于系统区分
 	define('HYSESSQZ','sixty_');
 	
 	//定义平台名称
-	define('HY_SYSTEM_NAME','hy网关');
+	define('HY_SYSTEM_NAME','60秒视频');
 	
 	//平台名称后是否显示IP---true/false
 	define('HY_SHOW_IP',true);

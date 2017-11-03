@@ -22,22 +22,38 @@ class VideoAction extends Action{
         //判断用户是否登陆
         $this->loginjudgeshow($this->lock_index);
         //=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
+        //拼接URL
+        $echourl = func_baseurlcreate($_GET);
+        $this->assign('echourl',$echourl);
+
 
         //接收查询条件数据
-        $find_biaoti = trim($this->_request('find_biaoti'));
-        $find_biaotichild = trim($this->_request('find_biaotichild'));
-        $find_maketime = trim($this->_request('find_maketime'));
-        $get_sta_day = trim($this->_request('find_sta_date'));
-        $get_end_day = trim($this->_request('find_end_date'));
-        $find_classify1 = trim($this->_request('find_classify1'));
-        $find_classify2 = trim($this->_request('find_classify2'));
-        $find_classify3 = trim($this->_request('find_classify3'));
-        $find_classify4 = trim($this->_request('find_classify4'));
+        $find_biaoti = trim($this->_get('find_biaoti'));
+        $find_biaotichild = trim($this->_get('find_biaotichild'));
+        $find_maketime = trim($this->_get('find_maketime'));
+        $get_sta_day = trim($this->_get('find_sta_date'));
+        $get_end_day = trim($this->_get('find_end_date'));
+        $find_classify1 = trim($this->_get('find_classify1'));
+        $find_classify2 = trim($this->_get('find_classify2'));
+        $find_classify3 = trim($this->_get('find_classify3'));
+        $find_classify4 = trim($this->_get('find_classify4'));
+        $flag = trim($this->_get('find_flag'));
+        $id = trim($this->_get('find_id'));
+
+        //判断查询日期是否提交
+        if($get_sta_day == '')
+        {
+            $get_sta_day = date('Y-m-d', strtotime('-6 months',time()));
+        }
+        if($get_end_day == '')
+        {
+            $get_end_day = date('Y-m-d', time());
+        }
 
         //返回查询数据显示到页面上
         $this->assign('find_biaoti', $find_biaoti);
         $this->assign('find_biaotichild', $find_biaotichild);
-        $this->assign('find_maketime', $find_maketime);
+        $this->assign('find_id', $id);
         $this->assign('find_sta_date', $get_sta_day);
         $this->assign('find_end_date', $get_end_day);
         $this->assign('find_classify1', $find_classify1);
@@ -48,8 +64,15 @@ class VideoAction extends Action{
         $where_end_day = $get_end_day . ' 23:59:59';
         $where_sta_day = $get_sta_day . ' 00:00:00';
 
+        //判断是否传入状态
+        if($flag == '')
+        {
+            //状态值为4
+            $flag = 4;
+        }
+
         //判断是否有查询条件
-        $condition = "biaoti like '%" . $find_biaoti . "%' and biaotichild like '%" . $find_biaotichild . "%'";
+        $condition = "(biaoti like '%" . $find_biaoti . "%' or biaotichild like '%" . $find_biaoti . "%')";
         //判断是否查询创建时间
         if ($find_maketime != '') {
             $condition .= " and maketime = '" . $find_maketime . "'";
@@ -78,6 +101,37 @@ class VideoAction extends Action{
         if ($find_classify4 != '') {
             $condition .= " and classify4 = '" . $find_classify4 . "'";
         }
+        //判断是否查询ID
+        if($id != '')
+        {
+            $condition .= " and id= '" . $id . "'";
+        }
+        //判断是否查询状态
+        if($flag != 4 && $flag != '')
+        {
+            $condition .= " and flag = '" . $flag . "'";
+        }
+
+        // 动态下拉列表
+        //start--------------------------------------------------------------
+        //动态生成权限下拉选项
+        $flagarr = array(
+            '4' => '4-全选',
+            '1' => '1-已启用',
+            '2' => '2-已禁用',
+        );
+
+        $flag_show = '';
+        foreach($flagarr as $keyr => $valr) {
+            $flag_show .= '<option value="'.$keyr.'" ';
+            if($keyr==$flag) {
+                $flag_show .= ' selected="selected"';
+            }
+            $flag_show .= '>'.$valr.'</option>';
+
+        }
+        $this -> assign('flag_show',$flag_show);
+        //end--------------------------------------------------------------
 
         $Model = new Model();
 
@@ -85,23 +139,24 @@ class VideoAction extends Action{
         import('ORG.Page');// 导入分页类
         $count = $Model->table('sixty_video')
             ->where($condition)
+            -> order('create_datetime desc')
             ->count();// 查询满足要求的总记录数
-        $Page = new Page($count, 2);// 实例化分页类 传入总记录数和每页显示的记录数
+        $Page = new Page($count, 20);// 实例化分页类 传入总记录数和每页显示的记录数
         $show = $Page->show();// 分页显示输出
         // 进行分页数据查询 注意limit方法的参数要使用Page类的属性
         $this->assign('page', $show);// 赋值分页输出
 
         //执行数据查询
         $list = $Model->table('sixty_video')
-            ->field('id, classify1, classify2, classify3, classify4, msgjihe, showimg, 
-            videosavename, biaoti, biaotichild, jieshao, maketime, huafeimoney, tishishuoming, create_datetime')
-            ->where($condition)->limit($Page->firstRow . ',' . $Page->listRows)->select();
-
+            ->field('id, flag, classify1, classify2, classify3, classify4, msgjihe, showimg, videosavename, biaoti,
+             biaotichild, fenshu, jieshao, maketime, huafeimoney, tishishuoming, create_datetime')
+            -> where($condition) -> order('create_datetime desc') -> limit($Page->firstRow . ',' . $Page->listRows)->select();
         //判断是否有数据取出
         $num = count($list);
         if ($num <= 0) {
             $this->assign('list', $list);
             $this->display();
+            die;
         }
 
         //取出ID，拼接为数组
@@ -145,64 +200,73 @@ class VideoAction extends Action{
         $video_list = array();
 
         //遍历视频列表数组
-        foreach ($list as $list_key => $list_value)
+        foreach ($list as $key_video => $val_video)
         {
             //视频ID
-            $v_id = $list_value['id'];
+            $v_id = $val_video['id'];
             //定义步骤键键值为空
-            $list_value['buzhou'] = '';
+            $val_video['buzhou'] = '';
             //转变提示信息键的值，使它可以在输出时可以换行
-            $list_value['tishishuoming'] = nl2br($list_value['tishishuoming']);
+            $val_video['tishishuoming'] = nl2br($val_video['tishishuoming']);
+            $flag = $val_video['flag'];
+            if($flag == 1)
+            {
+                $val_video['flag'] = '<span style="background-color:green;padding:3px;">1-开启</span>';
+
+            }else{
+                $val_video['flag'] = '已关闭';
+            }
             //定义评论字段为一个数组
-            $list_value['pinglun'] = array();
+            $val_video['pinglun'] = array();
 
             //遍历材料结果集
-            foreach ($arr_cailiao as $cailiao_key => $cailiao_value)
+            foreach ($arr_cailiao as $key_cailiao => $val_cailiao)
             {
                 //判断此视频ID在材料数组中是否存在
                 if($arr_cailiao[$v_id] != '')
                 {
                     //存在，把内容放入视频列
-                    $list_value['cailiao'] = $arr_cailiao[$v_id];
+                    $val_video['cailiao'] = $arr_cailiao[$v_id];
                 }else{
                     //不存在，此视频键内容为空
-                    $list_value['cailiao'] = '';
+                    $val_cailiao['cailiao'] = '';
                 }
             }
 
             //遍历步骤结果集
-            foreach ($list_buzhou as $buzhou_key => $buzhou_value)
+            foreach ($list_buzhou as $key_buzhou => $val_buzhou)
             {
                 //判断步骤VID是否等于视频ID
-                if($buzhou_value['vid'] == $v_id)
+                if($val_buzhou['vid'] == $v_id)
                 {
                     //步骤VID与视频ID相等，把键值付给视频数组步骤键中
-                    $list_value['buzhou'] .= $buzhou_value['buzhouid'] . '.' . $buzhou_value['buzhoucontent']    . '<br/>';
-//                    $list_value['buzhou'] .= $buzhou_value['buzhoucontent');
+                    $val_video['buzhou'] .= $val_buzhou['buzhouid'] . '.' . $val_buzhou['buzhoucontent'] . '<br/>';
                 }
             }
 
             //遍历评论结果集
             //定义评论数组字段键名
             $i = 0;
-            foreach ($list_pinglun as $pinglun_key => $pinglun_value)
+            foreach ($list_pinglun as $key_pinglun => $val_pinglun)
             {
                 //判断此条评论VID是否等于此条评论ID
-                if($pinglun_value['vid'] == $v_id)
+                if($val_pinglun['vid'] == $v_id)
                 {
                     //相等，继续遍历评论结果二维数组
-                    foreach ($pinglun_value as $pinglun_k => $pinglun_v)
+                    foreach ($val_pinglun as $k_pinglun => $v_pinglun)
                     {
                         //把此条评论的评论内容以及其他信息存入视频数组
-                        $list_value['pinglun'][$i][$pinglun_k] = $pinglun_v;
+                        $val_video['pinglun'][$i][$k_pinglun] = $v_pinglun;
                     }
                 }
                 //键名自增1
                 $i++;
             }
             //把此视频ID的材料，步骤，评论信息存入输出数组
-            $video_list[] = $list_value;
+            $video_list[] = $val_video;
         }
+
+
 
         //输出到模板
         $this->assign('list', $video_list);
@@ -215,6 +279,28 @@ class VideoAction extends Action{
         //判断用户是否登陆
         $this->loginjudgeshow($this->lock_addvideo);
         //=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
+
+//        动态下拉列表、
+//start--------------------------------------------------------------
+        //动态生成权限下拉选项
+        $videoarr = array(
+            '1' => '1-启用',
+            '2' => '2-禁用',
+        );
+
+        $videoflag_show = '';
+        foreach($videoarr as $keyr => $valr) {
+            $videoflag_show .= '<option value="'.$keyr.'" ';
+            if($keyr==$lock) {
+                $videoflag_show .= ' selected="selected"';
+            }
+            $videoflag_show .= '>'.$valr.'</option>';
+
+        }
+        $this -> assign('videoflag_show',$videoflag_show);
+        //end--------------------------------------------------------------
+
+
         $this->display();
     }
 
@@ -236,9 +322,8 @@ class VideoAction extends Action{
         $maketime = trim($this->_post('maketime'));
         $tishishuoming = trim($this->_post('tishishuoming'));
         $huafeimoney = trim($this->_post('huafeimoney'));
+        $flag = trim($this->_post('flag'));
 
-//        $f = $_FILES;
-//        var_dump($f);die;
         //判断提交的视频介绍内容长度
         $len = mb_strlen($jieshao,'UTF-8');
         if($len > 200)
@@ -257,34 +342,39 @@ class VideoAction extends Action{
             $this -> error('视频提示内容超过200字，不能提交！');
         }
 
-        //实例化上传类
-        $upload = new fileupload();
-        //设置属性(上传的位置， 大小， 类型， 名是是否要随机生成)
-        $upload -> set("path", "./images/");
-        $upload -> set("maxsize", 2000000);
-        $upload -> set("allowtype", array("gif", "png", "jpg","jpeg"));
-        $upload -> set("israndname", true);
-
-        //使用对象中的upload方法， 就可以上传文件， 方法需要传一个上传表单的名子 pic, 如果成功返回true, 失败返回false
-        if(!$upload -> upload("showimg")) {
-            //失败返回错误
-            echo "<script>alert('视频添加失败！');history.go(-1);</script>";
-            $this -> error('视频添加失败！');
-            //获取上传失败以后的错误提示
+        //判断文件是否上传
+        $file = $_FILES['showing']['name'];
+        if($file){
+            //实例化上传类
+            $upload = new fileupload();
+            //设置属性(上传的位置， 大小， 类型， 名是是否要随机生成)
+            $upload -> set("path", "./images/");
+            $upload -> set("maxsize", 2000000);
+            $upload -> set("allowtype", array("gif", "png", "jpg","jpeg"));
+            $upload -> set("israndname", true);
+            //使用对象中的upload方法， 就可以上传文件， 方法需要传一个上传表单的名子 pic, 如果成功返回true, 失败返回false
+            if(!$upload -> upload("showimg")) {
+                //失败返回错误
+                echo "<script>alert('视频添加失败！');history.go(-1);</script>";
+                $this -> error('视频添加失败！');
+                //获取上传失败以后的错误提示
 //            var_dump($upload->getErrorMsg());
+            }
+            $showimg = '../../images/' . $upload->getFileName();
         }
+
 
 
         //准备SQL数据数组
         $create_datetime = date('Y-m-d H:i:s',time());
         $videosavename = mt_rand(1111,11111);
-        $showimg = '../../images/' . $upload->getFileName();
+
         $msgjihe = mt_rand(1111,11111);
         $data = array('biaoti' => $biaoti, 'biaotichild' => $biaotichild, 'classify1' => $classify1,
             'classify2' => $classify2, 'classify3' => $classify3, 'classify4' => $classify4,
             'jieshao' => $jieshao, 'maketime' => $maketime, 'tishishuoming' => $tishishuoming,
             'huafeimoney' => $huafeimoney, 'create_datetime' => $create_datetime, 'videosavename' => $videosavename,
-            'showimg' => $showimg, 'msgjihe' => $msgjihe);
+            'showimg' => $showimg, 'msgjihe' => $msgjihe, 'flag' => $flag);
         $Model = new Model();
         $result = $Model -> table('sixty_video') -> add($data);
 
@@ -312,14 +402,37 @@ class VideoAction extends Action{
         //判断用户是否登陆
         $this->loginjudgeshow($this->lock_editvideo);
         //=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
+        //返回URL地址
+        $echourl = func_baseurlcreate($_GET);
+        $this->assign('echourl',$echourl);
 
         //获取数据
         $id = $this->_post('video_id');
 
         //执行查询
         $Model = new Model();
-        $list = $Model -> table('sixty_video') -> field('id, biaoti, biaotichild, classify1, classify2, classify3, classify4, jieshao, 
+        $list = $Model -> table('sixty_video') -> field('id, fenshu, flag, biaoti, biaotichild, classify1, classify2, classify3, classify4, jieshao, 
         maketime, huafeimoney, tishishuoming, showimg') -> where("id = '".$id."'") -> find();
+
+        //        动态下拉列表、
+//start--------------------------------------------------------------
+        //动态生成权限下拉选项
+        $videoarr = array(
+            '1' => '1-启用',
+            '2' => '2-禁用',
+        );
+        $flag = $list['flag'];
+        $videoflag_show = '';
+        foreach($videoarr as $keyr => $valr) {
+            $videoflag_show .= '<option value="'.$keyr.'" ';
+            if($keyr==$flag) {
+                $videoflag_show .= ' selected="selected"';
+            }
+            $videoflag_show .= '>'.$valr.'</option>';
+
+        }
+        $this -> assign('videoflag_show',$videoflag_show);
+        //end--------------------------------------------------------------
 
         //输出到模板
         $this->assign('list', $list);
@@ -332,6 +445,9 @@ class VideoAction extends Action{
         //判断用户是否登陆
         $this->loginjudgeshow($this->lock_editvideo_do);
         //=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
+        //返回URL地址
+        $echourl = func_baseurlcreate($_GET);
+        $this->assign('echourl',$echourl);
 
         //接收数据
         $id = trim($this->_post('id'));
@@ -342,6 +458,8 @@ class VideoAction extends Action{
         $classify3 = trim($this->_post('classify3'));
         $classify4 = trim($this->_post('classify4'));
         $jieshao = trim($this->_post('jieshao'));
+        $fenshu = trim($this->_post('fenshu'));
+        $flag = trim($this->_post('flag'));
         $maketime = trim($this->_post('maketime'));
         $tishishuoming = trim($this->_post('tishishuoming'));
         $huafeimoney = trim($this->_post('huafeimoney'));
@@ -373,7 +491,7 @@ class VideoAction extends Action{
             'classify2' => $classify2, 'classify3' => $classify3, 'classify4' => $classify4,
             'jieshao' => $jieshao, 'maketime' => $maketime, 'tishishuoming' => $tishishuoming,
             'huafeimoney' => $huafeimoney, 'create_datetime' => $create_datetime, 'videosavename' => $videosavename,
-            'showimg' => $showimg, 'msgjihe' => $msgjihe);
+            'showimg' => $showimg, 'msgjihe' => $msgjihe, 'fenshu' => $fenshu, 'flag' => $flag);
 
         //执行更新
         $Model = new Model();
@@ -387,8 +505,8 @@ class VideoAction extends Action{
         if($result)
         {
             //成功返回成功
-            echo "<script>alert('数据修改成功!');window.location.href='".__APP__."/Video/index';</script>";
-            $this -> success('数据修改成功!','__APP__/Video/index');
+            echo "<script>alert('数据修改成功!');window.location.href='".__APP__.'/Video/index'.$echourl."';</script>";
+            $this -> success('数据修改成功!','__APP__'.$echourl);
         }else{
             //失败返回错误
             echo "<script>alert('数据修改失败！');history.go(-1);</script>";
@@ -402,12 +520,15 @@ class VideoAction extends Action{
         //判断用户是否登陆
         $this->loginjudgeshow($this->lock_delvideo_do);
         //=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
+        //返回URL地址
+        $echourl = func_baseurlcreate($_GET);
+        $this->assign('echourl',$echourl);
 
         //接收上传数据
         $id = trim($this->_post('del_id'));
 
-        $Modle = new Model();
-        $res_id = $Modle -> table('sixty_video') -> field('id') -> where("id='".$id."'") -> find();
+        $Model = new Model();
+        $res_id = $Model -> table('sixty_video') -> field('id') -> where("id='".$id."'") -> find();
 
         //判断ID是否存在
         if(!$res_id)
@@ -418,17 +539,17 @@ class VideoAction extends Action{
         }
 
         //执行删除
-        $result = $Modle -> table('sixty_video') -> where("id = '".$id."'") -> delete();
+        $result = $Model -> table('sixty_video') -> where("id = '".$id."'") -> delete();
 
         //写入日志
-        $templogs = $Model->getlastsql();
+        $templogs = $Model -> getlastsql();
         hy_caozuo_logwrite($templogs,__CLASS__.'---'.__FUNCTION__);
 
         if($result)
         {
             //成功返回成功
-            echo "<script>alert('数据删除成功!');window.location.href='".__APP__."/Video/index';</script>";
-            $this -> success('数据删除成功!','__APP__/Video/index');
+            echo "<script>alert('数据删除成功!');window.location.href='".__APP__.'/Video/index'.$echourl."';</script>";
+            $this -> success('数据删除成功!','__APP__'.$echourl);
         }else{
             //失败返回错误
             echo "<script>alert('数据删除失败！');history.go(-1);</script>";
