@@ -2,22 +2,182 @@
 
 
 
-function hy_urlcreate( $urlarr=array()) {
+//自动获取文件类型并返回新的后缀文件路径名称
+function hy_getfiletype($filepathname='') {
+	if(''==$filepathname || !file_exists($filepathname)) {
+		return false;
+	}else {
+		$path     = dirname($filepathname).'/';
+		$basename = pathinfo($filepathname, PATHINFO_FILENAME);
+		$extname  = pathinfo($filepathname, PATHINFO_EXTENSION);
+		
+		$file = fopen($filepathname, "rb");
+		$bin = fread($file, 2); //只读2字节
+		fclose($file);
+		$strInfo = @unpack("C2chars", $bin);
+		$typeCode = intval($strInfo['chars1'].$strInfo['chars2']);
+		$fileType = 'jpg';
+		switch ($typeCode)
+		{
+			case 7790:
+				$fileType = 'exe';
+				break;
+			case 7784:
+				$fileType = 'midi';
+				break;
+			case 8297:
+				$fileType = 'rar';
+				break;
+			case 8075:
+				$fileType = 'zip';
+				break;
+			case 255216:
+				$fileType = 'jpg';
+				break;
+			case 7173:
+				$fileType = 'gif';
+				break;
+			case 6677:
+				$fileType = 'bmp';
+				break;
+			case 13780:
+				$fileType = 'png';
+				break;
+			default:
+				$fileType = 'jpg'; //unknown
+		}
+		$newpathname = $path.$basename.'.'.$fileType;
+		
+		return $newpathname;
+	}
+	
+}
 
-	$baseurl = '';
 
-	if( is_array($urlarr) && count($urlarr)>0 ) {
+/**
+ * 将图片以自定义品质，另存为JPG格式,将会删除源图片
+ * @param string $filepathname 图片名称，包含路径
+ * @param int    $quality  图片品质，0到100，默认90，100为最高品质
+ */
+function hy_resave2jpg($filepathname='', $quality = 90) {
+	if(''==$filepathname) {
+		return false;
+	}else {
+		
+		$path     = dirname($filepathname).'/';
+		$basename = pathinfo($filepathname, PATHINFO_FILENAME);
+		$extname  = pathinfo($filepathname, PATHINFO_EXTENSION);
+		$im = null;
+		switch($extname) {
+			case 'jpg':
+				$im = imagecreatefromjpeg($filepathname);
+				break;
+			case 'png':
+				$im = imagecreatefrompng($filepathname);
+				break;
+			case 'gif':
+				$im = imagecreatefromgif($filepathname);
+				break;
+		}
+		$newpathname = $path.$basename.'.jpg';
+		$r = imagejpeg($im, $newpathname, $quality);
+		imagedestroy($im);
+		if($r) {
+			if(in_array($extname, array('png','gif'))) {
+				@unlink($filepathname);
+			}
 			
+			return $newpathname;
+		}else {
+			return false;
+		}
+		
+	}
+	
+}
+
+
+
+//返回七牛云图片读取地址
+function hy_qiniuimgurl($bucketname='',$imgname='',$width='',$height='',$canshu=true) {
+	$qiniubucketarr = json_decode(QINIUBUCKETSTR,true);
+	$returnimgurl = '';
+	if(''==$imgname) {
+		$bucketurl = isset($qiniubucketarr['sixty-basic'])?$qiniubucketarr['sixty-basic']:'';
+		if(''==$bucketurl) {
+			return '';
+		}else {
+			$returnimgurl = $bucketurl.'notfounddata.png';
+			if($canshu) {
+				$returnimgurl .= '?imageView2/1';
+				if($width!='') {
+					$returnimgurl .= '/w/'.$width;
+				}
+				if($height!='') {
+					$returnimgurl .= '/h/'.$height;
+				}
+				$returnimgurl .= '/q/75';
+				$returnimgurl .= '|imageslim';
+			}
+			return $returnimgurl;
+		}
+		
+	}else {
+		
+		$bucketurl = isset($qiniubucketarr[$bucketname])?$qiniubucketarr[$bucketname]:'';
+		if($bucketurl!='') {
+			if(substr($imgname,0,4)=='http') {
+				$returnimgurl = $imgname;
+			}else {
+				$returnimgurl = $bucketurl.$imgname;
+			}
+			if($canshu) {
+				$returnimgurl .= '?imageView2/1';
+				if($width!='') {
+					$returnimgurl .= '/w/'.$width;
+				}
+				if($height!='') {
+					$returnimgurl .= '/h/'.$height;
+				}
+				$returnimgurl .= '/q/75';
+				$returnimgurl .= '|imageslim';
+			}
+		}
+		return $returnimgurl;
+	}
+	
+}
+
+//七牛云bucket存储内容获取,返回视频地址
+function hy_qiniubucketurl($bucketname='',$dataname='') {
+	$returnurl = '';
+	$qiniubucketarr = json_decode(QINIUBUCKETSTR,true);
+	$bucketurl = isset($qiniubucketarr[$bucketname])?$qiniubucketarr[$bucketname]:'';
+	if($bucketurl!='') {
+		if(substr($dataname,0,4)=='http') {
+			$returnurl = $dataname;
+		}else {
+			$returnurl = $bucketurl.$dataname;
+		}
+	}
+	return $returnurl;
+	
+}
+
+
+
+//封装url参数拼接
+function hy_urlcreate( $urlarr=array()) {
+	$baseurl = '';
+	if( is_array($urlarr) && count($urlarr)>0 ) {
 		foreach($urlarr as $key => $val) {
 			$baseurl .= $key.'='.urlencode($val).'&';
 		}
-			
 		$baseurl = substr($baseurl,0,(strlen($baseurl)-1));
 	}
-
 	return $baseurl;
-
 }
+
 
 
 function hy_vget( $url, $timeout=5000, $header=array(), $useragent='' ) {
@@ -35,7 +195,6 @@ function hy_vget( $url, $timeout=5000, $header=array(), $useragent='' ) {
 	foreach( $header as $n => $v ) {
 		$headerArr[] = $n.':'.$v;
 	}
-
 
 	$curl = curl_init(); // 启动一个CURL会话
 
@@ -70,7 +229,6 @@ function hy_vget( $url, $timeout=5000, $header=array(), $useragent='' ) {
 	//关闭curl
 	curl_close($curl);
 
-
 // 	//定义return数组变量
 // 	$retarr = array();
 // 	$retarr['content']  = $content;
@@ -99,7 +257,6 @@ function hy_vpost( $url, $data, $timeout=5000, $header=array(), $useragent='' ) 
 	foreach( $header as $n => $v ) {
 		$headerArr[] = $n.':'.$v;
 	}
-
 
 	$curl = curl_init(); // 启动一个CURL会话
 
@@ -136,7 +293,6 @@ function hy_vpost( $url, $data, $timeout=5000, $header=array(), $useragent='' ) 
 
 	//关闭curl
 	curl_close($curl);
-
 
 // 	//定义return数组变量
 // 	$retarr = array();
