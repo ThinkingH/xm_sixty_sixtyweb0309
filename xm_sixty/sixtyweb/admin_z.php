@@ -6,17 +6,29 @@
 	define('HYSESSQZ','sixty_');
 	
 	//定义平台名称
-	define('HY_SYSTEM_NAME','60秒视频');
+	define('HY_SYSTEM_NAME','60秒视频后台');
 	
 	//平台名称后是否显示IP---true/false
 	define('HY_SHOW_IP',true);
 	
 	//定义网站访问路径ip地址---外网
-	define('HY_WAI_URLIP','http://127.0.0.1:8001/');
+	define('HY_WAI_URLIP','http://127.0.0.1:8009/');
 	
 	//定义网站访问路径ip地址---内网
-	define('HY_NEI_URLIP','http://127.0.0.1:8001/');
+	define('HY_NEI_URLIP','http://127.0.0.1:8009/');
 	
+	//七牛bucket定义存储
+	$bucketarr = array(
+		'sixty-basic'      => 'http://oys7hzyf8.bkt.clouddn.com/',  //基础公共图片存放，循环展示图片，默认图片等公共静态资源图片
+		'sixty-user'       => 'http://oys7i4dcy.bkt.clouddn.com/',  //用户图片存放，头像，用户其他数据
+		'sixty-video'      => 'http://oys78eqga.bkt.clouddn.com/',  //视频存放
+		'sixty-videoimage' => 'http://oys7tcwkg.bkt.clouddn.com/',  //视频封面图片存放
+		'sixty-imgpinglun' => 'http://oys72yckt.bkt.clouddn.com/',  //带图片投稿评论存放
+		'sixty-jihemsg'    => 'http://oys7xme11.bkt.clouddn.com/',  //集合封面图片存放
+	);
+	$bucketstr = json_encode($bucketarr);
+	define('QINIUBUCKETSTR',$bucketstr);
+
 	//定义项目名
 	define('APP_NAME','Adminz');
 	
