@@ -101,6 +101,14 @@
                     <input type="hidden" name="video_id" value="{$vo.id}" />
                     <input type="submit" class="yubuttonss yuwhite" name="pinglunbutton" value="投稿" />
                 </form>
+                <form action="__APP__/Step/addmater{$echourl}" method="get" style="margin:0px" >
+                    <input type="hidden" name="video_id" value="{$vo.id}" />
+                    <input type="submit" class="yubuttonss yuwhite" name="pinglunbutton" value="材料" />
+                </form>
+                <form action="__APP__/Step/addstep{$echourl}" method="get" style="margin:0px" >
+                    <input type="hidden" name="video_id" value="{$vo.id}" />
+                    <input type="submit" class="yubuttonss yuwhite" name="pinglunbutton" value="步骤" />
+                </form>
 
             </td>
             <td>{$vo.id}</td>
@@ -112,8 +120,7 @@
             <td>{$vo.classify3}</td>
             <td>{$vo.classify4}</td>
             <td>{$vo.msgjihe}</td>
-            <td><img style="width: 100px; height: 100px;" src="{$vo.showimg}"/></td>
-            <!--<td><img style="width: 50px; height: 50px;" src="images\20171030144243_169.jpg"/></td>-->
+            <td>{$vo.showimg}</td>
             <td>{$vo.create_datetime}</td>
             <td>{$vo.jieshao}</td>
             <td>{$vo.cailiao}</td>

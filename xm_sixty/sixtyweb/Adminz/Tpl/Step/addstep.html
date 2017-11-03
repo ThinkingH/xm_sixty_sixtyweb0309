@@ -1,0 +1,77 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <load href="__PUBLIC__/Css/main.css" />
+
+    <script type="text/javascript" src="__PUBLIC__/Js/jquery.min.js"></script>
+    <script type="text/javascript" src="__PUBLIC__/Js/themain.js"></script>
+    <script type="text/javascript" src="__PUBLIC__/Js/md5.js"></script>
+    <script type="text/javascript">
+        $("document").ready(function(){
+            $(".class_buzhou20").hide();
+                $("#add").click(function(){
+                    $(".class_buzhou20").show();
+                    $("#add").hide();
+
+                });
+
+
+        });
+    </script>
+</head>
+
+
+<body>
+<div class="hy_daohangtiao">
+    当前位置&nbsp;#&nbsp;视频管理&nbsp;#&nbsp;视频步骤&nbsp;#&nbsp;步骤添加页面
+</div>
+
+
+<a href="javascript:history.go(-1);" class="yubutton yuwhite">返回视频列表</a>
+<br/>
+<br/>
+
+<form action="__APP__/Step/addstep_do" method="post" >
+
+    <br/><br/>
+    <table class="table-edit" >
+        <php>
+            for($i=1;$i<=10;$i++) {
+            echo '<tr class="class_buzhou10">';
+            echo '    <td width="60" align="right"><b>第'.$i.'步:</b></td>';
+            echo '   <td width="600">';
+            echo '        <input type="text" name="buzhouid'.$i.'" maxlength="100" size="80"/>';
+            echo '   </td>';
+            echo '</tr>';
+            }
+        </php>
+        <php>
+            for($i=10;$i<=20;$i++) {
+            echo '<tr class="class_buzhou20">';
+            echo '    <td width="60" align="right"><b>第'.$i.'步:</b></td>';
+            echo '   <td width="600">';
+                echo '        <input type="text" name="buzhouid'.$i.'" maxlength="100" size="80"/>';
+                echo '   </td>';
+            echo '</tr>';
+            }
+        </php>
+        <tr>
+            <td colspan="2">
+                <input type="submit" id="button_add" class="yubutton yuwhite" value="添加步骤"
+                       style="margin-left:270px;margin-top:0px;" />
+                <input type="hidden" value="{$video_id}" name="video_id" />
+                <button type="button" id="add">更多</button>
+            </td>
+        </tr>
+    </table>
+
+</form>
+
+<br/><br/><br/><br/><br/><br/>
+End!
+
+</body>
+</html>
+
+

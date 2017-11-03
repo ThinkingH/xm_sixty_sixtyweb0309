@@ -33,6 +33,7 @@ function upload_qiniu($bucket,$filepath,$savename,$rewrite='no'){
 		$filename= $truepath['key'];
 		return $filename;
 	}else{
+	    var_dump($res);
 		return false;
 	}
 }

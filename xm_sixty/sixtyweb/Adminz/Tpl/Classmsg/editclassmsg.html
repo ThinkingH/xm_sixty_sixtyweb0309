@@ -1,0 +1,139 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <load href="__PUBLIC__/Css/main.css" />
+    <script type="text/javascript" src="__PUBLIC__/Js/jquery.min.js"></script>
+    <script type="text/javascript" src="__PUBLIC__/Js/themain.js"></script>
+    <script type="text/javascript" src="__PUBLIC__/Js/md5.js"></script>
+    <script language="javascript" type="text/javascript" src="__PUBLIC__/Js/datexxx/WdatePicker.js"></script>
+    <script type="text/javascript">
+        $("document").ready(function(){
+
+            $("#submit_edit").click(function(){
+
+                var name = $("#edit_name").val();
+                var edit_childname = $("#edit_childname").val();
+                var contenet = $("#edit_content").val();
+
+                name = $.trim(name);
+                edit_childname = $.trim(edit_childname);
+                contenet = $.trim(contenet);
+
+                if (name == '') {
+                    alert('名称不能为空！');
+                    return false;
+                }
+                if (edit_childname == '') {
+                    alert('子名称不能为空！');
+                    return false;
+                }
+
+                if (contenet == '') {
+                    alert('描述不能为空！');
+                    return false;
+                }
+                if(confirm("您确认要编辑此分类吗？")) {
+
+                }else {
+                    return false;
+                }
+            });
+
+        });
+
+    </script>
+</head>
+
+<body>
+<div class="hy_daohangtiao">
+    当前位置&nbsp;#&nbsp;合集分类&nbsp;#&nbsp;分类编辑操作&nbsp;#&nbsp;分类编辑页面
+</div>
+
+
+<a href="javascript:history.go(-1);" class="yubutton yuwhite">返回分类列表</a>
+<br/>
+
+<form name="form1" method="post" action="__APP__/Classmsg/editclassmsg_do{$echourl}" enctype="multipart/form-data">
+    <br/><br/>
+    <table class="table-edit" width="490">
+        <tr>
+            <td align="right" style="width: 90px;">分类ID：</td>
+            <td width="450">
+                {$list.id}
+                <input value="{$list.id}" type="hidden" name="edit_id"/>
+            </td>
+        </tr>
+        <tr>
+        <tr>
+            <td align="right" style="width: 90px;">填写分类名称：</td>
+            <td width="450">
+                <input value="{$list.name}" size="40" type="text"
+                       maxlength="30" name="edit_name" id="edit_name" onkeydown="if(event.keyCode=='32'){return false;}" />
+                <font color="orange" size="-2">
+                    分类名称最多30字
+                </font>
+            </td>
+        </tr>
+        <tr>
+            <td align="right" style="width: 90px;">子分类名称：</td>
+            <td width="450">
+                <input value="{$list.name}" size="40" type="text"
+                       maxlength="30" name="edit_childname" id="edit_childname" onkeydown="if(event.keyCode=='32'){return false;}" />
+                <font color="orange" size="-2">
+                    分类名称最多30字
+                </font>
+            </td>
+        </tr>
+        <tr>
+            <td align="right" style="width: 90px;">分类等级：</td>
+            <td width="450">
+                <select name="edit_level">
+                    {$level_show}
+                </select>
+            </td>
+        </tr>
+        <tr>
+            <td align="right">填写分类描述：</td>
+            <td>
+                <textarea rows="6" cols="40" style="resize: none;" onchange="this.value=this.value.substring(0, 200)"
+                          onkeydown="this.value=this.value.substring(0, 200)" onkeyup="this.value=this.value.substring(0, 200)"
+                          id="edit_content" name="edit_content">{$list.content}</textarea>
+                <font color="orange" size="-2">
+                    分类描述最多200字
+                </font>
+            </td>
+        </tr>
+        <tr>
+            <td align="right" style="width: 90px;">填写分类备注：</td>
+            <td width="450">
+                <input value="{$list.remark}" size="40" type="text" maxlength="30" name="edit_remark"
+                       id="edit_remark" onkeydown="if(event.keyCode=='32'){return false;}" />
+                <font color="orange" size="-2">
+                    分类名称最多30字
+                </font>
+            </td>
+        </tr>
+        <tr>
+            <td colspan="2">
+                <input type="submit" name="submit" id="submit_edit" class="yubutton yuwhite" value="提交修改" style="margin-left:220px;" />
+</form>
+<form method="post" action="__APP__/Classmsg/delclassmsg_do{$echourl}" style="display:inline;margin:0px;padding:0px; width: 100px; height: 50px;">
+    <input type="hidden" name="del_id" value="{$list.id}" />
+    <input type="submit" name="submitdel" id="submitdel" class="yubuttons yuwhite" value="删除此分类" style="margin-left: 440px;margin-top:10px; "/>
+</form>
+</td>
+</tr>
+
+</table>
+
+
+
+<br/><br/><br/><br/><br/><br/>
+End!
+
+
+</body>
+</html>
+
+
