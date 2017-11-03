@@ -28,7 +28,10 @@
 	);
 	$bucketstr = json_encode($bucketarr);
 	define('QINIUBUCKETSTR',$bucketstr);
-
+	
+	//七牛封装处理通讯地址
+	define('QINIUURL','http://127.0.0.1:8001/hyqiniu/init/');
+	
 	//定义项目名
 	define('APP_NAME','Adminz');
 	
