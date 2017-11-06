@@ -10,13 +10,19 @@
     <script type="text/javascript">
         $("document").ready(function(){
             $(".class_buzhou20").hide();
-                $("#add").click(function(){
-                    $(".class_buzhou20").show();
-                    $("#add").hide();
+            $(".class_kong").hide();
 
-                });
+            $("#add").click(function(){
+                $(".class_buzhou20").show();
+                $("#add").hide();
 
+            });
 
+            $("#addcount").click(function(){
+                $(".class_kong").show();
+                $("#addcount").hide();
+
+            });
         });
     </script>
 </head>
@@ -32,10 +38,21 @@
 <br/>
 <br/>
 
-<form action="__APP__/Step/addstep_do" method="post" >
+<form action="__APP__/Step/addstep_do" method="post" style="display: inline-block;" >
 
     <br/><br/>
     <table class="table-edit" >
+        <tr>
+            <td colspan="2">
+                添加步骤
+            </td>
+        </tr>
+        <tr class="class_buzhou10">
+             <td width="60" align="right"><b>步骤顺序</b></td>
+            <td width="600">
+             操作内容
+              </td>
+            </tr>
         <php>
             for($i=1;$i<=10;$i++) {
             echo '<tr class="class_buzhou10">';
@@ -51,7 +68,7 @@
             echo '<tr class="class_buzhou20">';
             echo '    <td width="60" align="right"><b>第'.$i.'步:</b></td>';
             echo '   <td width="600">';
-                echo '        <input type="text" name="buzhouid'.$i.'" maxlength="100" size="80"/>';
+                echo '        <input type="text" name="buzhouid'.$i.'" maxlength="100" size="80" value=""/>';
                 echo '   </td>';
             echo '</tr>';
             }
@@ -62,6 +79,52 @@
                        style="margin-left:270px;margin-top:0px;" />
                 <input type="hidden" value="{$video_id}" name="video_id" />
                 <button type="button" id="add">更多</button>
+            </td>
+        </tr>
+    </table>
+
+</form>
+
+<form action="__APP__/Step/editstep_do" method="post" style="display: inline-block;">
+
+    <br/><br/>
+    <table class="table-edit" style="float: right;" >
+        <tr>
+            <td colspan="2">
+                编辑步骤
+            </td>
+        </tr>
+        <tr class="class_buzhou10">
+            <td width="60" align="right"><b>步骤顺序</b></td>
+            <td width="600">
+                操作内容
+            </td>
+        </tr>
+        <volist name="list_se" id="vo" empty="没有对应数据" >
+            <tr class="class_buzhoucount">
+                <td width="60" align="right"><b>第{$vo.buzhouid}步</b></td>
+                <td width="600">
+                    <input value="{$vo.buzhoucontent}" name="{$vo.id}" type="text" maxlength="100" size="80">
+                    <input value="{$vo.id}" name="{$vo.have}" type="hidden" maxlength="100" size="80">
+                    </td>
+            </tr>
+        </volist>
+
+        <volist name="kong" id="ko" empty="没有对应数据" >
+            <tr class="class_kong">
+                <td width="60" align="right"><b>第{$ko.buzhouid}步</b></td>
+                <td width="600">
+                    <input value="" name="{$ko.shangchuan}" type="text" maxlength="100" size="80">
+                </td>
+            </tr>
+        </volist>
+
+        <tr>
+            <td colspan="2">
+                <input type="submit" id="button_add" class="yubutton yuwhite" value="编辑步骤"
+                       style="margin-left:270px;margin-top:0px;" />
+                <input type="hidden" value="{$video_id}" name="video_id" />
+                <button type="button" id="addcount">更多</button>
             </td>
         </tr>
     </table>
