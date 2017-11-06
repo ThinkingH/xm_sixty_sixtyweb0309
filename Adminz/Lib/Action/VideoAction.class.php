@@ -8,12 +8,12 @@
  */
 class VideoAction extends Action{
     //定义各模块锁定级别
-    private $lock_index    = '9';
-    private $lock_delvideo_do     = '9';
-    private $lock_addvideo       = '9';
-    private $lock_addvideo_do     = '9';
+    private $lock_index         = '9';
+    private $lock_delvideo_do   = '9';
+    private $lock_addvideo      = '9';
+    private $lock_addvideo_do   = '9';
     private $lock_editvideo     = '9';
-    private $lock_editvideo_do     = '9';
+    private $lock_editvideo_do  = '9';
 
 
     public function index()

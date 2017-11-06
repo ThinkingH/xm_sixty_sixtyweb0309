@@ -101,11 +101,11 @@
                     <input type="hidden" name="video_id" value="{$vo.id}" />
                     <input type="submit" class="yubuttonss yuwhite" name="pinglunbutton" value="投稿" />
                 </form>
-                <form action="__APP__/Step/addmater{$echourl}" method="get" style="margin:0px" >
+                <form action="__APP__/Food/addfood{$echourl}" method="post" style="margin:0px" >
                     <input type="hidden" name="video_id" value="{$vo.id}" />
-                    <input type="submit" class="yubuttonss yuwhite" name="pinglunbutton" value="材料" />
+                    <input type="submit" class="yubuttonss yuwhite" name="pinglunbutton" value="食材" />
                 </form>
-                <form action="__APP__/Step/addstep{$echourl}" method="get" style="margin:0px" >
+                <form action="__APP__/Step/addstep{$echourl}" method="post" style="margin:0px" >
                     <input type="hidden" name="video_id" value="{$vo.id}" />
                     <input type="submit" class="yubuttonss yuwhite" name="pinglunbutton" value="步骤" />
                 </form>
