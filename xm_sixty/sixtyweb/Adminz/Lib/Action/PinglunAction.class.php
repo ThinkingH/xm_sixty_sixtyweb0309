@@ -8,9 +8,9 @@
 class PinglunAction extends Action{
 
     //定义各模块锁定级别
-    private $lock_tougao = '9';
-    private $lock_pinglun = '9';
-    private $lock_delpinglun_do = '9';
+    private $lock_tougao = '7';
+    private $lock_pinglun = '7';
+    private $lock_delpinglun_do = '7';
 
     //视频列表跳转查看单条视频的全部评论
     public function tougao()
@@ -93,6 +93,13 @@ class PinglunAction extends Action{
             if($list[$key_li]['type'] == 2) {
                 $list[$key_li]['type'] = '投稿';
             }
+            //获取七牛云图片
+            $showimg = $list[$key_li]['showimg'];
+            $imgwidth = '100';
+            $imgheight = '100';
+            $addressimg = hy_qiniuimgurl('sixty-jihemsg',$showimg,$imgwidth,$imgheight);
+//            var_dump($addressimg);die;
+            $list[$key_li]['showimg'] = "<img src='" . $addressimg . "' />";
         }
 
         //输出到模板
@@ -222,7 +229,7 @@ class PinglunAction extends Action{
 
         //查询ID判断此条评论是否存在
         $Model = new Model();
-        $res = $Model -> table('sixty_video_pinglun') -> field('vid') -> where("id = '" . $id . "'") -> find();
+        $res = $Model -> table('sixty_video_pinglun') -> field('vid, showimg') -> where("id = '" . $id . "'") -> find();
         if($res == '')
         {
             //返回错误
@@ -230,6 +237,8 @@ class PinglunAction extends Action{
             $this -> error('非法进入！');
         }
 
+        //删除七牛云旧图片
+        delete_qiniu('sixty-imgpinglun', $res['showimg']);
         //执行删除操作
         $result = $Model -> table('sixty_video_pinglun') -> where("id = '" . $id . "'") -> delete();
 
@@ -251,8 +260,8 @@ class PinglunAction extends Action{
                 $this -> success('评论删除成功!','__APP__'.$echourl);
             }else if($pinglun_type == '投稿'){
                 //返回成功
-                echo "<script>alert('评论删除成功!');window.location.href='".__APP__.'/Pinglun/tougao'. $echourl ."';</script>";
-                $this -> success('评论删除成功!','__APP__'.$echourl);
+                echo "<script>alert('投稿删除成功!');window.location.href='".__APP__.'/Pinglun/tougao'. $echourl ."';</script>";
+                $this -> success('投稿删除成功!','__APP__'.$echourl);
             }
 
         }

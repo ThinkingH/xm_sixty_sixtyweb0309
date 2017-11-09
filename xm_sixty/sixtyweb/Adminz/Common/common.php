@@ -26,14 +26,14 @@ function upload_qiniu($bucket,$filepath,$savename,$rewrite='no'){
 	$datastr = hy_urlcreate($dataarr);
 	//模拟数据访问
 	$res = hy_vpost($qiniurl,$datastr,$header=array(),$timeout=5000 );
-	
+//	print_r($res);
 	if(''!=$res && substr($res,0,1)!='#'){
 		$truepath = json_decode($res, true);
 		//$arr = unserialize(BUCKETSTR);//获取七牛访问链接
 		$filename= $truepath['key'];
 		return $filename;
 	}else{
-	    var_dump($res);
+//	    var_dump($res);
 		return false;
 	}
 }
@@ -350,11 +350,11 @@ function hy_vpost( $url, $data, $timeout=5000, $header=array(), $useragent='' ) 
 	curl_close($curl);
 
 // 	//定义return数组变量
-// 	$retarr = array();
-// 	$retarr['content']  = $content;
-// 	$retarr['httpcode'] = $httpcode;
-// 	$retarr['run_time'] = $run_time;
-// 	$retarr['errorno']  = $errorno;
+ 	$retarr = array();
+ 	$retarr['content']  = $content;
+ 	$retarr['httpcode'] = $httpcode;
+ 	$retarr['run_time'] = $run_time;
+ 	$retarr['errorno']  = $errorno;
 
 	return $content;
 

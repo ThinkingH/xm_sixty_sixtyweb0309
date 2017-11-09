@@ -57,6 +57,17 @@
             </td>
         </tr>
         <tr>
+            <td width="100" align="right">是否设为首页展示：</td>
+            <td >
+                <select name="sflag">
+                    {$videosflag_show}
+                </select>
+                <font color="orange" size="-2">
+                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;选择是否首页展示该视频
+                </font>
+            </td>
+        </tr>
+        <tr>
             <td align="right">填写视频主标题：</td>
             <td width="900">
                 <input style="width:400px;" type="text" maxlength="50" name="biaoti" id="biaoti" onkeydown="if(event.keyCode=='32'){return false;}" />
@@ -152,7 +163,7 @@
         <tr>
             <td align="right">填写适用人数</td>
             <td>
-                <input style="width:100px;" type="text" id="huafeimoney" name="huafeimoney" maxlength="20" onkeydown="if(event.keyCode=='32'){return false;}"/>
+                <input style="width:100px;" type="text" id="fenshu" name="fenshu" maxlength="20" onkeydown="if(event.keyCode=='32'){return false;}"/>
                 <font color="orange" size="-2">
                     请填写适用人数（单位元）如：2人份
                 </font>
@@ -187,7 +198,8 @@
 
         <tr>
             <td colspan="2">
-                <input type="submit" name="submit" id="submit_add" class="yubutton yuwhite" value="添加视频" style="margin-left:400px;" />
+                <input type="submit" name="submit" id="submit_add" class="yubutton yuwhite" value="添加视频" style="margin-left:50px;" />
+                <input type="submit" name="submitandshicai" id="submit_add" class="yubutton yuwhite" value="添加视频并添加制作流程 " style="margin-left:200px;" />
             </td>
         </tr>
 

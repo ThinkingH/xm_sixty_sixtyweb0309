@@ -7,30 +7,40 @@
  */
 class FoodAction extends Action {
     //定义各模块锁定级别
-    private $lock_addstep    = '9';
-    private $lock_addstep_do = '9';
-    private $editstep_do     = '9';
+    private $lock_addfood   = '7';
+    private $lock_addfood_do = '7';
 
     public function addfood() {
         //=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
         //判断用户是否登陆
-        $this->loginjudgeshow($this->lock_index);
+        $this->loginjudgeshow($this->lock_addfood );
         //拼接URL
         $echourl = func_baseurlcreate($_GET);
         $this->assign('echourl',$echourl);
         //=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
 
         //接收视频id
-        $v_id = trim($this->_post('video_id'));
+        $v_idp = trim($this->_post('video_id'));
+        $v_idg = trim($this->_get('to_video_id'));
 
+        if($v_idp == '' && $v_idg == '') {
+            echo "<script>alert('非法进入此页面！');history.go(-1);</script>";
+            $this -> error('非法进入此页面！');
+        }
+
+        if($v_idp != '') {
+            $v_id = $v_idp;
+        }else {
+            $v_id = $v_idg;
+        }
         //实例化方法
         $Model = new Model();
+        //查询材料
         $list_cailiao = $Model -> table('sixty_video_cailiao') -> field('id, name, vid, yongliang')
             -> where("vid='". $v_id ."'") -> select();
-
-        $len = count($list_cailiao);
-        if($len < 24) {
-            $i = $len + 1;
+        $len_c = count($list_cailiao);
+        if($len_c < 24) {
+            $i = $len_c + 1;
             for($i; $i<=24; $i++) {
                 $list_cailiao[$i]['name'] = '';
                 $list_cailiao[$i]['id'] = '';
@@ -54,41 +64,48 @@ class FoodAction extends Action {
             }
 
         }
+
         $this->assign('list_cailiao_8', $list_cailiao_8);
         $this->assign('list_cailiao_16', $list_cailiao_16);
         $this->assign('list_cailiao_24', $list_cailiao_24);
 
         //实例化方法
         $Model = new Model();
-        $list_buzhou = $Model -> table('sixty_video_buzhou') -> field('id, buzhouid, vid, buzhoucontent')
-            -> where("vid='". $v_id ."'") -> select();
 
-//        $len = count($list_buzhou);
-        if($len < 24) {
-            $i = $len + 1;
+        //查询步骤
+        $list_buzhou = $Model -> table('sixty_video_buzhou') -> field('id, buzhouid, vid, buzhoucontent')
+            -> where("vid='". $v_id ."'") -> order('buzhouid asc') -> select();
+
+        //判断结果集长度
+        $len_b = count($list_buzhou);
+
+        //长度不够用空数据补满
+        if($len_b < 24) {
+            $i = $len_b + 1;
             for($i; $i<=24; $i++) {
                 $list_buzhou[$i]['buzhouid'] = '';
                 $list_buzhou[$i]['id'] = '';
                 $list_buzhou[$i]['buzhoucontent'] = '';
             }
         }
+
+        //遍历结果集
         foreach($list_buzhou as $key_bz => $val_bz) {
+            //每8个键值对为一组，分为3组
             if($key_bz <= 8) {
                 $list_buzhou[$key_bz]['bz_flag'] = 'bz_flag'.$key_bz;
-//                $list_buzhou[$key_bz]['buid'] = $key_bz;
                 $list_buzhou8[] = $list_buzhou[$key_bz];
-            }else if($key_bz > 8 && $key_li <= 16) {
+            }else if($key_bz > 8 && $key_bz <= 16) {
                 $list_buzhou[$key_bz]['bz_flag'] = 'bz_flag'.$key_bz;
-//                $list_buzhou[$key_bz]['buid'] = $key_bz;
                 $list_buzhou16[] = $list_buzhou[$key_bz];
-            }else if($key_bz > 16 && $key_li <= 24) {
+            }else if($key_bz > 16 && $key_bz <= 24) {
                 $list_buzhou[$key_bz]['bz_flag'] = 'bz_flag'.$key_bz;
-//                $list_buzhou[$key_bz]['buid'] = $key_bz;
                 $list_buzhou24[] = $list_buzhou[$key_bz];
             }
 
         }
-//        var_dump($list_buzhou24);die;
+
+        //输出到模板
         $this->assign('list_buzhou8', $list_buzhou8);
         $this->assign('list_buzhou16', $list_buzhou16);
         $this->assign('list_buzhou24', $list_buzhou24);
@@ -98,46 +115,65 @@ class FoodAction extends Action {
     }
 
     public function addfood_do() {
+        //=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
+        //判断用户是否登陆
+        $this->loginjudgeshow($this->lock_addfood_do );
+        //拼接URL
+        $echourl = func_baseurlcreate($_GET);
+        $this->assign('echourl',$echourl);
+        //=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
+        //接收视频id
+        $v_idp = trim($this->_post('video_id'));
+        $v_idg = trim($this->_get('to_video_id'));
 
 
-        $v_id = trim($this->_post('video_id'));
+        //判断来源，接收数据为空返回非法
+        if($v_idp == '' && $v_idg == '') {
+            echo "<script>alert('非法进入此页面！');history.go(-1);</script>";
+            $this -> error('非法进入此页面！');
+        }
+
+        if($v_idp != '') {
+            $v_id = $v_idp;
+        }else {
+            $v_id = $v_idg;
+        }
         //实例化模型
         $Model = new Model();
+        //删除旧数据
         $res = $Model -> table('sixty_video_buzhou') -> where("vid='".$v_id."'") -> delete();
-
         $res = $Model -> table('sixty_video_cailiao') -> where("vid='".$v_id."'") -> delete();
 
+        //步骤添加
         //准备上传数据 input name
         //准备sql语句
         $sql_b = 'insert into sixty_video_buzhou (vid, buzhouid, buzhoucontent) select ';
 
-        $buzhouidarr = '';
         $basename = 'bz_flag';
-        $n = 1;
         //循环接收上传数据
-        for($i=1;$i<=24;$i++) {
-            $buzhouidarr = trim($this->_post($basename.$i));
-
-            if($buzhouidarr != '') {
-                $sql_b .= " '".$v_id."','" .$n."','".$buzhouidarr."' union all select";
+        $n = 1;
+        for($i=0;$i<=24;$i++) {
+            $buzhouarr = trim($this->_post($basename.$i));
+            if($buzhouarr != '') {
+                $sql_b .= " '".$v_id."','" .$n."','".$buzhouarr."' union all select";
                 $n++;
             }
         }
+
         $sql_b = substr($sql_b,0, -17);
 
-        $res_b =$Model -> query($sql_b);
+        $res_b =$Model -> execute($sql_b);
 
         //执行添加
         //材料sql语句
         $sql_c = 'insert into sixty_video_cailiao (vid, name, yongliang) select ';
 
         //准备上传数据 input name
-        $cailiaodarr = '';
         $basename_f = 'cl_flag';
         $basename_n = 'cl_name';
         $n = 1;
         //循环接收上传数据
-        for($i=1;$i<=24;$i++) {
+        for($i=0;$i<=24;$i++) {
             $cailiaod_f = trim($this->_post($basename_f.$i));
             $cailiaod_n = trim($this->_post($basename_n.$i));
 
@@ -150,12 +186,10 @@ class FoodAction extends Action {
         //去掉结尾的多余字符
         $sql_c = substr($sql_c,0, -17);
 
-//var_dump($sql_b);die;
         //实例化模型
         $Model = new Model();
-//        var_dump($sql_c);die;
         //执行添加
-        $res_c =$Model -> query($sql_c);
+        $res_c =$Model -> execute($sql_c);
 
         //判断结果
         if($res_c === false || $res_b === false) {

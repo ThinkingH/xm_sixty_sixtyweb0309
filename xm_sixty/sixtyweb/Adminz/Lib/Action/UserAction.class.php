@@ -8,12 +8,12 @@
 
 class UserAction extends Action{
     //定义各模块锁定级别
-    private $lock_index    = '9';
-    private $lock_edituser  = '9';
-    private $lock_edit_do = '9';
-    private $lock_deluser_do     = '9';
-    private $lock_adduser       = '9';
-    private $lock_adduser_x     = '9';
+    private $lock_index        = '7';
+    private $lock_edituser     = '7';
+    private $lock_edit_do      = '7';
+    private $lock_deluser_do   = '7';
+    private $lock_adduser      = '7';
+    private $lock_adduser_x    = '7';
 
     /*
      * 用户列表*/
@@ -91,12 +91,21 @@ class UserAction extends Action{
             if ($list[$key]['sex'] == 3) {
                 $list[$key]['sex'] = '保密';
             }
+
+
             if($list[$key]['is_lock'] == 1)
             {
-                $list[$key]['is_lock'] = "<span style='background-color: green; padding: 3px;'>1-已启用</span>";
+                $list[$key]['is_lock'] = "<span style='background-color: #33FF66; padding: 3px;'>1-已启用</span>";
             }else{
-                $list[$key]['is_lock'] = "<span style='background-color: red; padding: 3px;'>2-已禁用</span>";
+                $list[$key]['is_lock'] = "<span style='background-color: #FFFF00; padding: 3px;'>2-已禁用</span>";
             }
+            //获取七牛云图片
+            $showimg = $list[$key]['touxiang'];
+            $imgwidth = '100';
+            $imgheight = '100';
+            $addressimg = hy_qiniuimgurl('sixty-user',$showimg,$imgwidth,$imgheight);
+            $list[$key]['touxiang'] = "<img src='" . $addressimg . "' />";
+//            var_dump($list['touxiang']);die;
         }
 
         //start--------------------------------------------------------------
@@ -118,6 +127,8 @@ class UserAction extends Action{
         }
         $this -> assign('rootflag_show',$rootflag_show);
         //end--------------------------------------------------------------
+
+
 
         //准备要传递的数据数组
         $find_where = array(
@@ -476,7 +487,7 @@ class UserAction extends Action{
         }
 
         //检查昵称是否存在
-        $sql_nickname = "select is_lock, nickname from sixty_user where nickname='".$nickname."'";
+        $sql_nickname = "select is_lock, nickname, touxiang from sixty_user where nickname='".$nickname."'";
         $result_nickname = $Model -> query($sql_nickname);
 
         //判断用户昵称是否存在
@@ -491,6 +502,9 @@ class UserAction extends Action{
             echo "<script>alert('请先将用户【禁用】，然后再执行删除操作');history.go(-1);</script>";
             $this -> error('请先将用户【禁用】，然后再执行删除操作');
         }
+
+        //删除七牛云旧图片
+        delete_qiniu('sixty-user', $res_is = $result_nickname[0]['touxiang']);
 
         //执行删除操作
         $del_result = $Model -> table('sixty_user') -> where("nickname='".$nickname."'") -> delete();

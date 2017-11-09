@@ -52,81 +52,81 @@
 </div>
 
 
-<a href="javascript:history.go(-1);" class="yubutton yuwhite">返回视频列表</a>
+<a href="javascript:history.go(-1);" class="yubutton yuwhite">返回</a>
 <br/>
 <br/>
 
-<form action="__APP__/Food/addfood_do" method="post" style="display: inline-block;" >
+<form action="__APP__/Food/addfood_do" method="post" style=" width: 1280px;height: 1000px;" >
 
     <br/><br/>
-    <table class="table-edit" >
+    <table class="table-edit" style="display: inline-block; float: left;">
         <tr>
             <td colspan="3">
                 <b>编辑制作步骤</b>
             </td>
         </tr>
-        <tr class="class_buzhou">
-            <td width="50" align="left"><b>ID</b></td>
+        <tr>
+            <td width="20" align="left"><b>ID</b></td>
             <td width="50" align="left"><b>步骤顺序</b></td>
             <td width="600">
-                制作步骤
+                <b>具体方法</b>
             </td>
         </tr>
         <volist name="list_buzhou8" id="vo">
             <tr class="class_buzhou8">
-                <td width="60">
+                <td width="50">
                     {$vo.id}
                 </td>
-                <td width="60">
-                    <input value="{$vo.buzhouid}" name="{$vo.bz_flag}" type="text" maxlength="20" size="22">
+                <td width="50">
+                    <!--<input value="{$vo.buzhouid}" name="{$vo.bu}" type="text" maxlength="3" size="4">-->
+                    {$vo.buzhouid}
                 </td>
                 <td width="60" align="left">
-                    <input value="{$vo.buzhoucontent}" name="buzhou{$vo.buid}" type="text" maxlength="20" size="22">
+                    <input value="{$vo.buzhoucontent}" name="{$vo.bz_flag}" type="text" maxlength="100" size="80">
                 </td>
             </tr>
         </volist>
         <volist name="list_buzhou16" id="vo">
             <tr class="class_buzhou16">
-                <td width="60">
+                <td>
                     {$vo.id}
                 </td>
-                <td width="60">
-                    <input value="{$vo.buzhouid}" name="{$vo.bz_flag}" type="text" maxlength="20" size="22">
+                <td width="50">
+                    <!--<input value="{$vo.buzhouid}" name="{$vo.bu}" type="text" maxlength="3" size="4">-->
+                    {$vo.buzhouid}
                 </td>
-                <td width="60">
-                    <input value="{$vo.buzhoucontent}" name="buzhou{$vo.buid}" type="text" maxlength="20" size="22">
+                <td>
+                    <input value="{$vo.buzhoucontent}" name="buzhou{$vo.buid}" type="text" maxlength="100" size="80">
                 </td>
             </tr>
         </volist>
         <volist name="list_buzhou24" id="vo">
             <tr class="class_buzhou24">
-                <td width="60">
+                <td>
                     {$vo.id}
                 </td>
-                <td width="60">
-                    <input value="" name="{$vo.bz_flag}" type="text" maxlength="20" size="22">
+                <td width="50">
+                    <!--<input value="{$vo.buzhouid}" name="{$vo.bu}" type="text" maxlength="3" size="4">-->
+                    {$vo.buzhouid}
                 </td>
-                <td width="60">
-                    <input value="{$vo.buzhoucontent}" name="buhzou{$vo.buid}" type="text" maxlength="20" size="22">
+                <td>
+                    <input value="{$vo.buzhoucontent}" name="buhzou{$vo.buid}" type="text" maxlength="100" size="80">
                 </td>
             </tr>
         </volist>
         <tr>
             <td colspan="3">
-                <input type="submit" id="button_add" class="yubutton yuwhite" value="提交添加"
-                       style="margin-left:270px;margin-top:0px;" />
+                <input type="submit" id="button_add" class="yubutton yuwhite" value="提交本页所有数据"
+                       style="margin-left:50px;margin-top:0px;" />
                 <input type="hidden" value="{$video_id}" name="video_id" />
-                <button type="button" id="add_b_16" class="">更多</button>
-                <button type="button" id="add_b_24" class="">更多</button>
+                <button type="button" id="add_b_16" class="yubutton yuwhite" style="margin-left: 400px;">显示更多</button>
+                <button type="button" id="add_b_24" class="yubutton yuwhite" style="margin-left: 400px;">显示更多</button>
             </td>
         </tr>
     </table>
 
-<!--</form>-->
-<!--<form action="__APP__/Step/addstep_do" method="post" style="display: inline-block;" >-->
-
     <br/><br/>
-    <table class="table-edit" >
+    <table class="table-edit" style="float: left;display: inline-block;position: relative;top:-36px;" >
         <tr>
             <td colspan="3">
                 <b>编辑制作食材</b>
@@ -136,12 +136,12 @@
             <td width="50" align="left"><b>ID</b></td>
             <td width="50" align="left"><b>食材名称</b></td>
             <td width="100">
-                制作食材
+                食材用量
             </td>
         </tr>
         <volist name="list_cailiao_8" id="vo">
             <tr class="class_cailiao8">
-                <td width="60">
+                <td width="50">
                     {$vo.id}
                 </td>
                 <td width="60">
@@ -154,36 +154,36 @@
         </volist>
         <volist name="list_cailiao_16" id="vo" >
             <tr class="class_cailiao16">
-                <td width="60">
+                <td width="50">
                     {$vo.id}
                 </td>
-                <td width="60">
+                <td>
                     <input value="{$vo.id}" name="{$vo.have}" type="text" maxlength="20" size="22">
                 </td>
-                <td width="60">
+                <td>
                     <input value="{$vo.id}" name="{$vo.have}" type="text" maxlength="20" size="22">
                 </td>
             </tr>
         </volist>
         <volist name="list_cailiao_24" id="vo">
             <tr class="class_cailiao24">
-                <td width="60">
+                <td>
                     {$vo.id}
                 </td>
-                <td width="60">
+                <td>
                     <input value="{$vo.id}" name="{$vo.have}" type="text" maxlength="20" size="22">
                 </td>
-                <td width="60">
+                <td>
                     <input value="{$vo.id}" name="{$vo.have}" type="text" maxlength="20" size="22">
                 </td>
             </tr>
         </volist>
         <tr>
             <td colspan="3">
-                <input type="submit" id="button_add" class="yubutton yuwhite" value="提交添加" style="margin-left:270px;margin-top:0px;" />
+                <!--<input type="submit" id="button_add" class="yubutton yuwhite" value="提交添加" style="margin-left:10px;margin-top:0px;" />-->
                 <input type="hidden" value="{$video_id}" name="video_id" />
-                <button type="button" id="add_c_16" class="">更多</button>
-                <button type="button" id="add_c_24" class="">更多</button>
+                <button type="button" id="add_c_16" class="yubutton yuwhite" style="margin-left: 300px;">显示更多</button>
+                <button type="button" id="add_c_24" class="yubutton yuwhite" style="margin-left: 300px;">显示更多</button>
                 <!--{$video_id}-->
             </td>
         </tr>
@@ -191,9 +191,6 @@
     </table>
 
 </form>
-
-<br/><br/><br/><br/><br/><br/>
-End!
 
 </body>
 </html>

@@ -74,6 +74,17 @@
             </td>
         </tr>
         <tr>
+            <td align="right">是否启用该视频：</td>
+            <td >
+                <select name="sflag">
+                    {$sflag_show}
+                </select>
+                <font color="orange" size="-2">
+                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;选择是否设为首页展示
+                </font>
+            </td>
+        </tr>
+        <tr>
             <td align="right">填写视频主标题：</td>
             <td width="700">
                 <input style="width:500px;" type="text" maxlength="20" name="biaoti" id="biaoti" value="{$list.biaoti}" onkeydown="if(event.keyCode=='32'){return false;}" />
@@ -199,7 +210,8 @@
         <tr>
             <td width="150" align="right">上传视频：</td>
             <td width="700">
-                <input style="width:250px;" type="text" name="ecit_videosavename" id="edit_videosavename" onkeydown="if(event.keyCode=='32'){return false;}"/>
+                <input style="width:250px;" type="text" name="edit_videosavename" id="edit_videosavename" onkeydown="if(event.keyCode=='32'){return false;}"
+                value="{$list.videosavename}"/>
             </td>
         </tr>
         <tr>
