@@ -76,6 +76,7 @@ class MenuAction extends Action {
                     'murl_name' => '网站配置',
                     'curl_name' => array(
                         array('f', '网站配置', '/Webconfig/index'),
+                        array('f', 'APP版本', '/Versioninfo/index'),
                     ),
                 ),
 				array(
@@ -100,76 +101,62 @@ class MenuAction extends Action {
 		
 		//----------------------------------------------------------------------------------------------------
 		$urlarr7 = array(
-				
-				array(
-						'murl_name' => '用户状态',
-						'curl_name' => array(
-								array('f', '用户在线状态' ,    '/Taskrelease/userstate' , ),
-						),
-				),
-				array(
-						'murl_name' => '数据处理工具',
-						'curl_name' => array(
-								array('f', '省份去重求和统计' ,  '/Hytool/provincehebingsum' , ),
-								array('f', '数据去重工具' ,  '/Hytool/dataunique' , ),
-								array('f', '数据切割提取' ,  '/Hytool/dataexplode' , ),
-						),
-				),
-				array(
-						'murl_name' => '配置信息',
-						'curl_name' => array(
-								array('f', '运营商数据管理' ,   '/Operatorcode/index' , ),
-								array('q', '--------------------' , '#' , ),
-								
-						),
-				),
-				array(
-						'murl_name' => '网关数据',
-						'curl_name' => array(
-								array('f', '网关黑名单添加' ,   '/Operatordata/blackphoneadd' , ),
-								array('f', '网关黑名单查询' ,   '/Operatordata/blackphoneselect' , ),
-								array('f', '网关黑名单删除' ,   '/Operatordata/blackphonedelete' , ),
-								array('q', '--------------------' , '#' , ),
-								array('f', '网关白名单添加' ,   '/Operatordata/writephoneadd' , ),
-								array('q', '--------------------' , '#' , ),
-								array('f', '包月用户统计' ,    '/Operatordata/baoyuecount' , ),
-								array('f', '包月用户浏览' ,    '/Operatordata/baoyueuser' , ),
-								array('q', '--------------------' , '#' , ),
-								array('f', '网关上下行统计' , '/Operatordata/shangxiaxingcount' , ),
-								array('f', '手机号上下行记录' , '/Operatordata/shangxiaxingphonedata' , ),
-								array('f', '网关对内同步日志' ,   '/Operatordata/operator_sendlog' , ),
-								array('q', '--------------------' , '#' , ),
-								array('f', '包月话单查看' ,   '/Operatordata/huadanchakan' , ),
-								array('f', '包月话单统计' ,   '/Operatordata/huadantongji' , ),
-								array('q', '--------------------' , '#' , ),
-								array('f', '单条指定下行推送' ,   '/Operatordata/xiaxing_phonelinkid' , ),
-								array('f', '反向订购退订操作' ,   '/Operatordata/fanxiang_servicecodemo' , ),
-				
-						),
-				),
-				array(
-						'murl_name' => '数据迁移',
-						'curl_name' => array(
-								
-						),
-				),
-				array(
-						'murl_name' => '系统管理',
-						'curl_name' => array(
-								array('f', '编辑操作用户' ,   '/Root/editoruser' , ),
-								array('f', '用户操作日志记录' , '/Root/caozuo_log' , ),
-								array('f', '管理员操作文档' ,  '/Root/roottext' , ),
-								array('f', '管理公告修改' ,   '/Root/gonggao' , ),
-						),
-				),
-				array(
-						'murl_name' => '用户操作',
-						'curl_name' => array(
-								array('f', '当前用户信息' ,  '/Main/index' , ),
-								array('f', '用户密码修改' ,  '/Passwdrewrite/index' , ),
-								array('t', '退出系统'    ,  '/Login/logout' , ),
-						),
-				),
+
+            array(
+                'murl_name' => '用户状态',
+                'curl_name' => array(
+                    array('f', '用户在线状态' ,    '/Taskrelease/userstate' , ),
+                ),
+            ),
+            array(
+                'murl_name' => '数据处理工具',
+                'curl_name' => array(
+                    array('f', '省份去重求和统计' ,  '/Hytool/provincehebingsum' , ),
+                    array('f', '数据去重工具' ,  '/Hytool/dataunique' , ),
+                    array('f', '数据切割提取' ,  '/Hytool/dataexplode' , ),
+                ),
+            ),
+            array(
+                'murl_name' => '用户管理',
+                'curl_name' => array(
+                    array('f', '用户列表', '/User/index'),
+                ),
+            ),
+            array(
+                'murl_name' => '视频管理',
+                'curl_name' => array(
+                    array('f', '视频列表', '/Video/index'),
+                ),
+            ),
+            array(
+                'murl_name' => '评论管理',
+                'curl_name' => array(
+                    array('f', '评论列表', '/Pinglun/pinglun'),
+                    array('f', '投稿列表', '/Pinglun/tougao'),
+                ),
+            ),
+            array(
+                'murl_name' => '分类合集',
+                'curl_name' => array(
+                    array('f', '合集信息', '/Gather/index'),
+                    array('f', '分类信息', '/Classmsg/index'),
+                ),
+            ),
+            array(
+                'murl_name' => '网站配置',
+                'curl_name' => array(
+                    array('f', '网站配置', '/Webconfig/index'),
+                    array('f', 'APP版本', '/Versioninfo/index'),
+                ),
+            ),
+            array(
+                'murl_name' => '用户操作',
+                'curl_name' => array(
+                    array('f', '当前用户信息' ,  '/Main/index' , ),
+                    array('f', '用户密码修改' ,  '/Passwdrewrite/index' , ),
+                    array('t', '退出系统'    ,  '/Login/logout' , ),
+                ),
+            ),
 				
 		);
 		

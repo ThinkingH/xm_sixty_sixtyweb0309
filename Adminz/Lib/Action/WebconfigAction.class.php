@@ -8,12 +8,12 @@
 
 class WebconfigAction extends Action{
     //定义各模块锁定级别
-    private $lock_index    = '9';
+    private $lock_index    = '7';
     private $lock_editconfig  = '9';
     private $lock_editconfig_do = '9';
     private $lock_delconfig_do     = '9';
-    private $lock_adduser       = '9';
-    private $lock_adduser_x     = '9';
+    private $lock_addconfig       = '9';
+    private $lock_addconfig_do     = '9';
 
     /*
      * 网站配置列表

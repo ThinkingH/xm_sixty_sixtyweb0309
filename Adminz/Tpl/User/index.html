@@ -53,7 +53,7 @@
         <td width="120"><b>用户昵称</b></td>
         <td width="100"><b>电话</b></td>
         <td width="100"><b>微信openid标识</b></td>
-        <td width="80"><b>头像</b></td>
+        <td width="120"><b>头像</b></td>
         <td width="150"><b>注册时间</b></td>
         <td width="200"><b>邮箱</b></td>
         <td width="100"><b>微信</b></td>
@@ -89,7 +89,9 @@
             <td>{$vo.nickname}</td>
             <td>{$vo.phone}</td>
             <td>{$vo.openid}</td>
-            <td><img src="{$vo.touxiang}" style="height: 70px; width: 70px;"></td>
+            <td>
+                {$vo.touxiang}
+            </td>
             <td>{$vo.create_datetime}</td>
             <td>{$vo.email}</td>
             <td>{$vo.weixin}</td>

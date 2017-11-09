@@ -7,12 +7,12 @@
  */
 class ClassmsgAction extends Action{
     //定义各模块锁定级别
-    private $lock_index = '9';
-    private $lock_addgat = '9';
-    private $lock_addgat_do = '9';
-    private $lock_editgat_do = '9';
-    private $lock_editgat = '9';
-    private $lock_delgat_do = '9';
+    private $lock_index = '7';
+    private $lock_addclassmsg = '7';
+    private $lock_addclassmsg_do = '7';
+    private $lock_editclassmsg_do = '7';
+    private $lock_editclassmsg = '7';
+    private $lock_delclassmsg_do = '7';
 
     public function index(){
         //=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
@@ -71,7 +71,7 @@ class ClassmsgAction extends Action{
     public function addclassmsg(){
         //=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
         //判断用户是否登陆
-        $this->loginjudgeshow($this->lock_index);
+        $this->loginjudgeshow($this->lock_addclassmsg);
         //返回URL地址
         $echourl = func_baseurlcreate($_GET);
         $this->assign('echourl',$echourl);
@@ -104,7 +104,7 @@ class ClassmsgAction extends Action{
     public function addclassmsg_do(){
         //=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
         //判断用户是否登陆
-        $this->loginjudgeshow($this->lock_index);
+        $this->loginjudgeshow($this->lock_addclassmsg_do);
         //返回URL地址
         $echourl = func_baseurlcreate($_GET);
         $this->assign('echourl',$echourl);
@@ -162,7 +162,7 @@ class ClassmsgAction extends Action{
     public function editclassmsg(){
         //=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
         //判断用户是否登陆
-        $this->loginjudgeshow($this->lock_index);
+        $this->loginjudgeshow($this->lock_editclassmsg);
         //返回URL地址
         $echourl = func_baseurlcreate($_GET);
         $this->assign('echourl',$echourl);
@@ -220,7 +220,7 @@ class ClassmsgAction extends Action{
     public function editclassmsg_do(){
         //=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
         //判断用户是否登陆
-        $this->loginjudgeshow($this->lock_index);
+        $this->loginjudgeshow($this->lock_editclassmsg_do);
         //返回URL地址
         $echourl = func_baseurlcreate($_GET);
         $this->assign('echourl',$echourl);
@@ -276,7 +276,7 @@ class ClassmsgAction extends Action{
     public function delclassmsg_do(){
         //=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
         //判断用户是否登陆
-        $this->loginjudgeshow($this->lock_index);
+        $this->loginjudgeshow($this->lock_delclassmsg_do);
         //返回URL地址
         $echourl = func_baseurlcreate($_GET);
         $this->assign('echourl',$echourl);

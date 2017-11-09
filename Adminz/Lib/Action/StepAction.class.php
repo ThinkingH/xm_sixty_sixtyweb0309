@@ -168,7 +168,6 @@ class StepAction extends Action{
         //准备sql语句
         $sql_new = 'insert into sixty_video_buzhou (vid, buzhouid, buzhoucontent) select ';
 
-
         //循环接收上传数据
         $n = 1;
         for($i=1;$i<=20;$i++) {

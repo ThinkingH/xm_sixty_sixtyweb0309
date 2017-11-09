@@ -43,8 +43,9 @@
                 $("#showimg").attr('src',e.target.result);
                 document.getElementById('localBase64StrContainer').value = e.target.result;
             }
-            read.readAsDataURL(src)
+            read.readAsDataURL(src);
         };
+
     </script>
 </head>
 
@@ -100,7 +101,7 @@
             </td>
         </tr>
         <tr style="height: 200px;">
-            <td align="right">上传合集图片：</td>
+            <td align="right">上传集合图片：</td>
             <td>
                 <img id="edit_showimg" src="" style="width: 100px; height: 100px;" />
                 <br/>
@@ -110,11 +111,11 @@
 
         <tr>
             <td colspan="2">
-                <input type="submit" name="submit" id="submit_edit" class="yubutton yuwhite" value="提交修改" style="margin-left:220px;" />
+                <input type="submit" name="submit" id="submit_edit" class="yubutton yuwhite" value="提交修改" style="margin-left:50px;" />
                 </form>
                 <form method="post" action="__APP__/Gather/delgat_do{$echourl}" style="display:inline;margin:0px;padding:0px; width: 100px; height: 50px;">
                     <input type="hidden" name="del_id" value="{$list.id}" />
-                    <input type="submit" name="submitdel" id="submitdel" class="yubuttons yuwhite" value="删除此合集" style="margin-left: 440px;margin-top:10px; "/>
+                    <input type="submit" name="submitdel" id="submitdel" class="yubuttons yuwhite" value="删除此合集" style="margin-left: 250px;margin-top:10px; "/>
                 </form>
             </td>
         </tr>
