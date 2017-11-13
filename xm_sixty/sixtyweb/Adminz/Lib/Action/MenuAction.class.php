@@ -84,6 +84,7 @@ class MenuAction extends Action {
                     'curl_name' => array(
                         array('f', '网站配置', '/Webconfig/index'),
                         array('f', 'APP版本', '/Versioninfo/index'),
+                        array('f', '系统通知', '/Notice/index'),
                     ),
                 ),
 				array(
@@ -154,6 +155,7 @@ class MenuAction extends Action {
                 'curl_name' => array(
                     array('f', '网站配置', '/Webconfig/index'),
                     array('f', 'APP版本', '/Versioninfo/index'),
+                    array('f', '系统通知', '/Notice/index'),
                 ),
             ),
             array(
