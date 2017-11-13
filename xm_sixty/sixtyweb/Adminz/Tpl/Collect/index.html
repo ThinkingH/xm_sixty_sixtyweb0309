@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <load href="__PUBLIC__/Css/main.css" />
+
+    <script type="text/javascript" src="__PUBLIC__/Js/jquery.min.js"></script>
+    <script type="text/javascript" src="__PUBLIC__/Js/themain.js"></script>
+    <script language="javascript" type="text/javascript" src="__PUBLIC__/Js/datexxx/WdatePicker.js"></script>
+    <script type="text/javascript">
+
+    </script>
+
+</head>
+<body>
+<div class="hy_daohangtiao">
+    当前位置&nbsp;#&nbsp;用户管理&nbsp;#&nbsp;用户列表&nbsp;#&nbsp;收藏信息列表
+</div>
+<a href="javascript:history.go(-1);" class="yubutton yuwhite">后退</a>
+<br/>
+<br/>
+<table class="table-list" width="">
+    <thead>
+    <tr>
+        <td width="50">收藏ID</td>
+        <td width="50">用户ID</td>
+        <td width="50"><b>藏品ID</b></td>
+        <td width="50"><b>类型</b></td>
+        <td width="200"><b>收藏内容</b></td>
+        <td width="150"><b>更新日期</b></td>
+    </tr>
+    </thead>
+
+    <tbody>
+    <volist name="list" id="vo" empty="没有对应数据" >
+        <tr>
+            <!--<td>-->
+                <!--<form action="__APP__/Versioninfo/editversion" method="post" style="margin:0px" >-->
+                    <!--<input type="hidden" name="id" value="{$vo.id}"  />-->
+                    <!--<input type="submit" class="yubuttons yuwhite" name="editversionbutton" value="编辑" />-->
+                <!--</form>-->
+            <!--</td>-->
+            <td>{$vo.id}</td>
+            <td>{$vo.userid}</td>
+            <td>{$vo.dataid}</td>
+            <td>{$vo.type}</td>
+            <td>{$vo.video_biaoti}</td>
+            <td>{$vo.create_datetime}</td>
+        </tr>
+    </volist>
+
+    </tbody>
+</table>
+
+<br/><br/>
+
+<center>{$page}</center>
+
+<br/><br/><br/><br/><br/><br/>
+End!
+
+</body>
+</html>

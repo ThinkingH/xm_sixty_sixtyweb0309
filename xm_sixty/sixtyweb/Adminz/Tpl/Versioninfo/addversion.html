@@ -1,0 +1,99 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <load href="__PUBLIC__/Css/main.css" />
+
+    <script type="text/javascript" src="__PUBLIC__/Js/jquery.min.js"></script>
+    <script type="text/javascript" src="__PUBLIC__/Js/themain.js"></script>
+    <script type="text/javascript" src="__PUBLIC__/Js/md5.js"></script>
+    <script type="text/javascript">
+        $("document").ready(function(){
+
+        });
+
+    </script>
+</head>
+
+
+<body>
+<div class="hy_daohangtiao">
+    当前位置&nbsp;#&nbsp;网站管理&nbsp;#&nbsp;版本信息&nbsp;#&nbsp;添加版本信息页面
+</div>
+
+<a href="javascript:history.go(-1);" class="yubutton yuwhite">返回版本信息列表</a>
+<br/>
+<br/>
+
+<form action="__APP__/Versioninfo/addversion_do" method="post" >
+
+    &nbsp;&nbsp;&nbsp;
+
+
+    <br/><br/>
+    <table class="table-edit" >
+        <tr>
+            <td width="60" align="right"><b>版本号:</b></td>
+            <td width="600">
+                <input type="text" name="version" maxlength="30" style="width: 300px;"/>
+            </td>
+        </tr>
+
+        <tr>
+            <td align="right"><b>版本状态:</b></td>
+            <td>
+                <select name="flag">
+                {$flag}
+                </select>
+            </td>
+        </tr>
+
+        <tr>
+            <td align="right"><b>强制更新:</b></td>
+            <td>
+                <select name="type">
+                    {$type}
+                </select>
+            </td>
+        </tr>
+
+        <tr>
+            <td align="right"><b>系统类型:</b></td>
+            <td>
+                <input type="text" name="system" maxlength="10" size="11"/>
+            </td>
+        </tr>
+
+        <tr>
+            <td align="right"><b>下载地址:</b></td>
+            <td>
+                <input type="text" name="url" maxlength="200" size="80"/>
+            </td>
+        </tr>
+
+        <tr>
+            <td align="right"><b>版本描述:</b></td>
+            <td>
+
+            <textarea rows="4" cols="80" style="resize: none;" onchange="this.value=this.value.substring(0, 200)"
+          onkeydown="this.value=this.value.substring(0, 200)" onkeyup="this.value=this.value.substring(0, 200)"
+          id="" name="updesc"></textarea>
+            </td>
+        </tr>
+
+        <tr>
+            <td colspan="2">
+                <input type="submit" name="submit" id="submit_add" class="yubutton yuwhite" value="添加版本信息" style="margin-left:50px;margin-top:0px;" />
+            </td>
+        </tr>
+    </table>
+
+</form>
+
+<br/><br/><br/><br/><br/><br/>
+End!
+
+</body>
+</html>
+
+

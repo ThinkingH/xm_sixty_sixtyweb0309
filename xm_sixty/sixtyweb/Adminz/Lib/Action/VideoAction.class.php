@@ -60,20 +60,6 @@ class VideoAction extends Action{
             $heji_arr[$val_heji['id']] = $val_heji['name'];
         }
 
-//        //        动态下拉列表、
-//        //start--------------------------------------------------------------
-//        //动态生成权限下拉选项
-//        $videoheji_show = '';
-//        foreach($heji_arr as $keyr => $valr) {
-//            $videoheji_show .= '<option value="'.$keyr.'" ';
-//            if($keyr==$lock) {
-//                $videoheji_show .= ' selected="selected"';
-//            }
-//            $videoheji_show .= '>'.$valr.'</option>';
-//        }
-//
-//        $this -> assign('videoheji_show',$videoheji_show);
-//        //end--------------------------------------------------------------
 
         //查询分类
         $Model = new Model();
@@ -142,6 +128,8 @@ class VideoAction extends Action{
 
         //判断是否有查询条件
         $condition = "(biaoti like '%" . $find_biaoti . "%' or biaotichild like '%" . $find_biaoti . "%')";
+
+
         //判断是否查询创建时间
         if ($find_maketime != '') {
             $condition .= " and maketime = '" . $find_maketime . "'";
@@ -265,7 +253,7 @@ class VideoAction extends Action{
         $list = $Model->table('sixty_video')
             ->field('id, flag, sflag, classify1, classify2, classify3, classify4, msgjihe, showimg, videosavename, biaoti,
              biaotichild, fenshu, jieshao, maketime, huafeimoney, tishishuoming, create_datetime')
-            -> where($condition) -> order('id desc') -> limit($Page->firstRow . ',' . $Page->listRows)->select();
+            -> where($condition) -> order('id desc') -> limit($Page->firstRow . ',' . $Page->listRows) ->select();
         //判断是否有数据取出
         $num = count($list);
         if ($num <= 0) {
@@ -1018,10 +1006,10 @@ class VideoAction extends Action{
 
     }
 
+
+    //动态下拉列表
     public function downlist($arr, $lock=''){
 
-        //        动态下拉列表、
-        //start--------------------------------------------------------------
         //动态生成权限下拉选项
         //$lock为空时，关联数组array[0]未默认选项
         $res_arr = '';
@@ -1038,6 +1026,5 @@ class VideoAction extends Action{
         }
         return $res_arr;
 
-        //end--------------------------------------------------------------
     }
 }

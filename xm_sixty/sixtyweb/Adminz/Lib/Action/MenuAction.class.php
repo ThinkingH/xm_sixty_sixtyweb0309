@@ -56,6 +56,7 @@ class MenuAction extends Action {
                     'murl_name' => '视频管理',
                     'curl_name' => array(
                         array('f', '视频列表', '/Video/index'),
+                        array('f', '收藏列表', '/Collect/statistics'),
                     ),
                 ),
                 array(
@@ -70,6 +71,12 @@ class MenuAction extends Action {
                 'curl_name' => array(
                     array('f', '合集信息', '/Gather/index'),
                     array('f', '分类信息', '/Classmsg/index'),
+                    ),
+                ),
+                array(
+                    'murl_name' => '反馈建议',
+                    'curl_name' => array(
+                        array('f', '建议列表', '/Suggest/index'),
                     ),
                 ),
                 array(
@@ -147,6 +154,12 @@ class MenuAction extends Action {
                 'curl_name' => array(
                     array('f', '网站配置', '/Webconfig/index'),
                     array('f', 'APP版本', '/Versioninfo/index'),
+                ),
+            ),
+            array(
+                'murl_name' => '反馈建议',
+                'curl_name' => array(
+                    array('f', '建议列表', '/Suggest/index'),
                 ),
             ),
             array(
