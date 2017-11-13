@@ -1,0 +1,108 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <load href="__PUBLIC__/Css/main.css" />
+
+    <script type="text/javascript" src="__PUBLIC__/Js/jquery.min.js"></script>
+    <script type="text/javascript" src="__PUBLIC__/Js/themain.js"></script>
+    <script type="text/javascript" src="__PUBLIC__/Js/md5.js"></script>
+    <script type="text/javascript">
+        $("document").ready(function(){
+
+            $("#submitedit").click(function(){
+
+                var message = $("#message").val();
+
+                if(message == '') {
+                    alert('通知内容不能为空！');
+                    return false;
+                }
+
+                if(confirm("您确认要编辑此条系统通知吗？")) {
+
+                }else {
+                    return false;
+                }
+
+            });
+
+
+            $("#submitdel").click(function(){
+                if(confirm("您确认要删除此系统通知吗？")) {
+                    //alert('ok');
+
+                }else {
+                    return false;
+                }
+            });
+
+        });
+
+
+    </script>
+</head>
+
+
+<body>
+<div class="hy_daohangtiao">
+    当前位置&nbsp;#&nbsp;网站管理&nbsp;#&nbsp;系统通知&nbsp;#&nbsp;系统通知修改页面
+</div>
+
+
+<a href="javascript:history.go(-1);" class="yubutton yuwhite">返回系统通知列表</a>
+<br/>
+<br/>
+
+<form action="__APP__/Notice/editnotice_do" method="post" >
+
+    &nbsp;&nbsp;&nbsp;
+
+
+    <br/><br/>
+    <table class="table-edit" >
+        <tr>
+            <td width="50" align="right"><b>通知ID:</b></td>
+            <td width="600">
+                {$list['id']}
+            </td>
+        </tr>
+        <tr>
+            <td width="50"><b>通知内容</b></td>
+            <td width="600">
+
+            <textarea rows="5" cols="50" style="resize: none;" onchange="this.value=this.value.substring(0, 100)"
+                      onkeydown="this.value=this.value.substring(0, 100)" onkeyup="this.value=this.value.substring(0, 100)"
+                      id="message" name="message">{$list['message']}</textarea>
+                <font color="orange" size="-2">
+                    通知内容最多100字
+                </font>
+            </td>
+        </tr>
+
+
+        <tr>
+            <td colspan="2">
+                <input type="hidden" name="editnotice_id" value="{$list['id']}" />
+                <input type="submit" name="submitedit" id="submitedit" class="yubutton yuwhite" value="提交修改" style="margin-left:50px;margin-top:0px;" />
+</form>
+<form method="post" action="__APP__/Notice/delnotice_do" style="margin:0px;padding:0px; display: inline;">
+    <input type="hidden" name="delconfig_id" value="{$list['id']}" />
+    <input type="submit" name="submitdel" id="submitdel" class="yubuttons yuwhite" value="删除此通知" style="margin-left:406px;margin-top:0px;"/>
+</form>
+            </td>
+        </tr>
+
+        </table>
+
+
+
+
+
+<br/><br/><br/><br/><br/><br/>
+End!
+
+</body>
+</html>
+
+
