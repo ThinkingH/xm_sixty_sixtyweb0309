@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <load href="__PUBLIC__/Css/main.css" />
+
+    <script type="text/javascript" src="__PUBLIC__/Js/jquery.min.js"></script>
+    <script type="text/javascript" src="__PUBLIC__/Js/themain.js"></script>
+    <script language="javascript" type="text/javascript" src="__PUBLIC__/Js/datexxx/WdatePicker.js"></script>
+    <script type="text/javascript">
+
+    </script>
+
+</head>
+<body>
+<div class="hy_daohangtiao">
+    当前位置&nbsp;#&nbsp;网站管理&nbsp;#&nbsp;版本信息&nbsp;#&nbsp;版本信息列表
+</div>
+<a href="__APP__/Versioninfo/addversion" class="yubutton yuwhite">添加版本信息</a>
+<br/>
+<br/>
+<table class="table-list" width="1000">
+    <thead>
+    <tr>
+        <td width="50">操作</td>
+        <td width="50">ID</td>
+        <td width="100"><b>版本号</b></td>
+        <td width="50"><b>版本状态</b></td>
+        <td width="60"><b>更新状态</b></td>
+        <td width="60"><b>系统类型</b></td>
+        <td width="450"><b>下载地址</b></td>
+        <td width="300"><b>版本描述</b></td>
+        <td width="100"><b>更新日期</b></td>
+    </tr>
+    </thead>
+
+    <tbody>
+    <volist name="list" id="vo" empty="没有对应数据" >
+        <tr>
+            <td>
+                <form action="__APP__/Versioninfo/editversion" method="post" style="margin:0px" >
+                    <input type="hidden" name="id" value="{$vo.id}"  />
+                    <input type="submit" class="yubuttons yuwhite" name="editversionbutton" value="编辑" />
+                </form>
+            </td>
+            <td>{$vo.id}</td>
+            <td>{$vo.version}</td>
+            <td>{$vo.flag}</td>
+            <td>{$vo.uptype}</td>
+            <td>{$vo.system}</td>
+            <td>{$vo.apk_url}</td>
+            <td>{$vo.updesc}</td>
+            <td>{$vo.update_date}</td>
+
+        </tr>
+    </volist>
+    </tbody>
+</table>
+<br/><br/>
+
+<center>{$page}</center>
+
+<br/><br/><br/><br/><br/><br/>
+End!
+</body>
+</html>

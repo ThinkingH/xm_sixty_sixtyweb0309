@@ -68,7 +68,6 @@ class UserAction extends Action{
         import('ORG.Page');// 导入分页类
         $count = $Model->table('sixty_user')
             ->where($condition)
-            ->order('create_datetime DESC')
             ->count();// 查询满足要求的总记录数
         $Page = new Page($count, 100);// 实例化分页类 传入总记录数和每页显示的记录数
         $show = $Page->show();// 分页显示输出

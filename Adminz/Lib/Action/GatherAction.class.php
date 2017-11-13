@@ -69,11 +69,25 @@ class GatherAction extends Action{
         );
         $this->assign('find_where', $find_where);
 
+
         //准备查询数组
         $Model = new Model();
+
+        //分页
+        import('ORG.Page');// 导入分页类
+        $count = $Model->table('sixty_jihemsg')
+            ->where($where)
+            ->count();// 查询满足要求的总记录数
+        $Page = new Page($count, 20);// 实例化分页类 传入总记录数和每页显示的记录数
+        $show = $Page->show();// 分页显示输出
+        // 进行分页数据查询 注意limit方法的参数要使用Page类的属性
+        $this->assign('page', $show);// 赋值分页输出
+
+
         //查询集合数据表
         $list = $Model -> table('sixty_jihemsg') -> field('id, name, showimg, content, remark, create_datetime')
-            -> where($where) -> order('create_datetime desc') -> select();
+            -> where($where) -> order('create_datetime desc') -> limit($Page->firstRow . ',' . $Page->listRows)
+            -> select();
 
         foreach($list as $key_li => $val_li) {
             //获取七牛云图片

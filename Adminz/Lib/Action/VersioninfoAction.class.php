@@ -8,11 +8,11 @@
 class VersioninfoAction extends Action {
     //定义各模块锁定级别
     private $lock_index         = '7';
-    private $lock_delvideo_do   = '7';
-    private $lock_addvideo      = '7';
-    private $lock_addvideo_do   = '7';
-    private $lock_editvideo     = '7';
-    private $lock_editvideo_do  = '7';
+    private $lock_delversion_do   = '7';
+    private $lock_addversion      = '7';
+    private $lock_addversion_do   = '7';
+    private $lock_editversion    = '7';
+    private $lock_editversion_do  = '7';
 
     public function index() {
         //=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
@@ -26,10 +26,20 @@ class VersioninfoAction extends Action {
         //实例化方法
         $Model = new Model();
 
+        //分页
+        import('ORG.Page');// 导入分页类
+        $count = $Model->table('sixty_versioninfo')
+            ->where($condition)
+            ->count();// 查询满足要求的总记录数
+        $Page = new Page($count, 20);// 实例化分页类 传入总记录数和每页显示的记录数
+        $show = $Page->show();// 分页显示输出
+        // 进行分页数据查询 注意limit方法的参数要使用Page类的属性
+        $this->assign('page', $show);// 赋值分页输出
 
         //执行查询
         $list = $Model -> table('sixty_versioninfo')
             -> field('id, flag, system, version, uptype, apk_url, updesc, update_date')
+            -> limit($Page->firstRow . ',' . $Page->listRows)
             -> select();
 
         //修改结果集内容
@@ -94,7 +104,7 @@ class VersioninfoAction extends Action {
     public function addversion_do() {
         //=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
         //判断用户是否登陆
-        $this->loginjudgeshow($this->lock_addversion);
+        $this->loginjudgeshow($this->lock_addversion_do);
         //返回URL地址
         $echourl = func_baseurlcreate($_GET);
         $this->assign('echourl',$echourl);
@@ -143,7 +153,7 @@ class VersioninfoAction extends Action {
     public function editversion() {
         //=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
         //判断用户是否登陆
-        $this->loginjudgeshow($this->lock_addversion);
+        $this->loginjudgeshow($this->lock_editversion);
         //返回URL地址
         $echourl = func_baseurlcreate($_GET);
         $this->assign('echourl',$echourl);
@@ -197,7 +207,7 @@ class VersioninfoAction extends Action {
     public function editversion_do() {
         //=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
         //判断用户是否登陆
-        $this->loginjudgeshow($this->lock_addversion);
+        $this->loginjudgeshow($this->lock_editversion_do);
         //返回URL地址
         $echourl = func_baseurlcreate($_GET);
         $this->assign('echourl',$echourl);
@@ -251,6 +261,51 @@ class VersioninfoAction extends Action {
             //返回失败
             echo "<script>alert('版本信息修改失败！');history.go(-1);</script>";
             $this -> error('版本信息修改失败！');
+        }
+
+    }
+
+
+    public function delversion_do() {
+        //=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
+        //判断用户是否登陆
+        $this->loginjudgeshow($this->lock_delversion_do);
+        //返回URL地址
+        $echourl = func_baseurlcreate($_GET);
+        $this->assign('echourl',$echourl);
+        //=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
+
+        //接收上传数据
+        $id = trim($this->_post('id'));
+        $submit = trim($this->_post('del_version'));
+
+        //判断来源
+        if($id == '') {
+            echo "<script>alert('非法进入此页面!');history.go(-1);</script>";
+            $this -> error('非法进入此页面!');
+        }
+
+        if($submit == '') {
+            echo "<script>alert('非法进入此页面!');history.go(-1);</script>";
+            $this -> error('非法进入此页面!');
+        }
+
+        //实例化方法
+        $Model = new Model();
+
+        //执行删除操作
+        $res = $Model -> table('sixty_versioninfo') -> where("id='" . $id . "'") -> delete();
+
+        //判断结果
+        //判断结果
+        if($res) {
+            //返回成功
+            echo "<script>alert('版本信息删除成功!');window.location.href='".__APP__.'/Versioninfo/index'.$echourl."';</script>";
+            $this -> success('版本信息删除成功!','__APP__'.$echourl);
+        }else {
+            //返回失败
+            echo "<script>alert('版本信息删除失败！');history.go(-1);</script>";
+            $this -> error('版本信息删除失败！');
         }
 
     }

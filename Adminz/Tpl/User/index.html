@@ -82,6 +82,10 @@
                     <input type="hidden" name="edit_nickname" value="{$vo.nickname}" />
                     <input type="submit" class="yubuttons yuwhite" name="edituserbutton" value="编辑" />
                 </form>
+                <form action="__APP__/Collect/index{$echourl}" method="get" style="margin:0px" >
+                    <input type="hidden" name="user_id" value="{$vo.id}" />
+                    <input type="submit" class="yubuttons yuwhite" name="edituserbutton" value="收藏" />
+                </form>
             </td>
             <td>{$vo.id}</td>
             <td>{$vo.is_lock}</td>
