@@ -7,7 +7,7 @@
  */
 class SuggestAction extends Action {
     //定义各模块锁定级别
-    private $lock_index         = '7';
+    private $lock_index         = '97';
 
     public function index() {
         //=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=

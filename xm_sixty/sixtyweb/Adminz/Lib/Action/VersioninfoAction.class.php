@@ -7,12 +7,12 @@
  */
 class VersioninfoAction extends Action {
     //定义各模块锁定级别
-    private $lock_index         = '7';
-    private $lock_delversion_do   = '7';
-    private $lock_addversion      = '7';
-    private $lock_addversion_do   = '7';
-    private $lock_editversion    = '7';
-    private $lock_editversion_do  = '7';
+    private $lock_index         = '97';
+    private $lock_delversion_do   = '97';
+    private $lock_addversion      = '97';
+    private $lock_addversion_do   = '97';
+    private $lock_editversion    = '97';
+    private $lock_editversion_do  = '97';
 
     public function index() {
         //=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
@@ -117,6 +117,26 @@ class VersioninfoAction extends Action {
         $url = trim($this->_post('url'));
         $updesc = trim($this->_post('updesc'));
         $type = trim($this->_post('type'));
+
+        if($version == '') {
+            echo "<script>alert('版本号不能为空');history.go(-1);</script>";
+            $this -> error('版本号不能为空!');
+        }
+
+        if($system == '') {
+            echo "<script>alert('系统类型不能为空');history.go(-1);</script>";
+            $this -> error('系统类型不能为空!');
+        }
+
+        if($url == '') {
+            echo "<script>alert('下载地址不能为空');history.go(-1);</script>";
+            $this -> error('下载地址不能为空!');
+        }
+
+        if($updesc == '') {
+            echo "<script>alert('版本描述不能为空');history.go(-1);</script>";
+            $this -> error('版本描述不能为空!');
+        }
 
         //准备更新数组
         $datetime = date('Y-m-d H:i:s', time());
@@ -235,6 +255,25 @@ class VersioninfoAction extends Action {
             $this -> error('非法进入此页面！');
         }
 
+        if($version == '') {
+            echo "<script>alert('版本号不能为空');history.go(-1);</script>";
+            $this -> error('版本号不能为空!');
+        }
+
+        if($system == '') {
+            echo "<script>alert('系统类型不能为空');history.go(-1);</script>";
+            $this -> error('系统类型不能为空!');
+        }
+
+        if($url == '') {
+            echo "<script>alert('下载地址不能为空');history.go(-1);</script>";
+            $this -> error('下载地址不能为空!');
+        }
+
+        if($updesc == '') {
+            echo "<script>alert('版本描述不能为空');history.go(-1);</script>";
+            $this -> error('版本描述不能为空!');
+        }
 
         //准备更新数组
         $data = array(
@@ -292,6 +331,13 @@ class VersioninfoAction extends Action {
 
         //实例化方法
         $Model = new Model();
+
+        $res_flag = $Model -> table('sixty_versioninfo') -> field('flag') -> where("id='" . $id . "'") -> find();
+
+        if($res_flag['flag'] == 1) {
+            echo "<script>alert('当前版本信息为开启状态，请改为关闭后才能删除!');history.go(-1);</script>";
+            $this -> error('当前版本信息为开启状态，请改为关闭后才能删除!!');
+        }
 
         //执行删除操作
         $res = $Model -> table('sixty_versioninfo') -> where("id='" . $id . "'") -> delete();

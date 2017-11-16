@@ -7,12 +7,12 @@
  */
 class ClassmsgAction extends Action{
     //定义各模块锁定级别
-    private $lock_index = '7';
-    private $lock_addclassmsg = '7';
-    private $lock_addclassmsg_do = '7';
-    private $lock_editclassmsg_do = '7';
-    private $lock_editclassmsg = '7';
-    private $lock_delclassmsg_do = '7';
+    private $lock_index = '97';
+    private $lock_addclassmsg = '97';
+    private $lock_addclassmsg_do = '97';
+    private $lock_editclassmsg_do = '97';
+    private $lock_editclassmsg = '97';
+    private $lock_delclassmsg_do = '97';
 
     public function index(){
         //=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
@@ -27,6 +27,7 @@ class ClassmsgAction extends Action{
         $class_id = trim($this->_get('find_id'));
         $class_name = trim($this->_get('find_name'));
         $class_childname = trim($this->_get('find_childname'));
+        $class_level = trim($this->_get('find_level'));
 
         //准备查询条件
         $where = "";
@@ -50,6 +51,13 @@ class ClassmsgAction extends Action{
             $where .= "childname like '%" . $class_childname . "%'";
         }
 
+        //判断等级查询是否为空
+        if($class_level != '' && $where !='') {
+            $where .= "and level = '" . $class_level . "'";
+        }else if($class_level != '' && $where =='') {
+            $where .= "level = '" . $class_level . "'";
+        }
+
         //返回查询条件
         $find_where = array(
             'find_id' => $class_id,
@@ -57,6 +65,18 @@ class ClassmsgAction extends Action{
             'find_childname' => $class_childname,
         );
         $this->assign('find_where', $find_where);
+
+
+        //生成下拉菜单
+        $levelarr = array(
+            '' => '全选',
+            '1' => '一级',
+            '2' => '二级',
+            '3' => '三级',
+            '4' => '四级',
+        );
+        $find_level = $this->downlist($levelarr, $class_level);
+        $this->assign('find_level', $find_level);
 
         //准备查询数组
         $Model = new Model();
@@ -71,10 +91,11 @@ class ClassmsgAction extends Action{
         // 进行分页数据查询 注意limit方法的参数要使用Page类的属性
         $this->assign('page', $show);// 赋值分页输出
 
-
         //查询集合数据表
         $list = $Model -> table('sixty_classifymsg') -> field('id, level, name, childname, content, remark')
-            -> where($where) -> order('id desc') -> limit($Page->firstRow . ',' . $Page->listRows) ->  select();
+            -> where($where) -> order('level asc, id desc') -> limit($Page->firstRow . ',' . $Page->listRows) ->  select();
+
+
         $this->assign('list',$list);
         $this->display();
 
@@ -143,6 +164,28 @@ class ClassmsgAction extends Action{
             $this -> error('描述不能为空!');
         }
 
+        //实例化模型
+        $Model = new Model();
+
+
+        //判断分类名是否存在
+        $res_name = $Model -> table('sixty_classifymsg') -> field('id')
+            -> where("name='" . $name . "' and level = '" . $level . "'") ->find();
+        if($res_name != ''){
+            echo "<script>alert('此分类名已存在，请使用其他名称');history.go(-1);</script>";
+            $this -> error('此分类名已存在，请使用其他名称!');
+        }
+
+
+        //判断分类子名是否存在
+        $res_name = $Model -> table('sixty_classifymsg') -> field('id')
+            -> where("childname='" . $childname . "' and level = '" . $level . "'") ->find();
+        if($res_name != ''){
+            echo "<script>alert('此子分类名已存在，请使用其他名称');history.go(-1);</script>";
+            $this -> error('此子分类名已存在，请使用其他名称!');
+        }
+
+
         //准备插入数组
         $data = array(
             'name' => $name,
@@ -152,8 +195,8 @@ class ClassmsgAction extends Action{
             'level' => $level,
         );
 
-        //实例化模型
-        $Model = new Model();
+
+        //执行添加
         $result = $Model -> table('sixty_classifymsg') -> add($data);
 
         //写入日志
@@ -193,9 +236,8 @@ class ClassmsgAction extends Action{
         $Model = new Model();
 
         //查询此ID是否存在
-        $list = $Model -> table('sixty_classifymsg') -> field('id, name, childname, content, remark')
+        $list = $Model -> table('sixty_classifymsg') -> field('id, name, childname, level, content, remark')
             -> where("id='".$id."'") -> find();
-
         if($list == ''){
             echo "<script>alert('非法进入此页面');history.go(-1);</script>";
             $this -> error('非法进入此页面');
@@ -215,7 +257,7 @@ class ClassmsgAction extends Action{
         $level_show = '';
         foreach($levelarr as $keyr => $valr) {
             $level_show .= '<option value="'.$keyr.'" ';
-            if($keyr==$flag) {
+            if($keyr==$list['level']) {
                 $level_show .= ' selected="selected"';
             }
             $level_show .= '>'.$valr.'</option>';
@@ -243,8 +285,8 @@ class ClassmsgAction extends Action{
         $name = trim($this->_post('edit_name'));
         $childname = trim($this->_post('edit_childname'));
         $content = trim($this->_post('edit_content'));
-        $level = trim($this->_post('edit_remark'));
-        $remark = trim($this->_post('edit_level'));
+        $remark = trim($this->_post('edit_remark'));
+        $level = trim($this->_post('edit_level'));
 
         //判断传值是否为空
         if($name == ''){
@@ -260,15 +302,36 @@ class ClassmsgAction extends Action{
             $this -> error('描述不能为空!');
         }
 
+
+        //实例化模型
+        $Model = new Model();
+
+        //判断分类名是否存在
+        $res_name = $Model -> table('sixty_classifymsg') -> field('id')
+            -> where("name='" . $name . "' and level = '" . $level . "' and id <>'" . $id . "'") ->find();
+        if($res_name != ''){
+            echo "<script>alert('此分类名已存在，请使用其他名称');history.go(-1);</script>";
+            $this -> error('此分类名已存在，请使用其他名称!');
+        }
+
+
+        //判断分类子名是否存在
+        $res_name = $Model -> table('sixty_classifymsg') -> field('id')
+            -> where("childname='" . $childname . "' and level = '" . $level . "' and id <>'" . $id . "'") ->find();
+        if($res_name != ''){
+            echo "<script>alert('此子分类名已存在，请使用其他名称');history.go(-1);</script>";
+            $this -> error('此子分类名已存在，请使用其他名称!');
+        }
+
         //准备插入数组
         $data = array(
             'name' => $name,
             'childname' => $childname,
             'content' => $content,
             'remark' => $remark,
+            'level' => $level,
         );
-        //实例化模型
-        $Model = new Model();
+
         $result = $Model -> table('sixty_classifymsg') -> where("id='".$id."'") -> save($data);
 
         //写入日志
@@ -344,5 +407,26 @@ class ClassmsgAction extends Action{
             exit('系统错误，为确保系统安全，禁止登入系统');
         }
         //=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
+    }
+
+    //动态下拉列表
+    public function downlist($arr, $lock=''){
+
+        //动态生成权限下拉选项
+        //$lock为空时，关联数组array[0]未默认选项
+        $res_arr = '';
+        if($arr != '') {
+            foreach ($arr as $keyr => $valr) {
+                $res_arr .= '<option value="' . $keyr . '" ';
+                if ($keyr == $lock) {
+                    $res_arr .= ' selected="selected"';
+                }
+                $res_arr .= '>' . $valr . '</option>';
+            }
+        }else{
+            $res_arr = "<option selected='selected'>无</option>";
+        }
+        return $res_arr;
+
     }
 }

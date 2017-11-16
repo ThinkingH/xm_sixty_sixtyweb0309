@@ -8,9 +8,9 @@
 class PinglunAction extends Action{
 
     //定义各模块锁定级别
-    private $lock_tougao = '7';
-    private $lock_pinglun = '7';
-    private $lock_delpinglun_do = '7';
+    private $lock_tougao = '97';
+    private $lock_pinglun = '97';
+    private $lock_delpinglun_do = '97';
 
     //视频列表跳转查看单条视频的全部评论
     public function tougao()
@@ -32,7 +32,7 @@ class PinglunAction extends Action{
         //设置默认查询日期
         //判断是否查询起始日期
         if ($find_sta_date == '') {
-            $find_sta_date = date('Y-m-d', strtotime('-6 month'));
+            $find_sta_date = date('Y-m-d', strtotime('-3 month'));
             $where_sta_day = $find_sta_date . ' 00:00:00';
         }else{
             $where_sta_day = $find_sta_date . ' 00:00:00';
@@ -98,7 +98,6 @@ class PinglunAction extends Action{
             $imgwidth = '100';
             $imgheight = '100';
             $addressimg = hy_qiniuimgurl('sixty-jihemsg',$showimg,$imgwidth,$imgheight);
-//            var_dump($addressimg);die;
             $list[$key_li]['showimg'] = "<img src='" . $addressimg . "' />";
         }
 

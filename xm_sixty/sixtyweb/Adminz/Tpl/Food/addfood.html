@@ -41,6 +41,14 @@
                 $("#add_c_24").hide();
             });
 
+            $("#button_add").click(function(){
+                if(confirm("您确认要执行此操作吗？")) {
+
+                }else {
+                    return false;
+                }
+            });
+
         });
     </script>
 </head>
@@ -52,7 +60,7 @@
 </div>
 
 
-<a href="javascript:history.go(-1);" class="yubutton yuwhite">返回</a>
+<a href="__APP__/Video/index{$echourl}" class="yubutton yuwhite">返回视频列表</a>
 <br/>
 <br/>
 

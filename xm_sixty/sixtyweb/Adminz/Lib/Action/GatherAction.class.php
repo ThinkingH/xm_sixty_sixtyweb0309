@@ -8,12 +8,12 @@
 
 class GatherAction extends Action{
     //定义各模块锁定级别
-    private $lock_index = '7';
-    private $lock_addgat = '7';
-    private $lock_addgat_do = '7';
-    private $lock_editgat_do = '7';
-    private $lock_editgat = '7';
-    private $lock_delgat_do = '7';
+    private $lock_index = '97';
+    private $lock_addgat = '97';
+    private $lock_addgat_do = '97';
+    private $lock_editgat_do = '97';
+    private $lock_editgat = '97';
+    private $lock_delgat_do = '97';
 
     public function index(){
         //=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
@@ -30,14 +30,7 @@ class GatherAction extends Action{
         $gat_find_sta_date = trim($this->_get('find_sta_date'));
         $gat_find_end_date = trim($this->_get('find_end_date'));
 
-        //判断起始日期是否有传值
-        $sta_minute = ' 00:00:00';
-        if($gat_find_sta_date == ''){
-            $gat_find_sta_date = date('Y-m-d',strtotime('-6 month'));
-            $where_sta_date = $gat_find_sta_date . $sta_minute;
-        }else{
-            $where_sta_date = $gat_find_sta_date . $sta_minute;
-        }
+
         //判断结束日期是否有传值
         $end_minute = ' 59:59:59';
         if($gat_find_end_date == ''){
@@ -48,8 +41,14 @@ class GatherAction extends Action{
         }
 
         //准备查询条件
-        $where = "create_datetime >= '" . $where_sta_date . "' and " . "create_datetime <= '" . $where_end_date . "'";
+        $where = "create_datetime <= '" . $where_end_date . "'";
 
+        //判断起始日期是否有传值
+        $sta_minute = ' 00:00:00';
+        if($gat_find_sta_date != '') {
+            $where_sta_date = $gat_find_sta_date . $sta_minute;
+            $where .= " and create_datetime >= '" . $where_sta_date . "'";
+        }
         //判断查询条件
         //判断ID是否不为空
         if($gat_id != ''){
@@ -78,7 +77,7 @@ class GatherAction extends Action{
         $count = $Model->table('sixty_jihemsg')
             ->where($where)
             ->count();// 查询满足要求的总记录数
-        $Page = new Page($count, 20);// 实例化分页类 传入总记录数和每页显示的记录数
+        $Page = new Page($count, 30);// 实例化分页类 传入总记录数和每页显示的记录数
         $show = $Page->show();// 分页显示输出
         // 进行分页数据查询 注意limit方法的参数要使用Page类的属性
         $this->assign('page', $show);// 赋值分页输出
@@ -98,7 +97,6 @@ class GatherAction extends Action{
 //            var_dump($addressimg);die;
             $list[$key_li]['showimg'] = "<img src='" . $addressimg . "' />";
         }
-
         $this->assign('list',$list);
         $this->display();
     }
@@ -144,8 +142,20 @@ class GatherAction extends Action{
             $this -> error('合集描述不能为空!');
         }
 
+        //实例化方法
+        $Model = new Model();
+
+
+        //判断分类名是否存在
+        $res_name = $Model -> table('sixty_jihemsg') -> field('id') -> where("name='" . $name . "'") ->find();
+        if($res_name != ''){
+            echo "<script>alert('此合集名已存在，请使用其他名称');history.go(-1);</script>";
+            $this -> error('此合集名已存在，请使用其他名称');
+        }
+
+
         //判断图片是否上传
-        if($_FILES['showimg'] != '')
+        if($_FILES['showimg']['name'] != '')
         {
             import('ORG.UploadFile');
             $upload = new UploadFile();// 实例化上传类
@@ -160,7 +170,6 @@ class GatherAction extends Action{
                 $info =  $upload->getUploadFileInfo();
                 $showimg = $info['0']['savename'];
 
-//                $oldfile = BASEDIR.'Public/Images/gather_showimg/'.$showimg;
                 //上传七牛云
                 //上传图片存储绝对路径
                 $cz_filepathname  = BASEDIR.'Public/Images/sixty-jihemsg/'.$showimg;
@@ -194,8 +203,10 @@ class GatherAction extends Action{
                 }
             }
         }else{
-            $showimg = '';
+            echo "<script>alert('合集展示图不能为空！');history.go(-1);</script>";
+            $this -> error('合集展示图不能为空！');
         }
+
 
         //准备插入数组
         $create_timedate = date('Y-m-d H:i:s', time());
@@ -207,8 +218,8 @@ class GatherAction extends Action{
             'create_datetime' => $create_timedate,
         );
 
+
         //执行插入
-        $Model = new Model();
         $res = $Model -> table('sixty_jihemsg') -> add($data);
 
         //写入日志
@@ -245,6 +256,13 @@ class GatherAction extends Action{
         $Model = new Model();
         $list = $Model -> table('sixty_jihemsg') -> field('id, name, showimg, content, remark')
             -> where("id='".$id."'") -> find();
+
+        //获取七牛云图片
+        $showimg = $list['showimg'];
+        $imgwidth = '100';
+        $imgheight = '100';
+        $addressimg = hy_qiniuimgurl('sixty-jihemsg',$showimg,$imgwidth,$imgheight);
+        $list['showimg'] = "<img src='" . $addressimg . "' />";
 
         $this->assign('list', $list);
         $this->display();
@@ -293,6 +311,16 @@ class GatherAction extends Action{
             $this -> error('非法进入此页面!');
         }
 
+
+        //判断分类名是否存在
+        $res_name = $Model -> table('sixty_jihemsg') -> field('id')
+            -> where("name='" . $name . "' and id <> '" . $id . "'") ->find();
+        if($res_name != ''){
+            echo "<script>alert('此合集名已存在，请使用其他名称');history.go(-1);</script>";
+            $this -> error('此合集名已存在，请使用其他名称');
+        }
+
+
         //判断图片是否上传
         if($_FILES['edit_showimg']['name'] != '')
         {
@@ -303,9 +331,7 @@ class GatherAction extends Action{
             $upload->allowExts  = array('jpg', 'gif', 'png', 'jpeg');// 设置附件上传类型
             $upload->savePath =  BASEDIR.'Public/Images/sixty-jihemsg/';// 设置附件上传目录
             if(!$upload->upload()) {// 上传错误提示错误信息
-                $a = $this->error($upload->getErrorMsg());
                 echo "<script>alert('图片上传失败!');history.go(-1);</script>";
-                var_dump($a);die;
                 $this -> error('图片上传失败!');
             }else{// 上传成功 获取上传文件信息
                 $info =  $upload->getUploadFileInfo();
@@ -417,7 +443,7 @@ class GatherAction extends Action{
         $templogs = $Model->getlastsql();
         hy_caozuo_logwrite($templogs,__CLASS__.'---'.__FUNCTION__);
 
-        //
+        //判断删除结果
         if($res != ''){
             echo "<script>alert('合集数据删除成功!');window.location.href='".__APP__.'/Gather/index'. $echourl ."';</script>";
             $this -> success('合集数据删除成功!','__APP__'.$echourl);

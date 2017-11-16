@@ -8,8 +8,8 @@
 
 class CollectAction extends Action {
     //定义各模块锁定级别
-    private $lock_index         = '7';
-    private $lock_statistics   = '7';
+    private $lock_index         = '97';
+    private $lock_statistics   = '97';
 
 
     public function index() {
@@ -103,11 +103,22 @@ class CollectAction extends Action {
         $get_end_day = trim($this->_get('find_end_date'));
         $find_type = trim($this->_get('find_type'));
 
+
+        //查询默认日期，本月1号至本月当前日期
+        if($get_sta_day == '') {
+            $get_sta_day = date('Y-m-01', strtotime(date('Y-m-d')));
+        }
+
+        if($get_end_day == '') {
+            $get_end_day = date('Y-m-d');
+        }
+
         //返回查询数据
         $this->assign('find_type', $find_type);
         $this->assign('find_id', $find_id);
         $this->assign('find_sta_date', $get_sta_day);
         $this->assign('find_end_date', $get_end_day);
+
 
         //判断查询日期是否提交
         if($get_sta_day != '') {
@@ -274,7 +285,8 @@ class CollectAction extends Action {
                 $Model = new Model();
                 //查询视频ID查询视频表数据
                 $list_video = $Model -> table($val_coll['table']) -> field($val_coll['field'] . ', create_datetime, id') -> where($where_arr) -> select();
-//                var_dump($list_video);
+
+
                 //遍历收藏表结果集,并把视频查询结果插入到收藏结果中
                 foreach($list as $key_l => $val_l) {
 
@@ -284,7 +296,8 @@ class CollectAction extends Action {
                         if($val_l['dataid'] == $val_v['id']) {
                             //相等,进行赋值
                             $list[$key_l]['video_biaoti'] = $val_v[$val_coll['field']];
-                            $list[$key_l]['create_datetime'] = $val_v['create_datetime'];
+//                            $list[$key_l]['create_datetime'] = $val_v['create_datetime'];
+                            $list[$key_l]['create_datetime'] = date('Y-m-d', strtotime($val_v['create_datetime']));
                         }
 
                     }

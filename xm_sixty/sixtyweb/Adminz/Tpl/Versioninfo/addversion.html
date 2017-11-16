@@ -9,7 +9,34 @@
     <script type="text/javascript" src="__PUBLIC__/Js/md5.js"></script>
     <script type="text/javascript">
         $("document").ready(function(){
+            $("#submit_add").click(function(){
+                function checkForm(arr){
+                    for(var i=0;i<arr.length;i++){
+                        if($("#"+arr[i][0]).val()==''){
+                            alert(arr[i][1]);
+                            $("#"+arr[i][0]).focus();
+                            return false;
+                        }
+                    }
+                    return true;
+                };
+                //调用方式
+                var arr=new Array(
+                    new Array('version','版本号不可为空!'),
+                    new Array('system','系统类型不可为空!'),
+                    new Array('url','下载地址不可为空!'),
+                    new Array('updesc','版本描述不可为空!'),
+                );
 
+                if(!checkForm(arr)){
+                    return false;
+                }
+                if(confirm("您确认要添加此版本信息吗？")) {
+
+                }else {
+                    return false;
+                }
+            });
         });
 
     </script>
@@ -33,54 +60,81 @@
     <br/><br/>
     <table class="table-edit" >
         <tr>
-            <td width="60" align="right"><b>版本号:</b></td>
+            <td width="60" align="right">版本号<font color="red" size="-2">*</font>:</td>
             <td width="600">
-                <input type="text" name="version" maxlength="30" style="width: 300px;"/>
+                <input type="text" id="version" name="version" maxlength="30" style="width: 300px;"/>
+                <font color="orange" size="-2">
+                    版本号最长11位
+                </font>
             </td>
         </tr>
 
         <tr>
-            <td align="right"><b>版本状态:</b></td>
+            <td align="right">版本状态<font color="red" size="-2">*</font>:</td>
             <td>
                 <select name="flag">
                 {$flag}
                 </select>
+                <font color="orange" size="-2">
+                    是否启用
+                </font>
             </td>
         </tr>
 
         <tr>
-            <td align="right"><b>强制更新:</b></td>
+            <td align="right">强制更新<font color="red" size="-2">*</font>:</td>
             <td>
                 <select name="type">
                     {$type}
                 </select>
+                <font color="orange" size="-2">
+                    是否强制更新
+                </font>
             </td>
         </tr>
 
         <tr>
-            <td align="right"><b>系统类型:</b></td>
+            <td align="right">系统类型<font color="red" size="-2">*</font>:</td>
             <td>
-                <input type="text" name="system" maxlength="10" size="11"/>
+                <input type="text" id="system" name="system" maxlength="20" size="11"/>
+                <font color="orange" size="-2">
+                    适用于的系统类型
+                </font>
             </td>
         </tr>
 
         <tr>
-            <td align="right"><b>下载地址:</b></td>
+            <td align="right">下载地址<font color="red" size="-2">*</font>:</td>
             <td>
-                <input type="text" name="url" maxlength="200" size="80"/>
+                <input type="text" id="url" name="url" maxlength="200" size="80"/>
+                <br/>
+                <font color="orange" size="-2">
+                    最大长度200
+                </font>
             </td>
         </tr>
 
         <tr>
-            <td align="right"><b>版本描述:</b></td>
+            <td align="right">版本描述<font color="red" size="-2">*</font>:</td>
             <td>
 
-            <textarea rows="4" cols="80" style="resize: none;" onchange="this.value=this.value.substring(0, 200)"
+                <textarea rows="4" cols="80" style="" onchange="this.value=this.value.substring(0, 200)"
           onkeydown="this.value=this.value.substring(0, 200)" onkeyup="this.value=this.value.substring(0, 200)"
-          id="" name="updesc"></textarea>
+          id="updesc" name="updesc"></textarea>
+                <br/>
+                <font color="orange" size="-2">
+                    新版本有哪些改动
+                </font>
             </td>
         </tr>
-
+        <tr>
+            <td align="right" style="width: 90px;"></td>
+            <td>
+                <font color="red" size="-2">
+                    注意：带 * 的选项为必填项目！
+                </font>
+            </td>
+        </tr>
         <tr>
             <td colspan="2">
                 <input type="submit" name="submit" id="submit_add" class="yubutton yuwhite" value="添加版本信息" style="margin-left:50px;margin-top:0px;" />
