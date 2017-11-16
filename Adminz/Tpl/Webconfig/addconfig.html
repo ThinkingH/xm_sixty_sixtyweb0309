@@ -17,7 +17,7 @@
                 var val1 = $("#val1").val();
 
                 if(name == '') {
-                    alert('名称不能为空！');
+                    alert('配置名称不能为空！');
                     return false;
                 }
 
@@ -27,7 +27,13 @@
                 }
 
                 if(val1 == '') {
-                    alert('配置信息不能为空！');
+                    alert('配置详情不能为空！');
+                    return false;
+                }
+
+                if(confirm("您确认要添加此配置吗？")) {
+
+                }else {
                     return false;
                 }
 
@@ -41,7 +47,7 @@
 
 <body>
 <div class="hy_daohangtiao">
-    当前位置&nbsp;#&nbsp;网站管理&nbsp;#&nbsp;编辑网站配置&nbsp;#&nbsp;网站配置修改页面
+    当前位置&nbsp;#&nbsp;网站管理&nbsp;#&nbsp;网站配置&nbsp;#&nbsp;网站配置添加页面
 </div>
 
 <a href="javascript:history.go(-1);" class="yubutton yuwhite">返回网站配置列表</a>
@@ -56,22 +62,40 @@
     <br/><br/>
     <table class="table-edit" >
         <tr>
-            <td width="60" align="right"><b>配置名称:</b></td>
-            <td width="600">
+            <td width="60" align="right">配置名称<font color="red" size="-2">*</font>:</td>
+            <td width="450">
                 <input type="text" name="addconfig_name" id="name" maxlength="30" style="width: 300px;"/>
+                <br/>
+                <font color="orange" size="-1">配置名是用于前台获取的字段信息，只能是数字、字母、下划线</font>
             </td>
         </tr>
         <tr>
-            <td align="right"><b>配置项:</b></td>
+            <td align="right">配置项<font color="red" size="-2">*</font>:</td>
             <td>
                 <input type="text" name="addconfig_key1" id="key1" maxlength="50" size="50"/>
+                <br/>
+                <font color="orange" size="-1">配置项填写配置的中文名，最多50字 如：版本号</font>
             </td>
         </tr>
         <tr>
-            <td align="right"><b>配置详情:</b></td>
+            <td align="right">配置详情<font color="red" size="-2">*</font>:</td>
             <td>
-                <input type="text" name="addconfig_val1" id="val1" maxlength="100" size="80"/>
-                <!--<textarea rows="3" cols="50" name="addconfig_val1" style="resize: none"></textarea>-->
+                <!--<input type="text" name="addconfig_val1" id="val1" maxlength="100" size="80"/>-->
+                <textarea rows="6" cols="70" style=""
+                  onchange="this.value=this.value.substring(0, 300)"
+                  onkeydown="this.value=this.value.substring(0, 300)"
+                  onkeyup="this.value=this.value.substring(0, 300)"
+                  id="val1" name="addconfig_val1"></textarea>
+                <br/>
+                <font color="orange" size="-1">配置详情填写该配置的具体内容，最多300字</font>
+            </td>
+        </tr>
+        <tr>
+            <td align="right" style="width: 90px;"></td>
+            <td>
+                <font color="red" size="-2">
+                    注意：带 * 的选项为必填项目！
+                </font>
             </td>
         </tr>
         <tr>

@@ -13,21 +13,27 @@
             $("#submitedit").click(function(){
 
                 var phone = $("#phone").val();
+                var nickname = $("#nickname").val();
                 var email = $("#email").val();
 
+
+                if(nickname==''){
+                    alert('用户昵称不能为空！');
+                    return false;
+                }
 
                 if(phone.length<11) {
                     alert('手机号码长度必须是11位');
                     return false;
                 }
+                if(email != '') {
 
-                if (!/^\w+([-+.]\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*$/.test(email)) {
-                    alert('邮箱格式不正确');
-                    return false;
+                    if (!/^\w+([-+.]\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*$/.test(email)) {
+                        alert('邮箱格式不正确');
+                        return false;
+                    }
                 }
-
-
-                if(confirm("您确认要编辑此用户吗？此编辑涉及到重要用户数据，请小心操作。")) {
+                if(confirm("您确认要添加此用户吗？")) {
 
                 }else {
                     return false;
@@ -53,7 +59,7 @@
 
 <body>
 <div class="hy_daohangtiao">
-    当前位置&nbsp;#&nbsp;用户管理&nbsp;#&nbsp;编辑操作用户&nbsp;#&nbsp;用户信息修改页面
+    当前位置&nbsp;#&nbsp;用户管理&nbsp;#&nbsp;用户列表&nbsp;#&nbsp;用户信息修改页面
 </div>
 
 
@@ -68,50 +74,29 @@
 
     <br/><br/>
     <table class="table-edit" >
+
         <tr>
-            <td width="80" align="right"><b>用户ID:</b></td>
-            <td width="650">
+            <td width="80" align="right">用户ID:</td>
+            <td width="500">
                 {$list['id']}
+                <input type="hidden" name="id" value="{$list['id']}" />
             </td>
         </tr>
         <tr>
-            <td align="right"><b>用户昵称:</b></td>
-            <td width="650">
-                {$list['nickname']}
-                <input type="hidden" name="nickname" value="{$list['nickname']}" />
-            </td>
-        </tr>
-        <tr>
-            <td align="right"><b>手机号:</b></td>
+            <td align="right">用户头像:</td>
             <td>
-                <input type="text" name="phone" id="phone" value="{$list['phone']}" maxlength="11" />
-
+                {$list['touxiang']}
             </td>
         </tr>
         <tr>
-            <td align="right"><b>邮箱:</b></td>
+            <td align="right">用户创建时间:</td>
             <td>
-                <input style="width:250px;" type="text" name="email" id="email" value="{$list['email']}" maxlength="50"/>
-
-            </td>
-        </tr>
-
-        <tr>
-            <td align="right"><b>QQ:</b></td>
-            <td>
-                <input type="text" name="qq" id="qq" value="{$list['qq']}" maxlength="24" />
-
+                {$list['create_datetime']}
+                <input type="hidden" name="id" value="{$list['id']}" />
             </td>
         </tr>
         <tr>
-            <td align="right"><b>微信:</b></td>
-            <td>
-                <input type="text" name="weixin_openid" id="openid" value="{$list['openid']}" />
-            </td>
-        </tr>
-
-        <tr>
-            <td align="right"><b>用户锁定状态:</b></td>
+            <td align="right">用户锁定状态<font color="red" size="-2">*</font>:</td>
             <td>
                 <select name="is_lock">
                     {$is_lock}
@@ -120,12 +105,100 @@
             </td>
         </tr>
         <tr>
+            <td align="right">用户昵称<font color="red" size="-2">*</font>:</td>
+            <td>
+                <input type="text" name="nickname" value="{$list['nickname']}" />
+            </td>
+        </tr>
+
+        <tr>
+            <td align="right">手机号<font color="red" size="-2">*</font>:</td>
+            <td>
+                <input size="15" type="text" name="phone" id="phone" value="{$list['phone']}" maxlength="11" />
+                <font color="orange" size="-2">
+                    手机号长度11位
+                </font>
+            </td>
+        </tr>
+        <tr>
+            <td align="right">请输入描述：</td>
+            <td >
+                <input size="55" type="text" value="{$list['describes']}" name="describes" id="describes" maxlength="80"/>
+                <font color="orange" size="-2">
+                    最多80字
+                </font>
+            </td>
+        </tr>
+        <tr>
+            <td align="right">请输入邮箱：</td>
+            <td>
+                <input size="50" type="text" value="{$list['email']}" name="email" id="email" maxlength="100"/>
+            </td>
+        </tr>
+        <tr>
+            <td align="right">请输入微博ID：</td>
+            <td>
+                <input size="50" type="text" value="{$list['weiboid']}" name="weiboid" id="weiboid" maxlength="100"/>
+            </td>
+        </tr>
+        <tr>
+            <td align="right">请输入微信：</td>
+            <td>
+                <input size="50" type="text" value="{$list['weixin']}" name="weixin" id="weixin" maxlength="100"/>
+            </td>
+        </tr>
+        <tr>
+            <td align="right">请输入微信ID：</td>
+            <td>
+                <input size="50" type="text" value="{$list['openid']}" name="openid" id="openid" maxlength="100"/>
+            </td>
+        </tr>
+        <tr>
+            <td align="right">请输入QQ号码：</td>
+            <td >
+                <input size="22" type="text" value="{$list['qq']}" name="qq" id="qq" maxlength="100"/>
+            </td>
+        </tr>
+        <tr>
+            <td align="right">请输入QQID：</td>
+            <td >
+                <input size="50" type="text" value="{$list['qqid']}" name="qqid" id="qqid" maxlength="100"/>
+            </td>
+        </tr>
+        <tr>
+            <td align="right">请输入极光关联ID：</td>
+            <td >
+                <input size="50" type="text" value="{$list['jiguangid']}" name="jiguangid" id="jiguangid" maxlength="60"/>
+            </td>
+        </tr>
+
+        <tr>
+            <td align="right">备注:</td>
+            <td>
+                <input size="55" type="text" name="remark" value="{$list['remark']}" />
+            </td>
+        </tr>
+
+        <tr>
+            <td align="right"></td>
+            <td>
+                &nbsp;
+                <font color="red" size="-2">
+                    注意：带 * 的选项为必填项目！
+                </font>
+            </td>
+        </tr>
+        <tr>
             <td colspan="2">
                 <input type="submit" name="submitedit" id="submitedit" class="yubutton yuwhite" value="提交修改" style="margin-left:50px;" />
 </form>
 <form method="post" action="__APP__/User/deluser_do{$echourl}" style="margin:0px;padding:0px;display: inline;">
     <input type="hidden" name="del_nickname" value="{$list['nickname']}" />
-    <input type="submit" name="submitdel" id="submitdel" class="yubuttons yuwhite" value="删除此用户" style="margin-left:380px;" />
+    <!--<input type="submit" name="submitdel" id="submitdel" class="yubuttons yuwhite" value="删除此用户" style="margin-left:380px;" />-->
+</form>
+<form action="__APP__/Collect/index{$echourl}" method="get" style="margin:0px;display: inline;" >
+    <input type="hidden" name="user_id" value="{$list['id']}" />
+    <input type="submit" class="yubutton yuwhite" name="edituserbutton" value="查看该用户收藏" style="margin-left: 280px;"/>
 </form>
             </td>
         </tr>

@@ -101,10 +101,7 @@
         <td width="50">首页展示</td>
         <td width="150"><b>主标题</b></td>
         <td width="200"><b>子标题</b></td>
-        <td width="100"><b>分类1</b></td>
-        <td width="100"><b>分类2</b></td>
-        <td width="100"><b>分类3</b></td>
-        <td width="100"><b>分类4</b></td>
+        <td width="150"><b>分类</b></td>
         <td width="150"><b>合集信息</b></td>
         <td width="120"><b>展示图片</b></td>
         <td width="150"><b>创建时间</b></td>
@@ -127,6 +124,10 @@
                     <input type="hidden" name="video_id" value="{$vo.id}" />
                     <input type="submit" class="yubuttonss yuwhite" name="edituserbutton" value="编辑" />
                 </form>
+                <form action="__APP__/Food/addfood{$echourl}" method="post" style="margin:0px" >
+                    <input type="hidden" name="video_id" value="{$vo.id}" />
+                    <input type="submit" class="yubuttonss yuwhite" name="pinglunbutton" value="食材" />
+                </form>
                 <form action="__APP__/Pinglun/pinglun" method="get" style="margin:0px" >
                     <input type="hidden" name="video_id" value="{$vo.id}" />
                     <input type="submit" class="yubuttonss yuwhite" name="pinglunbutton" value="评论" />
@@ -135,28 +136,30 @@
                     <input type="hidden" name="video_id" value="{$vo.id}" />
                     <input type="submit" class="yubuttonss yuwhite" name="pinglunbutton" value="投稿" />
                 </form>
-                <form action="__APP__/Food/addfood{$echourl}" method="post" style="margin:0px" >
-                    <input type="hidden" name="video_id" value="{$vo.id}" />
-                    <input type="submit" class="yubuttonss yuwhite" name="pinglunbutton" value="食材" />
-                </form>
-
             </td>
             <td>{$vo.id}</td>
             <td>{$vo.flag}</td>
             <td>{$vo.sflag}</td>
             <td>{$vo.biaoti}</td>
             <td>{$vo.biaotichild}</td>
-            <td>{$vo.classify1}</td>
-            <td>{$vo.classify2}</td>
-            <td>{$vo.classify3}</td>
-            <td>{$vo.classify4}</td>
+            <td>
+                分类一：{$vo.classify1}<hr />
+                分类二：{$vo.classify2}<hr />
+                分类三：{$vo.classify3}<hr />
+                分类四：{$vo.classify4}
+            </td>
             <td>{$vo.msgjihe}</td>
             <td>{$vo.showimg}</td>
             <td>{$vo.create_datetime}</td>
             <td>{$vo.jieshao}</td>
             <td>{$vo.cailiao}</td>
             <td>{$vo.buzhou}</td>
-            <td>{$vo.videosavename}</td>
+            <td>
+                {$vo.videosavename}
+            <br/>
+            <br/>
+                {$vo.video_url}
+            </td>
             <td>{$vo.maketime}</td>
             <td>{$vo.huafeimoney}</td>
             <td>{$vo.fenshu}</td>

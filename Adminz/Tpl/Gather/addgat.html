@@ -11,21 +11,13 @@
         $("document").ready(function(){
 
             $("#submit_add").click(function(){
-
-                if(confirm("您确认要添加此合集吗？")) {
-
-                }else {
-                    return false;
-                }
-            });
-            $("#submit_add").click(function() {
                 var name = $("#name").val();
                 var contenet = $("#content").val();
-                var remark = $("#remark").val();
+                var fileshowimg = $("#fileshowimg").val();
 
                 name = $.trim(name);
                 contenet = $.trim(contenet);
-                remark = $.trim(remark);
+                fileshowimg = $.trim(fileshowimg);
 
                 if (name == '') {
                     alert('名称不能为空！');
@@ -34,6 +26,16 @@
 
                 if (contenet == '') {
                     alert('描述不能为空！');
+                    return false;
+                }
+                if (fileshowimg == '') {
+                    alert('展示图片不能为空！');
+                    return false;
+                }
+
+                if(confirm("您确认要添加此合集吗？")) {
+
+                }else {
                     return false;
                 }
             });
@@ -53,7 +55,7 @@
 
 <body>
 <div class="hy_daohangtiao">
-    当前位置&nbsp;#&nbsp;分类合集&nbsp;#&nbsp;添加合集操作&nbsp;#&nbsp;添加合集页面
+    当前位置&nbsp;#&nbsp;分类合集&nbsp;#&nbsp;合集信息&nbsp;#&nbsp;添加合集页面
 </div>
 
 
@@ -62,9 +64,9 @@
 
 <form name="form1" method="post" action="__APP__/Gather/addgat_do{$echourl}" enctype="multipart/form-data">
     <br/><br/>
-    <table class="table-edit" width="490">
+    <table class="table-edit" width="">
         <tr>
-            <td align="right" style="width: 90px;">填写合集名称：</td>
+            <td align="right" style="width: 95px;">填写合集名称<font color="red" size="-2">*</font>：</td>
             <td width="450">
                 <input size="40" type="text" maxlength="30" name="name" id="name" onkeydown="if(event.keyCode=='32'){return false;}" />
                 <font color="orange" size="-2">
@@ -73,13 +75,14 @@
             </td>
         </tr>
         <tr>
-            <td align="right">填写集合描述：</td>
+            <td align="right">填写集合描述<font color="red" size="-2">*</font>：</td>
             <td>
-                <textarea rows="6" cols="40" style="resize: none;" onchange="this.value=this.value.substring(0, 200)"
+                <textarea rows="6" cols="40" style="" onchange="this.value=this.value.substring(0, 200)"
                           onkeydown="this.value=this.value.substring(0, 200)" onkeyup="this.value=this.value.substring(0, 200)"
                           id="content" name="content"></textarea>
                 <font color="orange" size="-2">
-                    集合描述最多200字
+                    <br/>集合描述最多200字，必填！
+                    此项内容填写关于此合集内容的简介
                 </font>
             </td>
         </tr>
@@ -92,15 +95,26 @@
                 </font>
             </td>
         </tr>
-        <tr style="height: 200px;">
-            <td align="right">上传集合图片：</td>
+        <tr>
+            <td align="right">上传集合图片<font color="red" size="-2">*</font>：</td>
             <td>
                 <img id="showimg" src="" style="width: 100px; height: 100px;" />
                 <br/>
-                <input type="file" onchange="localImgLoad.call(this)" name="showimg" id="showimg"/>
+                <input type="file" onchange="localImgLoad.call(this)" name="showimg" id="fileshowimg"/>
+                <font color="orange" size="-2">
+                    <br/>
+                        上传图片格式必须为JPG，PNG，GIF格式
+                </font>
             </td>
         </tr>
-
+        <tr>
+            <td align="right" style="width: 90px;"></td>
+            <td>
+                <font color="red" size="-2">
+                    注意：带 * 的选项为必填项目！
+                </font>
+            </td>
+        </tr>
         <tr>
             <td colspan="2">
                 <input type="submit" name="submit" id="submit_add" class="yubutton yuwhite" value="添加集合" style="margin-left:50px;" />

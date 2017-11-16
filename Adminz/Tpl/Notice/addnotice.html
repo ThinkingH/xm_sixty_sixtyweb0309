@@ -19,7 +19,11 @@
                     return false;
                 }
 
-
+                if(confirm("您确认要添加此通知吗？")) {
+;
+                }else {
+                    return false;
+                }
             });
 
         });
@@ -30,7 +34,7 @@
 
 <body>
 <div class="hy_daohangtiao">
-    当前位置&nbsp;#&nbsp;网站管理&nbsp;#&nbsp;系统通知&nbsp;#&nbsp;系统通知修改页面
+    当前位置&nbsp;#&nbsp;网站管理&nbsp;#&nbsp;系统通知&nbsp;#&nbsp;系统通知添加页面
 </div>
 
 <a href="javascript:history.go(-1);" class="yubutton yuwhite">返回系统通知列表</a>
@@ -45,18 +49,26 @@
     <br/><br/>
     <table class="table-edit" >
         <tr>
-            <td width="60" align="right"><b>通知内容:</b></td>
-            <td width="600">
+            <td width="65" align="right">通知内容<font color="red" size="-2">*</font>:</td>
+            <td width="400">
 
-            <textarea rows="5" cols="50" style="resize: none;" onchange="this.value=this.value.substring(0, 100)"
+            <textarea rows="5" cols="70" style="" onchange="this.value=this.value.substring(0, 100)"
           onkeydown="this.value=this.value.substring(0, 100)" onkeyup="this.value=this.value.substring(0, 100)"
           id="message" name="message"></textarea>
+                <br/>
                 <font color="orange" size="-2">
                     通知内容最多100字
                 </font>
             </td>
         </tr>
-
+        <tr>
+            <td></td>
+            <td>
+                <font color="red" size="-2">
+                    注意：带 * 的选项为必填项目！
+                </font>
+            </td>
+        </tr>
         <tr>
             <td colspan="2">
                 <input type="submit" name="submit" id="submit_add" class="yubutton yuwhite" value="添加通知" style="margin-left:50px;margin-top:0px;" />

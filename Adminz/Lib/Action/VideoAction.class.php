@@ -8,12 +8,12 @@
  */
 class VideoAction extends Action{
     //定义各模块锁定级别
-    private $lock_index         = '7';
-    private $lock_delvideo_do   = '7';
-    private $lock_addvideo      = '7';
-    private $lock_addvideo_do   = '7';
-    private $lock_editvideo     = '7';
-    private $lock_editvideo_do  = '7';
+    private $lock_index         = '97';
+    private $lock_delvideo_do   = '97';
+    private $lock_addvideo      = '97';
+    private $lock_addvideo_do   = '97';
+    private $lock_editvideo     = '97';
+    private $lock_editvideo_do  = '97';
 
 
     public function index()
@@ -225,7 +225,7 @@ class VideoAction extends Action{
         $sflagarr = array(
             '4' => '4-全选',
             '1' => '1-已展示',
-            '2' => '2-已关闭',
+            '2' => '2-已隐藏',
         );
 
         $sflag_show = '';
@@ -275,14 +275,14 @@ class VideoAction extends Action{
         $cailiao_where['vid'] = array('in', "$str_id");
 
         $list_cailiao = $Model->table('sixty_video_cailiao')->field('vid, name, yongliang')
-            ->where($cailiao_where)->select();
+            ->where($cailiao_where) -> order('id asc')->select();
 
 
         //根据ID查询合集表中的数据
         $list_heji = $Model->table('sixty_jihemsg')->field('id, name')->select();
 
-        //根据ID查询分类表数据
-        $list_class = $Model->table('sixty_classifymsg')->field('id, name, level')->select();
+//        //根据ID查询分类表数据
+//        $list_class = $Model->table('sixty_classifymsg')->field('id, name, level')->select();
         //空数组保存材料表信息
         $arr_cailiao = array();
 
@@ -324,7 +324,7 @@ class VideoAction extends Action{
             if($flag == 1) {
                 $val_video['flag'] = '<span style="background-color:#33FF66;padding:3px;">1-开启</span>';
             }else {
-                $val_video['flag'] = '<span style="background-color:#FFFF00;padding:3px;">2-关闭</span>';
+                $val_video['flag'] = '<span style="background-color:#FF82A5;padding:3px;">2-关闭</span>';
             }
 
             //视频是否首页展示
@@ -333,7 +333,7 @@ class VideoAction extends Action{
                 $val_video['sflag'] = '<span style="background-color:#33FF66;padding:3px;">1-展示</span>';
 
             }else {
-                $val_video['sflag'] = '<span style="background-color:#FFFF00;padding:3px;">2-关闭</span>';
+                $val_video['sflag'] = '<span style="background-color:#FFFF00;padding:3px;">2-隐藏</span>';
             }
 
             //获取七牛云图片
@@ -342,6 +342,12 @@ class VideoAction extends Action{
             $imgheight = '100';
             $addressimg = hy_qiniuimgurl('sixty-videoimage',$showimg,$imgwidth,$imgheight);
             $val_video['showimg'] = "<img src='" . $addressimg . "' />";
+
+            //获取七牛云视频
+            $video_url = hy_qiniubucketurl('sixty-video', $val_video['videosavename']);
+//            var_dump($video_url);die;
+            $val_video['video_url'] = "<a href='".$video_url."' target='_blank' class='yubuttons yuwhite'>预览视频</a>";
+
             //定义评论字段为一个数组
             $val_video['pinglun'] = array();
 
@@ -380,34 +386,16 @@ class VideoAction extends Action{
                     $val_video['msgjihe'] = '<span style="background-color:#FFFF00;padding:3px;">未选择集合</span>';
                 }
             }
-
-            //遍历分类结果集
-            foreach($list_class as $key_class => $val_class) {
-
-                if($val_video['classify1'] == $val_class['id']) {
-                    $val_video['classify1'] = $val_class['name'];
-                }else if($val_video['classify1'] == ''){
-                    $val_video['classify1'] = '<span style="background-color:#FFFF00;padding:3px;">未选择分类</span>';
-                }
-
-                if($val_video['classify2'] == $val_class['id']) {
-                    $val_video['classify2'] = $val_class['name'];
-                }else if($val_video['classify2'] == ''){
-                    $val_video['classify2'] = '<span style="background-color:#FFFF00;padding:3px;">未选择分类</span>';
-                }
-
-                if($val_video['classify3'] == $val_class['id']) {
-                    $val_video['classify3'] = $val_class['name'];
-                }else if($val_video['classify3'] == ''){
-                    $val_video['classify3'] = '<span style="background-color:#FFFF00;padding:3px;">未选择分类</span>';
-                }
-
-                if($val_video['classify4'] == $val_class['id']) {
-                    $val_video['classify4'] = $val_class['name'];
-                }else if($val_video['classify4'] == ''){
-                    $val_video['classify4'] = '<span style="background-color:#FFFF00;padding:3px;">未选择分类</span>';
-                }
+            if($val_video['classify1'] == '' || $val_video['classify1'] == '无'){
+                $val_video['classify1'] = '<span style="background-color:#FFFF00;padding:3px;">未选择分类</span>';
             }
+            if($val_video['classify2'] == '' || $val_video['classify2'] == '无'){
+                $val_video['classify2'] = '<span style="background-color:#FFFF00;padding:3px;">未选择分类</span>';
+            }
+            if($val_video['classify3'] == '' || $val_video['classify3'] == '无'){
+                $val_video['classify3'] = '<span style="background-color:#FFFF00;padding:3px;">未选择分类</span>';
+            }
+//
             //把此视频ID的材料，步骤，评论信息存入输出数组
             $video_list[] = $val_video;
         }
@@ -423,19 +411,22 @@ class VideoAction extends Action{
         //=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
         //判断用户是否登陆
         $this->loginjudgeshow($this->lock_addvideo);
+        //拼接URL
+        $echourl = func_baseurlcreate($_GET);
+        $this->assign('echourl',$echourl);
         //=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
 
         //        动态下拉列表、
         //start--------------------------------------------------------------
         //动态生成权限下拉选项
         $videoarr = array(
-            '1' => '1-启用',
-            '2' => '2-禁用',
+            '2' => '2-关闭',
+            '1' => '1-开启',
         );
 
         $videosflagarr = array(
-            '2' => '2-首页不展示',
-            '1' => '1-首页展示',
+            '2' => '2-隐藏',
+            '1' => '1-展示',
         );
 
         $videoflag_show = '';
@@ -461,7 +452,7 @@ class VideoAction extends Action{
 
         //查询合集
         $Model = new Model();
-        $list_heji = $Model -> table('sixty_jihemsg') -> field('id, name') -> select();
+        $list_heji = $Model -> table('sixty_jihemsg') -> field('id, name') -> order('id DESC') -> limit('0','100') -> select();
 
         $heji_arr = array();
         foreach($list_heji as $key_heji => $val_heji){
@@ -492,17 +483,16 @@ class VideoAction extends Action{
         }
 
         //插入不选选项
-        $class_arr_one = Array('' => '不选') + $class_arr_one;
-        $class_arr_two = Array('' => '不选') + $class_arr_two;
+
         $class_arr_three = Array('' => '不选') + $class_arr_three;
         $class_arr_four = Array('' => '不选') + $class_arr_four;
         $heji_arr = Array('' => '不选') + $heji_arr;
 
         //生成下拉菜单
-        $one_select = $this->downlist($class_arr_one);
-        $two_select = $this->downlist($class_arr_two);
-        $three_select = $this->downlist($class_arr_three);
-        $four_select = $this->downlist($class_arr_four);
+        $one_select = $this->downlist2($class_arr_one);
+        $two_select = $this->downlist2($class_arr_two);
+        $three_select = $this->downlist2($class_arr_three);
+        $four_select = $this->downlist2($class_arr_four);
         $heji_arr = $this->downlist($heji_arr);
         $this -> assign('videoheji_show',$heji_arr);
 
@@ -518,6 +508,9 @@ class VideoAction extends Action{
         //=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
         //判断用户是否登陆
         $this->loginjudgeshow($this->lock_addvideo_do);
+        //拼接URL
+        $echourl = func_baseurlcreate($_GET);
+        $this->assign('echourl',$echourl);
         //=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
 
         //接收数据
@@ -537,6 +530,41 @@ class VideoAction extends Action{
         $msgjihe = trim($this->_post('msgjihe'));
         $tiaozhaun = trim($this->_post('submitandshicai'));
         $sflag = trim($this->_post('sflag'));
+
+        //判断是否提交视频标题
+        if($biaoti == '')
+        {
+            echo "<script>alert('视频标题不能为空!');history.go(-1);</script>";
+            $this -> error('视频标题不能为空!');
+        }
+
+        //判断是否提交视频子标题
+        if($biaotichild == '')
+        {
+            echo "<script>alert('视频子标题不能为空!');history.go(-1);</script>";
+            $this -> error('视频子标题不能为空!');
+        }
+
+//        //判断是否提交视频分类1
+//        if($classify1 == '')
+//        {
+//            echo "<script>alert('视频分类1不能为空!');history.go(-1);</script>";
+//            $this -> error('视频分类1不能为空!');
+//        }
+
+        //判断是否提交视频分类1
+        if($classify2 == '')
+        {
+            echo "<script>alert('视频分类2不能为空!');history.go(-1);</script>";
+            $this -> error('视频分类2不能为空!');
+        }
+
+//        //判断是否提交视频分类1
+//        if($classify3 == '')
+//        {
+//            echo "<script>alert('视频分类3不能为空!');history.go(-1);</script>";
+//            $this -> error('视频分类3不能为空!');
+//        }
 
 
         //判断提交的视频介绍内容长度
@@ -558,6 +586,27 @@ class VideoAction extends Action{
         }
 
 
+        $Model = new Model();
+        //判断视频标题是否重名
+        $old_biaoti = $Model -> table('sixty_video') -> field('id') -> where("biaoti='" . $biaoti . "'") -> find();
+        //判断是否找到结果
+        if($old_biaoti != '')
+        {
+            echo "<script>alert('此视频标题名已存在！');history.go(-1);</script>";
+            $this -> error('此视频标题名已存在！');
+        }
+
+
+        //判断视频子标题是否重名
+        $old_biaotichild = $Model -> table('sixty_video') -> field('id') -> where("biaotichild='" . $biaotichild . "'") -> find();
+        //判断是否找到结果
+        if($old_biaotichild != '')
+        {
+            echo "<script>alert('此视频子标题名已存在！');history.go(-1);</script>";
+            $this -> error('此视频子标题名已存在！');
+        }
+
+
         //判断文件是否上传
         $file = $_FILES['showimg']['name'];
         if($file != ''){
@@ -565,7 +614,7 @@ class VideoAction extends Action{
             $upload = new UploadFile();// 实例化上传类
             $upload->maxSize  = 2097152 ;// 设置附件上传大小
             $upload->saveRule  = date('YmdHis',time()) . mt_rand();// 设置附件上传文件名
-            $upload->allowExts  = array('jpg');// 设置附件上传类型
+            $upload->allowExts  = array('jpg','gif','png');// 设置附件上传类型
             $upload->savePath =  BASEDIR.'Public/Images/sixty-videoimage/';// 设置附件上传目录
             if(!$upload->upload()) {// 上传错误提示错误信息
                 echo "<script>alert('图片上传失败!');history.go(-1);</script>";
@@ -576,7 +625,7 @@ class VideoAction extends Action{
 
                 //上传七牛云
                 //上传图片存储绝对路径
-                $cz_filepathname  = BASEDIR.'Public/Images/video-showimg/'.$showimg;
+                $cz_filepathname  = BASEDIR.'Public/Images/sixty-videoimage/'.$showimg;
 
                 if(false===func_isImage($cz_filepathname)) {
                     //解析失败，非正常图片---后台图片上传时本函数可不使用
@@ -607,6 +656,9 @@ class VideoAction extends Action{
                 }
             }
 
+        }else {
+            echo "<script>alert('视频展示图片不能为空！');history.go(-1);</script>";
+            $this -> error('视频展示图片不能为空！');
         }
 
 
@@ -615,7 +667,7 @@ class VideoAction extends Action{
         $data = array(
             'biaoti' => $biaoti,
             'biaotichild' => $biaotichild,
-            'classify1' => $classify1,
+            'classify1' => '美食',
             'classify2' => $classify2,
             'classify3' => $classify3,
             'classify4' => $classify4,
@@ -632,7 +684,7 @@ class VideoAction extends Action{
             'fenshu' => $fenshu,
             );
 
-        $Model = new Model();
+        //执行添加
         $result = $Model -> table('sixty_video') -> add($data);
 
         //写入日志
@@ -644,8 +696,8 @@ class VideoAction extends Action{
         {
             if($tiaozhaun != '' ) {
             //成功返回成功
-                echo "<script>alert('视频添加成功!');window.location.href='".__APP__."/Food/addfood?to_video_id=".$result."';</script>";
-                $this -> success('视频添加成功!','__APP__/Food/addfood');
+                echo "<script>alert('视频添加成功!');window.location.href='".__APP__."/Food/addfood".$echourl.'&to_video_id='.$result."';</script>";
+                $this -> success('视频添加成功!','__APP__/Food/addfood'.$echourl);
             }
             //成功返回成功
             echo "<script>alert('视频添加成功!');window.location.href='".__APP__."/Video/index';</script>";
@@ -672,7 +724,7 @@ class VideoAction extends Action{
         //获取数据
         $id = $this->_post('video_id');
 
-        //执行查询
+        //执行视频表查询
         $Model = new Model();
         $list = $Model -> table('sixty_video') -> field('id, fenshu, sflag, flag, biaoti, biaotichild, videosavename,
         classify1, classify2, classify3, classify4, jieshao, msgjihe, maketime, huafeimoney, tishishuoming, showimg')
@@ -691,10 +743,14 @@ class VideoAction extends Action{
         //查询分类
         $Model = new Model();
         $list_class = $Model -> table('sixty_classifymsg') -> field('id, name, level') -> select();
+
+        //准备分类数组
         $class_arr_one = array();
         $class_arr_two = array();
         $class_arr_three = array();
         $class_arr_four = array();
+
+        //遍历分类结果集
         foreach($list_class as $key_class => $val_class){
             $level = $val_class['level'];
             if($level == 1){
@@ -713,33 +769,38 @@ class VideoAction extends Action{
 
         //启用禁用数组
         $videoarr = array(
-            '1' => '1-启用',
-            '2' => '2-禁用',
+            '1' => '1-开启',
+            '2' => '2-关闭',
         );
         $flag = $list['flag'];
 
         //首页展示数组
         $sflagarr = array(
             '1' => '1-展示',
-            '2' => '2-关闭',
+            '2' => '2-隐藏',
         );
         $sflag = $list['sflag'];
 
         //插入不选选项
-        $class_arr_one = Array('' => '不选') + $class_arr_one;
-        $class_arr_two = Array('' => '不选') + $class_arr_two;
         $class_arr_three = Array('' => '不选') + $class_arr_three;
         $class_arr_four = Array('' => '不选') + $class_arr_four;
         $heji_arr = Array('' => '不选') + $heji_arr;
 
         //执行生成下拉菜单
         $heji_arr = $this->downlist($heji_arr,$list['msgjihe']);
-        $one_select = $this->downlist($class_arr_one,$list['classify1']);
-        $two_select = $this->downlist($class_arr_two,$list['classify2']);
-        $three_select = $this->downlist($class_arr_three,$list['classify3']);
-        $four_select = $this->downlist($class_arr_four,$list['classify4']);
+        $one_select = $this->downlist2($class_arr_one,$list['classify1']);
+        $two_select = $this->downlist2($class_arr_two,$list['classify2']);
+        $three_select = $this->downlist2($class_arr_three,$list['classify3']);
+        $four_select = $this->downlist2($class_arr_four,$list['classify4']);
         $videoflag_show = $this->downlist($videoarr,$flag);
         $sflag_show = $this->downlist($sflagarr,$sflag);
+
+        //获取七牛云图片
+        $showimg = $list['showimg'];
+        $imgwidth = '100';
+        $imgheight = '100';
+        $addressimg = hy_qiniuimgurl('sixty-videoimage',$showimg,$imgwidth,$imgheight);
+        $list['showimg'] = "<img src='" . $addressimg . "' />";
 
 
         //输出到模板
@@ -785,6 +846,37 @@ class VideoAction extends Action{
         $videosavename = trim($this->_post('edit_videosavename'));
         $msgjihe = trim($this->_post('edit_msgjihe'));
 
+        //判断是否提交视频标题
+        if($biaoti == '')
+        {
+            //超过200返回错误
+            echo "<script>alert('视频标题不能为空!');history.go(-1);</script>";
+            $this -> error('视频标题不能为空!');
+        }
+
+        //判断是否提交视频子标题
+        if($biaotichild == '')
+        {
+            //超过200返回错误
+            echo "<script>alert('视频子标题不能为空!');history.go(-1);</script>";
+            $this -> error('视频子标题不能为空!');
+        }
+
+        //判断是否提交视频分类2
+        if($classify2 == '')
+        {
+            echo "<script>alert('视频分类2不能为空!');history.go(-1);</script>";
+            $this -> error('视频分类2不能为空!');
+        }
+
+//        //判断是否提交视频分类3
+//        if($classify3 == '')
+//        {
+//            echo "<script>alert('视频分类3不能为空!');history.go(-1);</script>";
+//            $this -> error('视频分类3不能为空!');
+//        }
+
+
         //判断提交的视频介绍内容长度
         $len = mb_strlen($jieshao,'UTF-8');
         if($len > 200)
@@ -802,6 +894,31 @@ class VideoAction extends Action{
             echo "<script>alert('视频提示内容超过200字，不能提交！');history.go(-1);</script>";
             $this -> error('视频提示内容超过200字，不能提交！');
         }
+
+
+        $Model = new Model();
+        //判断视频标题是否重名
+        $old_biaoti = $Model -> table('sixty_video') -> field('id')
+            -> where("biaoti='" . $biaoti . "' and id <> '" . $id . "'") -> find();
+        //判断是否找到结果
+        if($old_biaoti != '')
+        {
+            echo "<script>alert('此视频标题名已存在！');history.go(-1);</script>";
+            $this -> error('此视频标题名已存在！');
+        }
+
+
+        //判断视频子标题是否重名
+        $old_biaotichild = $Model -> table('sixty_video') -> field('id')
+            -> where("biaotichild='" . $biaotichild . "' and id <> '" . $id . "'") -> find();
+        //判断是否找到结果
+        if($old_biaotichild != '')
+        {
+            echo "<script>alert('此视频子标题名已存在！');history.go(-1);</script>";
+            $this -> error('此视频子标题名已存在！');
+        }
+
+
         //获取旧数据信息
         $Model = new Model();
         $res_old = $Model -> table('sixty_video') -> field('id,showimg') -> where("id='".$id."'") -> find();
@@ -811,8 +928,11 @@ class VideoAction extends Action{
             $this -> error('非法进入该页面！');
         }
         $show_old = $show_old['showimg'];
+
+
         //准备SQL数据数组
         $create_datetime = date('Y-m-d H:i:s',time());
+
 
         //判断文件是否上传
         $file = $_FILES['showimg']['name'];
@@ -821,7 +941,7 @@ class VideoAction extends Action{
             $upload = new UploadFile();// 实例化上传类
             $upload->maxSize  = 2097152 ;// 设置附件上传大小
             $upload->saveRule  = date('YmdHis',time()) . mt_rand();// 设置附件上传大小
-            $upload->allowExts  = array('jpg');// 设置附件上传类型
+            $upload->allowExts  = array('jpg','gif','png');// 设置附件上传类型
             $upload->savePath =  BASEDIR.'Public/Images/sixty-videoimage/';// 设置附件上传目录
             if(!$upload->upload()) {// 上传错误提示错误信息
                 echo "<script>alert('图片上传失败!');history.go(-1);</script>";
@@ -863,7 +983,7 @@ class VideoAction extends Action{
                     //准备更新数组
                     $data = array('biaoti' => $biaoti,
                         'biaotichild' => $biaotichild,
-                        'classify1' => $classify1,
+                        'classify1' => '美食',
                         'classify2' => $classify2,
                         'classify3' => $classify3,
                         'classify4' => $classify4,
@@ -886,7 +1006,7 @@ class VideoAction extends Action{
             $data = array(
                 'biaoti' => $biaoti,
                 'biaotichild' => $biaotichild,
-                'classify1' => $classify1,
+                'classify1' => '美食',
                 'classify2' => $classify2,
                 'classify3' => $classify3,
                 'classify4' => $classify4,
@@ -937,7 +1057,7 @@ class VideoAction extends Action{
         $id = trim($this->_post('del_id'));
 
         $Model = new Model();
-        $res = $Model -> table('sixty_video') -> field('id, showimg') -> where("id='".$id."'") -> find();
+        $res = $Model -> table('sixty_video') -> field('id, showimg, flag') -> where("id='".$id."'") -> find();
 
         //判断ID是否存在
         if(!$res['id'])
@@ -945,6 +1065,13 @@ class VideoAction extends Action{
             //ID不存在
             echo "<script>alert('删除失败，此ID不存在！');history.go(-1);</script>";
             $this -> error('删除失败，此ID不存在！');
+        }
+        //判断视频是否处于开启状态
+        if($res['flag'] == '1')
+        {
+            //ID不存在
+            echo "<script>alert('视频处于开启状态，请关闭后再删除！');history.go(-1);</script>";
+            $this -> error('视频处于开启状态，请关闭后再删除！');
         }
         $show_old = $res['showimg'];
         //删除七牛云视频旧图片
@@ -1023,6 +1150,33 @@ class VideoAction extends Action{
             }
         }else{
             $res_arr = "<option selected='selected'>无</option>";
+        }
+        return $res_arr;
+
+    }
+
+    //动态下拉列表
+    public function downlist2($arr, $lock=''){
+
+        //动态生成权限下拉选项
+        //$lock为空时，关联数组array[0]未默认选项
+        $res_arr = '';
+
+        if(!empty($arr)) {
+            foreach ($arr as $keyr => $valr) {
+                if($valr == '不选') {
+                    $res_arr .= "<option value=''";
+                }else {
+                    $res_arr .= '<option value="' . $valr . '" ';
+                }
+                if ($valr == $lock) {
+                    $res_arr .= ' selected="selected"';
+                }
+                $res_arr .= '>' . $valr . '</option>';
+            }
+        }else{
+
+            $res_arr = "<option value='' selected='selected'>无</option>";
         }
         return $res_arr;
 

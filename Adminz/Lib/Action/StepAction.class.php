@@ -7,9 +7,9 @@
  */
 class StepAction extends Action{
     //定义各模块锁定级别
-    private $lock_addstep    = '9';
-    private $lock_addstep_do = '9';
-    private $editstep_do = '9';
+    private $lock_addstep    = '97';
+    private $lock_addstep_do = '97';
+    private $editstep_do = '97';
 
 
     public function addstep(){

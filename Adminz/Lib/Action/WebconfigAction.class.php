@@ -8,12 +8,12 @@
 
 class WebconfigAction extends Action{
     //定义各模块锁定级别
-    private $lock_index    = '7';
-    private $lock_editconfig  = '9';
-    private $lock_editconfig_do = '9';
-    private $lock_delconfig_do     = '9';
-    private $lock_addconfig       = '9';
-    private $lock_addconfig_do     = '9';
+    private $lock_index    = '97';
+    private $lock_editconfig  = '97';
+    private $lock_editconfig_do = '97';
+    private $lock_delconfig_do     = '97';
+    private $lock_addconfig       = '97';
+    private $lock_addconfig_do     = '97';
 
     /*
      * 网站配置列表
@@ -91,14 +91,41 @@ class WebconfigAction extends Action{
         if(!$name)
         {
             echo "<script>alert('配置名称不能为空');history.go(-1);</script>";
-            $this -> error('项目名不能为空');
+            $this -> error('配置名称不能为空');
         }
-//
+
+        //传值不能为空
+        if(!$key1)
+        {
+            echo "<script>alert('配置项不能为空');history.go(-1);</script>";
+            $this -> error('配置项不能为空');
+        }
+
+        //传值不能为空
+        if(!$val1)
+        {
+            echo "<script>alert('配置详情不能为空');history.go(-1);</script>";
+            $this -> error('配置详情不能为空');
+        }
+
         if(!$id)
         {
             echo "<script>alert('非法进入！');history.go(-1);</script>";
             $this -> error('非法进入！');
         }
+
+
+        //正则表达式字符串
+        $zhengze = '/^[0-9a-zA-Z\_]+$/';
+        //进行匹配
+        $res_zheng = preg_match($zhengze,$name);
+
+        //判断匹配结果
+        if(!$res_zheng) {
+            echo "<script>alert('配置名称不合法!');history.go(-1);</script>";
+            $this -> error('配置名称不合法!');
+        }
+
 
         $Model = new Model();
         //判断ID是否存在
@@ -110,6 +137,17 @@ class WebconfigAction extends Action{
             echo "<script>alert('非法进入！');history.go(-1);</script>";
             $this -> error('非法进入！');
         }
+
+        //判断是否重名
+        $res_name= $Model -> table('sixty_config') -> field('name') -> where("name='".$name."'") -> find();
+        //判断是否查询到配置名
+        if($res_name != '')
+        {
+            echo "<script>alert('配置名已存在！');history.go(-1);</script>";
+            $this -> error('配置名已存在！');
+        }
+
+
         //准备更新数组
         $up_data = array('name' => $name, 'key1' => $key1, 'val1' => $val1);
         $Model = new Model();
@@ -147,14 +185,14 @@ class WebconfigAction extends Action{
         //判断提交是否为空
         if($submitdel == '')
         {
-            echo "<script>alert('非法进入此页面1111');history.go(-1);</script>";
+            echo "<script>alert('非法进入此页面');history.go(-1);</script>";
             $this -> error('非法进入此页面');
         }
 
         //判断用于id是否为空
         if(empty($id))
         {
-            echo "<script>alert('非法进入此页面2222');history.go(-1);</script>";
+            echo "<script>alert('非法进入此页面');history.go(-1);</script>";
             $this -> error('非法进入此页面');
         }
 
@@ -213,6 +251,18 @@ class WebconfigAction extends Action{
         $val1 = trim($this->_post('addconfig_val1'));
         $submit = trim($this->_post('submit_add'));
 
+
+        //正则表达式字符串
+        $zhengze = '/^[0-9a-zA-Z\_]+$/';
+        //进行匹配
+        $res_zheng = preg_match($zhengze,$name);
+        //判断匹配结果
+        if(!$res_zheng) {
+            echo "<script>alert('配置名称不合法!');history.go(-1);</script>";
+            $this -> error('配置名称不合法!');
+        }
+
+
         //判断提交来源
         if($submit)
         {
@@ -221,30 +271,47 @@ class WebconfigAction extends Action{
         }
 
         //判断项目名是否提交
-        if(empty($name))
+        if(!$name)
         {
-            echo "<script>alert('项目名不能为空!');history.go(-1);</script>";
-            $this -> error('项目名不能为空!');
+            echo "<script>alert('配置名称不能为空');history.go(-1);</script>";
+            $this -> error('配置名称不能为空');
         }
 
-        $Model = new Model();
+        //传值不能为空
+        if(!$key1)
+        {
+            echo "<script>alert('配置项不能为空');history.go(-1);</script>";
+            $this -> error('配置项不能为空');
+        }
 
+        //传值不能为空
+        if(!$val1)
+        {
+            echo "<script>alert('配置详情不能为空');history.go(-1);</script>";
+            $this -> error('配置详情不能为空');
+        }
+
+
+        $Model = new Model();
         //判断name是否已存在
         $res_name = $result = $Model -> table('sixty_config') -> where("name='".$name."'") -> find();
         if($res_name)
         {
-            echo "<script>alert('此项目名已存在!');history.go(-1);</script>";
-            $this -> error('此项目名已存在!');
+            echo "<script>alert('此网站配置名已存在!');history.go(-1);</script>";
+            $this -> error('此网站配置名已存在!');
         }
+
 
         //准备提交数据数组
         $data = array('name' => $name, 'key1' => $key1, 'val1' => $val1);
-
+        //执行添加
         $result = $Model -> table('sixty_config') -> add($data);
+
 
         //写入日志
         $templogs = $Model->getlastsql();
         hy_caozuo_logwrite($templogs,__CLASS__.'---'.__FUNCTION__);
+
 
         //判断添加结果
         if($result) {

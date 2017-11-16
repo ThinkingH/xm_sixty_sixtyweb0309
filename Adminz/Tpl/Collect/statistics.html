@@ -53,10 +53,12 @@
     <tr>
         <td width="50">藏品ID</td>
         <td width="300">藏品名称</td>
+
         <td width="50">收藏类型</td>
+        <td width="80"><b>藏品创建日期</b></td>
         <!--<td width="200"><b>收藏内容</b></td>-->
         <td width="50">收藏数</td>
-        <td width="150"><b>创建日期</b></td>
+
     </tr>
     </thead>
 
@@ -71,10 +73,11 @@
             <!--</td>-->
             <td>{$vo.dataid}</td>
             <td>{$vo.video_biaoti}</td>
-            <td>{$vo.type}</td>
 
-            <td>{$vo.colcont}</td>
+            <td>{$vo.type}</td>
             <td>{$vo.create_datetime}</td>
+            <td>{$vo.colcont}</td>
+
         </tr>
     </volist>
 

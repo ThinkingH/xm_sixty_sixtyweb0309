@@ -13,21 +13,28 @@
             $("#submitedit").click(function(){
 
                 var name = $("#name").val();
+                var key1 = $("#key1").val();
+                var val1 = $("#val1").val();
+
+
 
                 if(name == '') {
-                    alert('名称不能为空！');
+                    alert('配置名称不能为空！');
                     return false;
                 }
 
-                if(confirm("您确认要编辑此条网站配置吗？此编辑涉及到重要用户数据，请小心操作。")) {
-                    if(passwd!='') {
-                        var md5_passwd = hex_md5(passwd);
-                        $("#resetpasswd").val(md5_passwd);
-                    }
-                    if(repasswd!='') {
-                        var md5_repasswd = hex_md5(repasswd);
-                        $("#resetrepasswd").val(md5_repasswd);
-                    }
+                if(key1 == '') {
+                    alert('配置项不能为空！');
+                    return false;
+                }
+
+                if(val1 == '') {
+                    alert('配置详情不能为空！');
+                    return false;
+                }
+
+                if(confirm("您确认要编辑此条网站配置吗？此编辑涉及到重要数据，请小心操作。")) {
+
                 }else {
                     return false;
                 }
@@ -36,7 +43,7 @@
 
 
             $("#submitdel").click(function(){
-                if(confirm("您确认要删除此条网站配置吗？")) {
+                if(confirm("您确认要删除此条网站配置吗？删除后无法恢复！")) {
                     //alert('ok');
 
                 }else {
@@ -53,7 +60,7 @@
 
 <body>
 <div class="hy_daohangtiao">
-    当前位置&nbsp;#&nbsp;网站管理&nbsp;#&nbsp;编辑网站配置&nbsp;#&nbsp;网站配置修改页面
+    当前位置&nbsp;#&nbsp;网站配置&nbsp;#&nbsp;网站配置&nbsp;#&nbsp;网站配置修改页面
 </div>
 
 
@@ -69,27 +76,47 @@
     <br/><br/>
     <table class="table-edit" >
         <tr>
-            <td width="50" align="right"><b>配置ID:</b></td>
-            <td width="650">
-                {$list['id']}
+            <td width="50" align="right">配置ID:</td>
+            <td width=400">
+                &nbsp;&nbsp;{$list['id']}
             </td>
         </tr>
         <tr>
-            <td align="right"><b>配置名称:</b></td>
+            <td align="right">配置名称<font color="red" size="-2">*</font>:</td>
             <td >
                 <input type="text" name="editconfig_name" id="name" value="{$list['name']}" maxlength="30" size="30"/>
+                <br/>
+                <font color="orange" size="-1">配置名是用于前台获取的字段信息，只能是数字、字母、下划线</font>
             </td>
         </tr>
         <tr>
-            <td align="right"><b>配置项:</b></td>
+            <td align="right">配置项<font color="red" size="-2">*</font>:</td>
             <td>
                 <input type="text" name="editconfig_key1" id="key1" value="{$list['key1']}" maxlength="50" size="50"/>
+                <br/>
+                <font color="orange" size="-1">配置项填写配置的中文名，最多50字 如：版本号</font>
             </td>
         </tr>
         <tr>
-            <td align="right"><b>配置详情:</b></td>
+            <td align="right">配置详情<font color="red" size="-2">*</font>:</td>
             <td>
-                <input type="text" name="editconfig_val1" id="val1" value="{$list['val1']}" maxlength="100" size="80"/>
+                <!--<input type="text" name="editconfig_val1" id="val1" value="{$list['val1']}" maxlength="100" size="80"/>-->
+                <textarea rows="6" cols="70" style=""
+                          onchange="this.value=this.value.substring(0, 300)"
+                          onkeydown="this.value=this.value.substring(0, 300)"
+                          onkeyup="this.value=this.value.substring(0, 300)"
+                          id="val1" name="editconfig_val1">{$list['val1']}</textarea>
+                <br/>
+                <font color="orange" size="-1">配置详情填写该配置的具体内容，最多300字</font>
+            </td>
+        </tr>
+        <tr>
+            <td align="right"></td>
+            <td>
+                &nbsp;
+                <font color="red" size="-2">
+                    注意：带 * 的选项为必填项目！
+                </font>
             </td>
         </tr>
         <tr>
@@ -99,7 +126,7 @@
             </form>
             <form method="post" action="__APP__/Webconfig/delconfig_do" style="margin:0px;padding:0px; display: inline;">
                 <input type="hidden" name="delconfig_id" value="{$list['id']}" />
-                <input type="submit" name="submitdel" id="submitdel" class="yubuttons yuwhite" value="删除此配置" style="margin-left:406px;margin-top:0px;"/>
+                <input type="submit" name="submitdel" id="submitdel" class="yubuttons yuwhite" value="删除此配置" style="margin-left: 150px;px;margin-top:0px;"/>
             </form>
             </td>
         </tr>

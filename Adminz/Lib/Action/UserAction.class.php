@@ -8,12 +8,12 @@
 
 class UserAction extends Action{
     //定义各模块锁定级别
-    private $lock_index        = '7';
-    private $lock_edituser     = '7';
-    private $lock_edit_do      = '7';
-    private $lock_deluser_do   = '7';
-    private $lock_adduser      = '7';
-    private $lock_adduser_x    = '7';
+    private $lock_index        = '97';
+    private $lock_edituser     = '97';
+    private $lock_edit_do      = '97';
+    private $lock_deluser_do   = '97';
+    private $lock_adduser      = '97';
+    private $lock_adduser_x    = '97';
 
     /*
      * 用户列表*/
@@ -57,6 +57,7 @@ class UserAction extends Action{
             $where_end_day = $get_end_day . ' 23:59:59';
             $condition .= "and create_datetime <= '" . $where_end_day . "'";
         }
+
         if($lock != 4)
         {
             $condition .= "and is_lock = '". $lock ."'";
@@ -77,7 +78,7 @@ class UserAction extends Action{
         //执行查询
         $list = $Model->table('sixty_user')->field('id, is_lock, openid, nickname, touxiang, sex, email, phone, 
         userlevel, birthday, create_datetime, keyong_money, dongjie_money, keyong_jifen, dongjie_jifen, describes,
-        qq,weixin,remark, jiguangid')
+        qq,weixin,remark, jiguangid, phonetype, qqid, weiboid')
             ->where($condition) ->order('create_datetime DESC') ->limit($Page->firstRow . ',' . $Page->listRows)->select();
         //改变查询数据中性别字段
         foreach ($list as $key => $value) {
@@ -91,17 +92,26 @@ class UserAction extends Action{
                 $list[$key]['sex'] = '保密';
             }
 
+            if ($list[$key]['phonetype'] == 1) {
+                $list[$key]['phonetype'] = '安卓';
+            }
+            if ($list[$key]['phonetype'] == 2) {
+                $list[$key]['phonetype'] = 'IOS';
+            }
+            if ($list[$key]['phonetype'] == 0) {
+                $list[$key]['phonetype'] = '保密';
+            }
 
             if($list[$key]['is_lock'] == 1)
             {
-                $list[$key]['is_lock'] = "<span style='background-color: #33FF66; padding: 3px;'>1-已启用</span>";
+                $list[$key]['is_lock'] = "<span style='background-color: #33FF66; padding: 3px;'>1-已开启</span>";
             }else{
-                $list[$key]['is_lock'] = "<span style='background-color: #FFFF00; padding: 3px;'>2-已禁用</span>";
+                $list[$key]['is_lock'] = "<span style='background-color: #FF82A5; padding: 3px;'>2-已关闭</span>";
             }
             //获取七牛云图片
             $showimg = $list[$key]['touxiang'];
-            $imgwidth = '100';
-            $imgheight = '100';
+            $imgwidth = '50';
+            $imgheight = '50';
             $addressimg = hy_qiniuimgurl('sixty-user',$showimg,$imgwidth,$imgheight);
             $list[$key]['touxiang'] = "<img src='" . $addressimg . "' />";
 //            var_dump($list['touxiang']);die;
@@ -111,8 +121,8 @@ class UserAction extends Action{
         //动态生成权限下拉选项
         $rootarr = array(
             '4' => '4-全选',
-            '1' => '1-已启用',
-            '2' => '2-已禁用',
+            '1' => '1-已开启',
+            '-1' => '2-已关闭',
         );
 
         $rootflag_show = '';
@@ -196,6 +206,26 @@ class UserAction extends Action{
         $this -> assign('usersex_show',$usersex_show);
         //end--------------------------------------------------------------
 
+        //start--------------------------------------------------------------
+        //动态生成权限下拉选项
+        $phonearr = array(
+            '' => '保密',
+            '1' => '1-安卓',
+            '2' => '2-IOS',
+        );
+
+        $phone_show = '';
+        foreach($phonearr as $keyr => $valr) {
+            $phone_show .= '<option value="'.$keyr.'" ';
+            if($keyr==$lock) {
+                $phone_show .= ' selected="selected"';
+            }
+            $phone_show .= '>'.$valr.'</option>';
+
+        }
+        $this -> assign('phone_show',$phone_show);
+        //end--------------------------------------------------------------
+
         // 输出模板
         $this->display();
     }
@@ -221,74 +251,196 @@ class UserAction extends Action{
         $qq = trim($this->_post('qq'));
         $sex = trim($this->_post('sex'));
         $birthday = trim($this->_post('birthday'));
-        $passwd = trim($this->_post('passwd'));
         $lock = trim($this->_post('lock'));
-        //数据库初始化
+        $describes = trim($this->_post('describes'));
+        $remark = trim($this->_post('remark'));
+        $qqid = trim($this->_post('qqid'));
+        $weiboid = trim($this->_post('weiboid'));
+        $openid = trim($this->_post('openid'));
+        $weixin = trim($this->_post('weixin'));
+        $jiguangid = trim($this->_post('jiguangid'));
+        $phonetype = trim($this->_post('phonetype'));
+
+        //判断数据是否为空
+        if($nickname == '') {
+            echo "<script>alert('昵称不能为空');history.go(-1);</script>";
+            $this -> error('昵称不能为空');
+        }
+        if($phone == '') {
+            echo "<script>alert('手机号不能为空');history.go(-1);</script>";
+            $this -> error('手机号不能为空');
+        }
+        if($email != '') {
+            if(!preg_match('/^\w+([-+.]\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*$/',$email)) {
+                echo "<script>alert('邮箱不符合邮箱格式');history.go(-1);</script>";
+                $this -> error('邮箱不符合邮箱格式');
+            }
+        }
+
         $Model = new Model();
-        //判断该用户名是否存在
-        $sql_nikename = "select nikename from sixty_user where nikename='".$nickname."'";
-        $host_nikename = $Model -> query($sql_nikename);
-        if($host_nikename) {
-            echo "<script>alert('该昵称已经存在，请选择新的昵称');history.go(-1);</script>";
-            $this -> error('该昵称已经存在，请选择新的昵称');
-        }else{
+        //检查用户昵称是否存在
+        $sql_nickname = "select id from sixty_user where nickname='".$nickname."' and id <> '" . $id ."'";
+        $result_nickname = $Model -> query($sql_nickname);
 
-            //判断手机号是否存在
-            $sql_phone = "select phone from sixty_user where phone='".$phone."'";
-            $host_phone = $Model->query($sql_phone);
+        $res_nickname = $result_nickname['0']['id'];
+        if($res_nickname != '') {
+            echo "<script>alert('此昵称已存在');history.go(-1);</script>";
+            $this -> error('此昵称已存在');
+        }
 
-            if($host_phone) {
-                echo "<script>alert('此手机号已存在，请使用其他手机号');history.go(-1);</script>";
-                $this -> error('此手机号已存在，请使用其他手机号');
-            }else{
 
-                //判断邮箱是否存在
-                $sql_email = "select email from sixty_user where email='".$email."'";
-                $host_email = $Model->query($sql_email);
+        //检查手机号是否存在
+        $sql_phone = "select nickname from sixty_user where phone='".$phone."' and id <> '" . $id ."'" ;
+        $result_phone = $Model -> query($sql_phone);
 
-                if($host_email) {
-                    echo "<script>alert('此邮箱已存在，请使用其他邮箱');history.go(-1);</script>";
-                    $this -> error('此邮箱已存在，请使用其他邮箱');
+        if($result_phone) {
+            $res = $result_phone['0']['nickname'];
+            if($res != $nickname)
+            {
+                echo "<script>alert('此手机号已被注册，请使用其他手机号');history.go(-1);</script>";
+                $this -> error('此手机号已被注册，请使用其他手机号');
+            }
+        }
 
-                }else{
-                    //判断QQ是否存在
-                    //判断邮箱是否存在
-                    $sql_qq = "select qq from sixty_user where qq='".$qq."'";
-                    $host_qq = $Model->query($sql_qq);
-                    if($host_qq) {
-                        echo "<script>alert('此qq已存在，请使用其他qq');history.go(-1);</script>";
-                        $this -> error('此qq已存在，请使用其他qq');
-                    }else{
+        if($qq != '') {
+            //检查qq号是否存在
+            $sql_qq = "select nickname from sixty_user where qq='".$qq."' and id <> '" . $id ."'";
+            $result_qq = $Model -> query($sql_qq);
 
-                        //添加用户信息到sql数组
-                        $data = array();
-                        $data['nickname'] = $nickname;
-                        $data['passwd']   = md5($passwd);
-                        $data['phone'] = $phone;
-                        $data['email'] = $email;
-                        $data['qq'] = $qq;
-                        $data['sex'] = $sex;
-                        $data['is_lock'] = $lock;
-                        $data['birthday'] = $birthday;
-                        $data['create_datetime'] = date('Y-m-d H:i:s',time());
-                        //执行添加语句
-                        $ret = $Model->table('sixty_user')->add($data);
-
-                        //写入日志
-                        $templogs = $Model->getlastsql();
-                        hy_caozuo_logwrite($templogs,__CLASS__.'---'.__FUNCTION__);
-
-                        if($ret) {
-                            echo "<script>alert('数据添加成功!');window.location.href='".__APP__.'/User/index'.$echourl."';</script>";
-                            $this -> success('数据添加成功!','__APP__'.$echourl);
-                        }else {
-                            echo "<script>alert('数据添加失败，系统错误!');history.go(-1);</script>";
-                            $this -> error('数据添加失败，系统错误!');
-                        }
-                    }
+            if($result_qq)
+            {
+                $res = $result_qq[0]['nickname'];
+                if($res != $nickname) {
+                    echo "<script>alert('此qq号已被注册，请使用其他qq号');history.go(-1);</script>";
+                    $this -> error('此qq号已被注册，请使用其他qq号');
                 }
             }
         }
+
+
+        if($weixin != '') {
+            //检查微信号是否存在
+            $sql_weixin = "select nickname from sixty_user where weixin='".$weixin."' and id <> '" . $id ."'";
+            $result_weixin = $Model -> query($sql_weixin);
+
+            if($result_weixin) {
+                $res = $result_weixin[0]['nickname'];
+                if($res != $nickname && $result_weixin['openid'] != '')
+                {
+                    echo "<script>alert('此微信号已被注册，请使用其他微信号');history.go(-1);</script>";
+                    $this -> error('此微信号已被注册，请使用其他微信号');
+                }
+            }
+        }
+
+
+        if($email != '') {
+            //检查邮箱是否存在
+            $sql_email = "select nickname from sixty_user where email='".$email."' and id <> '" . $id ."'";
+            $result_email = $Model -> query($sql_email);
+            if($result_email) {
+                $res = $result_email[0]['nickname'];
+                if($res != $nickname)
+                {
+                    echo "<script>alert('此邮箱已被注册，请使用其他邮箱');history.go(-1);</script>";
+                    $this -> error('此邮箱已被注册，请使用其他邮箱');
+                }
+            }
+        }
+
+
+        if($qqid != '') {
+            //检查qqid是否存在
+            $sql_qqid = "select nickname from sixty_user where qqid='".$qqid."' and id <> '" . $id ."'";
+            $result_qqid = $Model -> query($sql_qqid);
+            if($result_qqid) {
+                $res = $result_qqid[0]['nickname'];
+                if($res != $nickname)
+                {
+                    echo "<script>alert('此qqid已被注册，请使用其他qqid');history.go(-1);</script>";
+                    $this -> error('此qqid已被注册，请使用其他qqid');
+                }
+            }
+        }
+
+
+        if($openid != '') {
+            //检查openid是否存在
+            $sql_openid = "select nickname from sixty_user where openid='".$openid."' and id <> '" . $id ."'";
+            $result_openid = $Model -> query($sql_openid);
+            if($result_openid) {
+                $res = $result_openid[0]['nickname'];
+                if($res != $nickname)
+                {
+                    echo "<script>alert('此openid已被注册，请使用其他openid');history.go(-1);</script>";
+                    $this -> error('此openid已被注册，请使用其他openid');
+                }
+            }
+        }
+
+
+        if($weiboid != '') {
+            //检查weiboid是否存在
+            $sql_weiboid = "select nickname from sixty_user where weiboid='".$weiboid."' and id <> '" . $id ."'";
+            $result_weiboid = $Model -> query($sql_weiboid);
+            if($result_weiboid) {
+                $res = $result_weiboid[0]['nickname'];
+                if($res != $nickname)
+                {
+                    echo "<script>alert('此微博id已被注册，请使用其他微博id');history.go(-1);</script>";
+                    $this -> error('此微博id已被注册，请使用其他微博id');
+                }
+            }
+        }
+
+
+        if($jiguangid != '') {
+            //检查jiguangid是否存在
+            $sql_jiguangid = "select nickname from sixty_user where jiguangid='".$jiguangid."' and id <> '" . $id ."'";
+            $result_jiguangid = $Model -> query($sql_jiguangid);
+            if($result_jiguangid) {
+                $res = $result_jiguangid[0]['nickname'];
+                if($res != $nickname)
+                {
+                    echo "<script>alert('此极光id已被注册，请使用其他极光id');history.go(-1);</script>";
+                    $this -> error('此极光id已被注册，请使用其他极光id');
+                }
+            }
+        }
+
+        //添加用户信息到sql数组
+        $data = array();
+        $data['nickname'] = $nickname;
+        $data['phone'] = $phone;
+        $data['email'] = $email;
+        $data['qq'] = $qq;
+        $data['sex'] = $sex;
+        $data['is_lock'] = $lock;
+        $data['birthday'] = $birthday;
+        $data['describes'] = $describes;
+        $data['remark'] = '后台手工添加' . $remark;
+        $data['qqid'] = $qqid;
+        $data['openid'] = $openid;
+        $data['weixin'] = $weixin;
+        $data['weiboid'] = $weiboid;
+        $data['jiguangid'] = $jiguangid;
+        $data['phonetype'] = $phonetype;
+        $data['create_datetime'] = date('Y-m-d H:i:s',time());
+        //执行添加语句
+        $ret = $Model->table('sixty_user')->add($data);
+
+        //写入日志
+        $templogs = $Model->getlastsql();
+        hy_caozuo_logwrite($templogs,__CLASS__.'---'.__FUNCTION__);
+
+        if($ret) {
+            echo "<script>alert('数据添加成功!');window.location.href='".__APP__.'/User/index'.$echourl."';</script>";
+            $this -> success('数据添加成功!','__APP__'.$echourl);
+        }else {
+            echo "<script>alert('数据添加失败，系统错误!');history.go(-1);</script>";
+            $this -> error('数据添加失败，系统错误!');
+        }
+
     }
 
     /*
@@ -310,9 +462,16 @@ class UserAction extends Action{
         //根据昵称查询用户信息
         $Model = new Model();
         $list = $Model -> table('sixty_user')
-            -> field('id, is_lock, phone, email, nickname, sex, birthday, qq, remark ,openid, touxiang')
+            -> field('id, is_lock, openid, nickname, touxiang, email, phone, create_datetime, 
+            describes,qq,weixin,remark, jiguangid, qqid, weiboid')
             -> where("nickname='".$nickname."'") -> find();
 
+        //获取七牛云图片
+        $showimg = $list['touxiang'];
+        $imgwidth = '50';
+        $imgheight = '50';
+        $addressimg = hy_qiniuimgurl('sixty-user',$showimg,$imgwidth,$imgheight);
+        $list['touxiang'] = "<img src='" . $addressimg . "' />";
         //发送给模板
         $this->assign('list',$list);
         //start--------------------------------------------------------------
@@ -352,28 +511,63 @@ class UserAction extends Action{
         $this->assign('echourl',$echourl);
 
         //获取提交数据
+        $id = trim($this->_post('id'));
         $nickname = trim($this->_post('nickname'));
         $phone = trim($this->_post('phone'));
         $email = trim($this->_post('email'));
         $qq = trim($this->_post('qq'));
-        $openid = trim($this->_post('weixin_openid'));
         $is_lock = trim($this->_post('is_lock'));
+        $describes = trim($this->_post('describes'));
+        $remark = trim($this->_post('remark'));
+        $qqid = trim($this->_post('qqid'));
+        $weiboid = trim($this->_post('weiboid'));
+        $openid = trim($this->_post('openid'));
+        $weixin = trim($this->_post('weixin'));
+        $jiguangid = trim($this->_post('jiguangid'));
+
 
         $Model = new Model();
 
+        //判断上传数据是否为空
+        if($nickname == '') {
+            echo "<script>alert('用户昵称不能为空');history.go(-1);</script>";
+            $this -> error('用户昵称不能为空');
+        }
+
+        if($phone == '') {
+            echo "<script>alert('用户手机号不能为空');history.go(-1);</script>";
+            $this -> error('用户手机号不能为空');
+        }
+        if($email != '') {
+            if(!preg_match('/^\w+([-+.]\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*$/',$email)) {
+                echo "<script>alert('邮箱不符合邮箱格式');history.go(-1);</script>";
+                $this -> error('邮箱不符合邮箱格式');
+            }
+        }
+
+        //检查用户是否存在
+        $sql_id = "select id from sixty_user where id='".$id."'";
+        $result_id = $Model -> query($sql_id);
+
+        $res_id = $result_id['0']['id'];
+        if($res_id == '') {
+            echo "<script>alert('此用户不存在');history.go(-1);</script>";
+            $this -> error('此用户不存在');
+        }
+
         //检查用户昵称是否存在
-        $sql_nickname = "select id from sixty_user where nickname='".$nickname."' ";
+        $sql_nickname = "select id from sixty_user where nickname='".$nickname."' and id <> '" . $id ."'";
         $result_nickname = $Model -> query($sql_nickname);
 
-        $res_nickname = $result_nickname['0']['nickname'];
-        if($res_nickname) {
-            echo "<script>alert('此昵称用户不存在');history.go(-1);</script>";
-            $this -> error('此昵称用户不存在');
+        $res_nickname = $result_nickname['0']['id'];
+        if($res_nickname != '') {
+            echo "<script>alert('此昵称已被注册，请使用其他昵称');history.go(-1);</script>";
+            $this -> error('此昵称已被注册，请使用其他昵称');
         }
 
 
         //检查手机号是否存在
-        $sql_phone = "select nickname from sixty_user where phone='".$phone."'" ;
+        $sql_phone = "select nickname from sixty_user where phone='".$phone."' and id <> '" . $id ."'" ;
         $result_phone = $Model -> query($sql_phone);
 
         if($result_phone) {
@@ -385,44 +579,112 @@ class UserAction extends Action{
             }
         }
 
-        //检查qq号是否存在
-        $sql_qq = "select nickname from sixty_user where qq='".$qq."'";
-        $result_qq = $Model -> query($sql_qq);
+        if($qq != '') {
+            //检查qq号是否存在
+            $sql_qq = "select nickname from sixty_user where qq='".$qq."' and id <> '" . $id ."'";
+            $result_qq = $Model -> query($sql_qq);
 
-        if($result_qq)
-        {
-            $res = $result_qq[0]['nickname'];
-            if($res != $nickname) {
-                echo "<script>alert('此qq号已被注册，请使用其他qq号');history.go(-1);</script>";
-                $this -> error('此qq号已被注册，请使用其他qq号');
-            }
-        }
-
-
-        //检查微信号是否存在
-        $sql_openid = "select nickname from sixty_user where openid='".$openid."'";
-        $result_openid = $Model -> query($sql_openid);
-
-        if($result_openid) {
-            $res = $result_openid[0]['nickname'];
-            if($res != $nickname)
+            if($result_qq)
             {
-                echo "<script>alert('此微信号已被注册，请使用其他微信号');history.go(-1);</script>";
-                $this -> error('此微信号已被注册，请使用其他微信号');
+                $res = $result_qq[0]['nickname'];
+                if($res != $nickname) {
+                    echo "<script>alert('此qq号已被注册，请使用其他qq号');history.go(-1);</script>";
+                    $this -> error('此qq号已被注册，请使用其他qq号');
+                }
             }
         }
 
-        //检查邮箱是否存在
-        $sql_email = "select nickname from sixty_user where email='".$email."'";
-        $result_email = $Model -> query($sql_email);
-        if($result_email) {
-            $res = $result_email[0]['nickname'];
-            if($res != $nickname)
-            {
-                echo "<script>alert('此微邮箱已被注册，请使用其他邮箱');history.go(-1);</script>";
-                $this -> error('此邮箱已被注册，请使用其他邮箱');
+
+        if($weixin != '') {
+            //检查微信号是否存在
+            $sql_weixin = "select nickname from sixty_user where weixin='".$weixin."' and id <> '" . $id ."'";
+            $result_weixin = $Model -> query($sql_weixin);
+
+            if($result_weixin) {
+                $res = $result_weixin[0]['nickname'];
+                if($res != $nickname && $result_weixin['openid'] != '')
+                {
+                    echo "<script>alert('此微信号已被注册，请使用其他微信号');history.go(-1);</script>";
+                    $this -> error('此微信号已被注册，请使用其他微信号');
+                }
             }
         }
+
+
+        if($email != '') {
+            //检查邮箱是否存在
+            $sql_email = "select nickname from sixty_user where email='".$email."' and id <> '" . $id ."'";
+            $result_email = $Model -> query($sql_email);
+            if($result_email) {
+                $res = $result_email[0]['nickname'];
+                if($res != $nickname)
+                {
+                    echo "<script>alert('此邮箱已被注册，请使用其他邮箱');history.go(-1);</script>";
+                    $this -> error('此邮箱已被注册，请使用其他邮箱');
+                }
+            }
+        }
+
+
+        if($qqid != '') {
+            //检查qqid是否存在
+            $sql_qqid = "select nickname from sixty_user where qqid='".$qqid."' and id <> '" . $id ."'";
+            $result_qqid = $Model -> query($sql_qqid);
+            if($result_qqid) {
+                $res = $result_qqid[0]['nickname'];
+                if($res != $nickname)
+                {
+                    echo "<script>alert('此qqid已被注册，请使用其他qqid');history.go(-1);</script>";
+                    $this -> error('此qqid已被注册，请使用其他qqid');
+                }
+            }
+        }
+
+
+        if($openid != '') {
+            //检查openid是否存在
+            $sql_openid = "select nickname from sixty_user where openid='".$openid."' and id <> '" . $id ."'";
+            $result_openid = $Model -> query($sql_openid);
+            if($result_openid) {
+                $res = $result_openid[0]['nickname'];
+                if($res != $nickname)
+                {
+                    echo "<script>alert('此openid已被注册，请使用其他openid');history.go(-1);</script>";
+                    $this -> error('此openid已被注册，请使用其他openid');
+                }
+            }
+        }
+
+
+        if($weiboid != '') {
+            //检查weiboid是否存在
+            $sql_weiboid = "select nickname from sixty_user where weiboid='".$weiboid."' and id <> '" . $id ."'";
+            $result_weiboid = $Model -> query($sql_weiboid);
+            if($result_weiboid) {
+                $res = $result_weiboid[0]['nickname'];
+                if($res != $nickname)
+                {
+                    echo "<script>alert('此微博id已被注册，请使用其他微博id');history.go(-1);</script>";
+                    $this -> error('此微博id已被注册，请使用其他微博id');
+                }
+            }
+        }
+
+
+        if($jiguangid != '') {
+            //检查jiguangid是否存在
+            $sql_jiguangid = "select nickname from sixty_user where jiguangid='".$jiguangid."' and id <> '" . $id ."'";
+            $result_jiguangid = $Model -> query($sql_jiguangid);
+            if($result_jiguangid) {
+                $res = $result_jiguangid[0]['nickname'];
+                if($res != $nickname)
+                {
+                    echo "<script>alert('此极光id已被注册，请使用其他极光id');history.go(-1);</script>";
+                    $this -> error('此极光id已被注册，请使用其他极光id');
+                }
+            }
+        }
+
 
         //把要存入的数据放入数组
         $datauser = array();
@@ -432,9 +694,16 @@ class UserAction extends Action{
         $datauser['openid'] = $openid;
         $datauser['is_lock'] = $is_lock;
         $datauser['email'] = $email;
+        $datauser['describes'] = $describes;
+        $datauser['remark'] = $remark;
+        $datauser['qqid'] = $qqid;
+        $datauser['weiboid'] = $weiboid;
+        $datauser['weixin'] = $weixin;
+        $datauser['jiguangid'] = $jiguangid;
+
 
         //执行更新语句
-        $result = $Model -> table('sixty_user') -> where("nickname='".$nickname."'")->save($datauser);
+        $result = $Model -> table('sixty_user') -> where("id='".$id."'")->save($datauser);
 
         //写入日志
         $templogs = $Model->getlastsql();

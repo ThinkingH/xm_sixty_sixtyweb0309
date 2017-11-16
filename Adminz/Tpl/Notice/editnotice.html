@@ -62,38 +62,49 @@
     <br/><br/>
     <table class="table-edit" >
         <tr>
-            <td width="50" align="right"><b>通知ID:</b></td>
-            <td width="600">
+            <td width="50" align="right">通知ID:</td>
+            <td width="400">
                 {$list['id']}
             </td>
         </tr>
         <tr>
-            <td width="50"><b>通知内容</b></td>
-            <td width="600">
+            <td>通知内容<font color="red" size="-2">*</font>:</td>
+            <td>
 
-            <textarea rows="5" cols="50" style="resize: none;" onchange="this.value=this.value.substring(0, 100)"
+            <textarea rows="5" cols="70" style="" onchange="this.value=this.value.substring(0, 100)"
                       onkeydown="this.value=this.value.substring(0, 100)" onkeyup="this.value=this.value.substring(0, 100)"
                       id="message" name="message">{$list['message']}</textarea>
+                <br/>
                 <font color="orange" size="-2">
                     通知内容最多100字
                 </font>
             </td>
         </tr>
-
+        <tr>
+            <td align="right"></td>
+            <td>
+                <font color="red" size="-2">
+                    注意：带 * 的选项为必填项目！
+                </font>
+            </td>
+        </tr>
 
         <tr>
             <td colspan="2">
                 <input type="hidden" name="editnotice_id" value="{$list['id']}" />
-                <input type="submit" name="submitedit" id="submitedit" class="yubutton yuwhite" value="提交修改" style="margin-left:50px;margin-top:0px;" />
-</form>
-<form method="post" action="__APP__/Notice/delnotice_do" style="margin:0px;padding:0px; display: inline;">
-    <input type="hidden" name="delconfig_id" value="{$list['id']}" />
-    <input type="submit" name="submitdel" id="submitdel" class="yubuttons yuwhite" value="删除此通知" style="margin-left:406px;margin-top:0px;"/>
-</form>
+                <input type="submit" name="submitedit" id="submitedit" class="yubutton yuwhite"
+                       value="提交修改" style="margin-left:50px;margin-top:0px;" />
+                </form>
+
+                <form method="post" action="__APP__/Notice/delnotice_do" style="margin:0px;padding:0px; display: inline;">
+                    <input type="hidden" name="delnotice_id" value="{$list['id']}" />
+                    <input type="submit" name="submitdel" id="submitdel" class="yubuttons yuwhite" value="删除此通知"
+                           style="margin-left:200px;margin-top:0px;"/>
+                </form>
             </td>
         </tr>
 
-        </table>
+    </table>
 
 
 

@@ -25,7 +25,7 @@
                     return false;
                 }
                 if (edit_childname == '') {
-                    alert('子名称不能为空！');
+                    alert('食材概述不能为空！');
                     return false;
                 }
 
@@ -40,6 +40,14 @@
                 }
             });
 
+            $("#submitdel").click(function(){
+                if(confirm("您确认要删除此分类吗？")) {
+                    return true;
+                }else {
+                    return false;
+                }
+            });
+
         });
 
     </script>
@@ -47,7 +55,7 @@
 
 <body>
 <div class="hy_daohangtiao">
-    当前位置&nbsp;#&nbsp;合集分类&nbsp;#&nbsp;分类编辑操作&nbsp;#&nbsp;分类编辑页面
+    当前位置&nbsp;#&nbsp;合集分类&nbsp;#&nbsp;分类列表&nbsp;#&nbsp;分类编辑页面
 </div>
 
 
@@ -58,16 +66,16 @@
     <br/><br/>
     <table class="table-edit" width="490">
         <tr>
-            <td align="right" style="width: 90px;">分类ID：</td>
-            <td width="450">
+            <td align="right" style="width: 95px;">分类ID：</td>
+            <td width="470">
                 {$list.id}
                 <input value="{$list.id}" type="hidden" name="edit_id"/>
             </td>
         </tr>
         <tr>
         <tr>
-            <td align="right" style="width: 90px;">填写分类名称：</td>
-            <td width="450">
+            <td align="right">填写分类名称<font color="red" size="-2">*</font>：</td>
+            <td>
                 <input value="{$list.name}" size="40" type="text"
                        maxlength="30" name="edit_name" id="edit_name" onkeydown="if(event.keyCode=='32'){return false;}" />
                 <font color="orange" size="-2">
@@ -76,41 +84,49 @@
             </td>
         </tr>
         <tr>
-            <td align="right" style="width: 90px;">子分类名称：</td>
-            <td width="450">
-                <input value="{$list.name}" size="40" type="text"
+            <td align="right">填写食材概述<font color="red" size="-2">*</font>：</td>
+            <td>
+                <input value="{$list.childname}" size="40" type="text"
                        maxlength="30" name="edit_childname" id="edit_childname" onkeydown="if(event.keyCode=='32'){return false;}" />
                 <font color="orange" size="-2">
-                    分类名称最多30字
+                    <br/>&nbsp;&nbsp;食材概述最多30字,面对APP端内容，填写该分类的3-5种食材
                 </font>
             </td>
         </tr>
         <tr>
-            <td align="right" style="width: 90px;">分类等级：</td>
-            <td width="450">
+            <td align="right" >分类等级<font color="red" size="-2">*</font>：</td>
+            <td>
                 <select name="edit_level">
                     {$level_show}
                 </select>
             </td>
         </tr>
         <tr>
-            <td align="right">填写分类描述：</td>
+            <td align="right">填写分类描述<font color="red" size="-2">*</font>：</td>
             <td>
-                <textarea rows="6" cols="40" style="resize: none;" onchange="this.value=this.value.substring(0, 200)"
+                <textarea rows="6" cols="60" style="" onchange="this.value=this.value.substring(0, 200)"
                           onkeydown="this.value=this.value.substring(0, 200)" onkeyup="this.value=this.value.substring(0, 200)"
                           id="edit_content" name="edit_content">{$list.content}</textarea>
                 <font color="orange" size="-2">
-                    分类描述最多200字
+                    <br/>&nbsp;&nbsp;分类描述最多200字,此内容面对PC端，填写分类的简介
                 </font>
             </td>
         </tr>
         <tr>
-            <td align="right" style="width: 90px;">填写分类备注：</td>
-            <td width="450">
+            <td align="right" >填写分类备注：</td>
+            <td>
                 <input value="{$list.remark}" size="40" type="text" maxlength="30" name="edit_remark"
                        id="edit_remark" onkeydown="if(event.keyCode=='32'){return false;}" />
                 <font color="orange" size="-2">
                     分类名称最多30字
+                </font>
+            </td>
+        </tr>
+        <tr>
+            <td align="right" ></td>
+            <td>
+                <font color="red" size="-2">
+                    注意：带 * 的选项为必填项目！
                 </font>
             </td>
         </tr>
@@ -120,7 +136,7 @@
 </form>
 <form method="post" action="__APP__/Classmsg/delclassmsg_do{$echourl}" style="display:inline;margin:0px;padding:0px; width: 100px; height: 50px;">
     <input type="hidden" name="del_id" value="{$list.id}" />
-    <input type="submit" name="submitdel" id="submitdel" class="yubuttons yuwhite" value="删除此分类" style="margin-left: 100px;margin-top:10px; "/>
+    <input type="submit" name="submitdel" id="submitdel" class="yubuttons yuwhite" value="删除此分类" style="margin-left: 250px;margin-top:10px; "/>
 </form>
 </td>
 </tr>

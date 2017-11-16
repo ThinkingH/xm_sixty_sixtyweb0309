@@ -12,6 +12,27 @@
 
             $("#submit_add").click(function(){
 
+                function checkForm(arr){
+                    for(var i=0;i<arr.length;i++){
+                        if($("#"+arr[i][0]).val()==''){
+                            alert(arr[i][1]);
+                            $("#"+arr[i][0]).focus();
+                            return false;
+                        }
+                    }
+                    return true;
+                };
+                //调用方式
+                var arr=new Array(
+                    new Array('biaoti','视频标题不可为空!'),
+                    new Array('biaotichildne','视频子标题不可为空!'),
+                    new Array('classify2','视频分类2不可为空!'),
+                );
+
+                if(!checkForm(arr)){
+                    return false;
+                }
+
                 if(confirm("您确认要提交修改吗？")) {
 
                 }else {
@@ -22,7 +43,7 @@
             });
 
             $("#submitdel").click(function(){
-                if(confirm("您确认要删除此用户吗？删除用户将会导致用户无法使用，请小心操作，删除用户前请将用户禁用")) {
+                if(confirm("您确认要删除此视频吗？删除后无法恢复！")) {
 
                 }else {
                     return false;
@@ -35,8 +56,7 @@
             var self = $(this);
             var read = new FileReader();
             read.onload = function(e) {
-                var html = "<img src=" + e.target.result + " alt='' style='width: 100px;height: 100px;'/>";
-                self.parent().append(html);
+                $("#showimg").attr('src',e.target.result);
                 document.getElementById('localBase64StrContainer').value = e.target.result;
             }
             read.readAsDataURL(src)
@@ -46,7 +66,7 @@
 
 <body>
 <div class="hy_daohangtiao">
-    当前位置&nbsp;#&nbsp;视频管理&nbsp;#&nbsp;编辑视频操作&nbsp;#&nbsp;编辑视频页面
+    当前位置&nbsp;#&nbsp;视频管理&nbsp;#&nbsp;视频列表&nbsp;#&nbsp;视频修改页面
 </div>
 
 
@@ -55,104 +75,121 @@
 
 <form name="form1" method="post" action="__APP__/Video/editvideo_do{$echourl}" enctype="multipart/form-data">
     <br/><br/>
-    <table class="table-edit" width="850">
+    <table class="table-edit" width="">
         <tr>
-            <td width="100" align="right">视频ID：</td>
-            <td width="700">
+            <td width="105" align="right">视频ID：</td>
+            <td width="680">
                 {$list.id}
             </td>
         </tr>
         <tr>
-            <td align="right">是否启用该视频：</td>
+            <td align="right">是否启用该视频<font color="red" size="-2">*</font>：</td>
             <td >
                 <select name="flag">
                     {$videoflag_show}
                 </select>
                 <font color="orange" size="-2">
-                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;选择是否启用该视频
+                    选择是否启用该视频
                 </font>
             </td>
         </tr>
         <tr>
-            <td align="right">是否启用该视频：</td>
+            <td align="right">是否首页展示<font color="red" size="-2">*</font>：</td>
             <td >
                 <select name="sflag">
                     {$sflag_show}
                 </select>
                 <font color="orange" size="-2">
-                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;选择是否设为首页展示
+                    选择是否设为首页展示
                 </font>
             </td>
         </tr>
         <tr>
-            <td align="right">填写视频主标题：</td>
-            <td width="700">
-                <input style="width:500px;" type="text" maxlength="20" name="biaoti" id="biaoti" value="{$list.biaoti}" onkeydown="if(event.keyCode=='32'){return false;}" />
+            <td align="right">填写视频主标题<font color="red" size="-2">*</font>：</td>
+            <td>
+                <input style="width:400px;" type="text" maxlength="50" name="biaoti" id="biaoti" value="{$list.biaoti}" onkeydown="if(event.keyCode=='32'){return false;}" />
                 <font color="orange" size="-2">
-                    视频主标题最多20字
+                    视频主标题最多50字
                 </font>
             </td>
         </tr>
         <tr>
-            <td align="right">填写视频子标题：</td>
-            <td width="700">
-                <input style="width:500px;" type="text" name="biaotichild" id="biaotichild" value="{$list.biaotichild}" maxlength="20" onkeydown="if(event.keyCode=='32'){return false;}" />
+            <td align="right">填写视频子标题<font color="red" size="-2">*</font>：</td>
+            <td>
+                <input size="90" type="text" name="biaotichild" id="biaotichild" value="{$list.biaotichild}" maxlength="100" onkeydown="if(event.keyCode=='32'){return false;}" />
+                <br/>
                 <font color="orange" size="-2">
-                    视频子标题最多20字
+                    视频子标题最多100字
                 </font>
             </td>
         </tr>
         <tr>
-            <td align="right">选择视频分类1：</td>
-            <td width="700">
+            <td align="right">选择视频分类1<font color="red" size="-2">*</font>：</td>
+            <td>
                 <!--<input style="width:250px;" type="text" name="classify1" id="classify1" value="{$list.classify1}" maxlength="24" onkeydown="if(event.keyCode=='32'){return false;}"/>-->
                 <select name="classify1">
                     {$one_select}
                 </select>
+                <font color="orange" size="-2">
+                    视频一级分类
+                </font>
             </td>
         </tr>
         <tr>
-            <td align="right">选择视频分类2：</td>
-            <td width="700">
+            <td align="right">选择视频分类2<font color="red" size="-2">*</font>：</td>
+            <td>
                 <!--<input style="width:250px;" type="text" name="classify2" id="classify2" value="{$list.classify2}" maxlength="24" onkeydown="if(event.keyCode=='32'){return false;}"/>-->
-                <select name="classify2">
+                <select name="classify2" id="classify2">
                     {$two_select}
                 </select>
+                <font color="orange" size="-2">
+                    视频二级分类
+                </font>
             </td>
         </tr>
         <tr>
             <td align="right">选择视频分类3：</td>
-            <td width="700">
+            <td>
                 <!--<input style="width:250px;" type="text" name="classify3" id="classify3" value="{$list.classify3}" maxlength="24" onkeydown="if(event.keyCode=='32'){return false;}"/>-->
                 <select name="classify3">
                     {$three_select}
                 </select>
+                <font color="orange" size="-2">
+                    视频三级分类
+                </font>
             </td>
         </tr>
         <tr>
             <td align="right">选择视频分类4：</td>
-            <td width="700">
+            <td>
                 <!--<input style="width:250px;" type="text" name="classify4" id="classify4" value="{$list.classify4}" maxlength="24" onkeydown="if(event.keyCode=='32'){return false;}"/>-->
                 <select name="classify4">
                     {$four_select}
                 </select>
+                <font color="orange" size="-2">
+                    此分类暂时不用
+                </font>
             </td>
         </tr>
         <tr>
             <td align="right">选择视频合集：</td>
-            <td width="850">
+            <td>
                 <select name="edit_msgjihe">
                     {$heji_arr}
                 </select>
+                <font color="orange" size="-2">
+                    视频属于哪个合集
+                </font>
             </td>
         </tr>
         <tr>
             <td align="right">填写视频介绍：</td>
-            <td width="700">
-                <textarea rows="10" cols="40" style="resize: none;"
+            <td>
+                <textarea rows="6" cols="90" style=""
                           maxlength="200" onchange="this.value=this.value.substring(0, 200)"
                           onkeydown="this.value=this.value.substring(0, 200)"
                           onkeyup="this.value=this.value.substring(0, 200)" id="jieshao" name="jieshao">{$list.jieshao}</textarea>
+                <br/>
                 <font color="orange" size="-2">
                     视频介绍最多200字。
                 </font>
@@ -163,7 +200,7 @@
             <td>
                 <input style="width:100px;" type="text" id="maketime" name="maketime" maxlength="10" value="{$list.maketime}"/>
                 <font color="orange" size="-2" onkeydown="if(event.keyCode=='32'){return false;}">
-                    请直接填入制作时间（单位分钟）如：1
+                    请填入制作时间 如：1小时
                 </font>
             </td>
         </tr>
@@ -172,7 +209,7 @@
             <td>
                 <input style="width:100px;" type="text" id="huafeimoney" name="huafeimoney" maxlength="10" value="{$list.huafeimoney}" onkeydown="if(event.keyCode=='32'){return false;}"/>
                 <font color="orange" size="-2">
-                    请直接填入金额（单位元）如：1
+                    请填入金额 如：10元
                 </font>
             </td>
         </tr>
@@ -181,37 +218,53 @@
             <td>
                 <input style="width:100px;" type="text" id="fenshu" name="fenshu" maxlength="20"  value="{$list.fenshu}" onkeydown="if(event.keyCode=='32'){return false;}"/>
                 <font color="orange" size="-2">
-                    请填写适用人数（单位元）如：2人份
+                    请填写适用人数 如：2人
                 </font>
             </td>
         </tr>
         <tr>
             <td align="right">填写提示说明：</td>
-            <td width="700">
-                <textarea rows="10" cols="40" style="resize: none;"
+            <td>
+                <textarea rows="6" cols="90" style=""
                           maxlength="200" onchange="this.value=this.value.substring(0, 200)"
                           onkeydown="this.value=this.value.substring(0, 200)"
                           onkeyup="this.value=this.value.substring(0, 200)" id="tishishuoming" name="tishishuoming"
                           >{$list.tishishuoming}</textarea>
+                <br/>
                 <font color="orange" size="-2">
-                    视频介绍最多200字。
+                    视频提示最多200字。
                 </font>
             </td>
         </tr>
         <tr style="height: 200px;">
-            <td width="150" align="right">上传视频图片：</td>
-            <td width="700">
-                本地图片预览：
-                <input type="file" id="showimg" name="showimg" onchange="localImgLoad.call(this)"/>
+            <td align="right">上传视频图片：</td>
+            <td>
+                <img id="showimg" src="" style="width: 100px; height: 100px; margin-right: 300px;">
+                {$list.showimg}
                 <br/>
-                <br/>
+                <input type="file" id="fileshowimg" name="showimg" onchange="localImgLoad.call(this)"/>
+                <BR/>
+                <font color="orange" size="-2">
+                    上传图片格式必须为JPG，PNG，GIF格式
+                </font>
+                <font color="orange" size="-2" style="margin-left: 200px;">
+                    当前图片
+                </font>
             </td>
         </tr>
         <tr>
-            <td width="150" align="right">上传视频：</td>
-            <td width="700">
-                <input style="width:250px;" type="text" name="edit_videosavename" id="edit_videosavename" onkeydown="if(event.keyCode=='32'){return false;}"
+            <td align="right">上传视频：</td>
+            <td>
+                <input size="90" type="text" name="edit_videosavename" id="edit_videosavename" onkeydown="if(event.keyCode=='32'){return false;}"
                 value="{$list.videosavename}"/>
+            </td>
+        </tr>
+        <tr>
+            <td align="right" style="width: 90px;"></td>
+            <td>
+                <font color="red" size="-2">
+                    注意：带 * 的选项为必填项目！
+                </font>
             </td>
         </tr>
         <tr>
