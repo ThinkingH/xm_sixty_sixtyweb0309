@@ -732,7 +732,7 @@ class VideoAction extends Action{
 
         //查询合集
         $Model = new Model();
-        $list_heji = $Model -> table('sixty_jihemsg') -> field('id, name') -> select();
+        $list_heji = $Model -> table('sixty_jihemsg') -> field('id, name') -> order('id DESC') -> limit('0','100') -> select();
         //合集数组
         $heji_arr = array();
         foreach($list_heji as $key_heji => $val_heji){
