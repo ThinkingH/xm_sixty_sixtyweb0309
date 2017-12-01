@@ -9,47 +9,365 @@
     <script type="text/javascript" src="__PUBLIC__/Js/md5.js"></script>
     <script type="text/javascript">
         $("document").ready(function(){
-            $(".class_cailiao16").hide();
-            $(".class_cailiao24").hide();
+            $(".class_cailiao_16").hide();
+            $(".class_cailiao_24").hide();
 
 
-            $(".class_buzhou16").hide();
-            $(".class_buzhou24").hide();
+            $(".class_buzhou_16").hide();
+            $(".class_buzhou_24").hide();
 
 
             $("#add_b_24").hide();
             $("#add_c_24").hide();
 
             $("#add_b_16").click(function(){
-                $(".class_buzhou16").show();
+                $(".class_buzhou_16").show();
                 $("#add_b_16").hide();
                 $("#add_b_24").show();
             });
 
             $("#add_b_24").click(function(){
-                $(".class_buzhou24").show();
+                $(".class_buzhou_24").show();
                 $("#add_b_24").hide();
             });
 
             $("#add_c_16").click(function(){
-                $(".class_cailiao16").show();
+                $(".class_cailiao_16").show();
                 $("#add_c_16").hide();
                 $("#add_c_24").show();
             });
             $("#add_c_24").click(function(){
-                $(".class_cailiao24").show();
+                $(".class_cailiao_24").show();
                 $("#add_c_24").hide();
             });
 
             $("#button_add").click(function(){
                 if(confirm("您确认要执行此操作吗？")) {
-
+                    $("#add_form").submit();
                 }else {
                     return false;
                 }
             });
 
+
+            //上移
+            var falg=[true,true];
+            var $up = $(".up");
+            $up.click(function() {
+                var $tr = $(this).parents("tr");
+                if ($tr.index() != 2) {
+                    if(falg[0]&&falg[1]) {
+                        falg[0]=falg[1]=false;
+                        var $my_name = $(this).parents("td").prev().children().attr('name');
+                        var $up_name = $tr.prev().find('input').attr('name');
+                        var $my_class = $(this).parents("td").prev().children().attr('class');
+                        var $up_class = $tr.prev().find('input').attr('class');
+                        $tr.prev().find('input').attr('name', $my_name);
+                        $(this).parents("td").prev().children().attr('name', $up_name);
+                        $tr.prev().find('input').attr('class', $my_class);
+                        $(this).parents("td").prev().children().attr('class', $up_class);
+
+                        $tr.prev().before($tr);
+                        $tr.fadeOut("fast",function () {
+                            console.log('1.1');
+                            $tr.fadeIn("fast",function () {
+                                console.log('1.2');
+                                falg[0]=true;
+                            });
+                        });
+                        $tr.next().fadeOut("fast",function () {
+                            console.log('2.1');
+                            $tr.next().fadeIn("fast",function () {
+                                console.log('2.2');
+                                falg[1]=true;
+                            });
+                        });
+                    }
+                }
+            });
+
+            var $up_c = $(".up_c");
+
+            $up_c.click(function() {
+
+                    var $tr = $(this).parents("tr");
+                    if ($tr.index() != 2) {
+                    if(falg[0]&&falg[1]){
+                        falg[0]=falg[1]=false;
+                        var $my_name_yl = $(this).parents("td").prev().children().attr('name');
+                        var $my_name_cl = $(this).parents("td").prev().prev().children().attr('name');
+                        var $up_name_cl = $tr.prev().find('input').attr('name');
+                        var $up_name_yl = $tr.prev().find('td').prev().next().next().find('input').attr('name');
+                        $(this).parents("td").prev().children().attr('name',$up_name_yl);
+                        $(this).parents("td").prev().prev().children().attr('name',$up_name_cl);
+                        $tr.prev().find('input').attr('name',$my_name_cl);
+                        $tr.prev().find('td').prev().next().next().find('input').attr('name',$my_name_yl);
+
+                        var $my_class_yl = $(this).parents("td").prev().children().attr('class');
+                        var $my_class_cl = $(this).parents("td").prev().prev().children().attr('class');
+                        var $up_class_cl = $tr.prev().find('input').attr('class');
+                        var $up_class_yl = $tr.prev().find('td').prev().next().next().find('input').attr('class');
+                        $(this).parents("td").prev().children().attr('class',$up_class_yl);
+                        $(this).parents("td").prev().prev().children().attr('class',$up_class_cl);
+                        $tr.prev().find('input').attr('class',$my_class_cl);
+                        $tr.prev().find('td').prev().next().next().find('input').attr('class',$my_class_yl);
+
+
+                        $tr.prev().before($tr);
+                        $tr.fadeOut("fast",function () {
+                            console.log('1.1');
+                            $tr.fadeIn("fast",function () {
+                                console.log('1.2');
+                                falg[0]=true;
+                            });
+                        });
+                        $tr.next().fadeOut("fast",function () {
+                            console.log('2.1');
+                            $tr.next().fadeIn("fast",function () {
+                                console.log('2.2');
+                                falg[1]=true;
+                            });
+                        });
+
+                    }
+                }
+            });
+
+
+            //下移
+            var down_c = $(".down_c");
+            var $len = down_c.length;
+            down_c.click(function() {
+                var $tr = $(this).parents("tr");
+                if ($tr.index() != $len + 1) {
+                    if(falg[0]&&falg[1]) {
+                        falg[0] = falg[1] = false;
+
+                        //获取 name属性
+                        var $my_name_yl = $(this).parents("td").prev().children().attr('name');
+                        var $my_name_cl = $(this).parents("td").prev().prev().children().attr('name');
+                        var $up_name_cl = $tr.next().find('input').attr('name');
+                        var $up_name_yl = $tr.next().find('td').prev().next().next().find('input').attr('name');
+                        //交换name属性值
+                        $(this).parents("td").prev().children().attr('name', $up_name_yl);
+                        $(this).parents("td").prev().prev().children().attr('name', $up_name_cl);
+                        $tr.next().find('input').attr('name', $my_name_cl);
+                        $tr.next().find('td').prev().next().next().find('input').attr('name', $my_name_yl);
+                        //获取class属性
+                        var $my_class_yl = $(this).parents("td").prev().children().attr('class');
+                        var $my_class_cl = $(this).parents("td").prev().prev().children().attr('class');
+                        var $up_class_cl = $tr.next().find('input').attr('class');
+                        var $up_class_yl = $tr.next().find('td').prev().next().next().find('input').attr('class');
+                        //交换class属性值
+                        $(this).parents("td").prev().children().attr('class', $up_class_yl);
+                        $(this).parents("td").prev().prev().children().attr('class', $up_class_cl);
+                        $tr.next().find('input').attr('class', $my_class_cl);
+                        $tr.next().find('td').prev().next().next().find('input').attr('class', $my_class_yl);
+//                    $(this).parents("td").prev().children().attr('class',$up_class);
+//                    console.log($up_class_yl);
+//                    $tr.fadeOut().fadeIn();
+                        $tr.next().after($tr);
+                        $tr.fadeOut("fast", function () {
+                            console.log('1.1');
+                            $tr.fadeIn("fast", function () {
+                                console.log('1.2');
+                                falg[0] = true;
+                            });
+                        });
+                        $tr.prev().fadeOut("fast", function () {
+                            console.log('2.1');
+                            $tr.prev().fadeIn("fast", function () {
+                                console.log('2.2');
+                                falg[1] = true;
+                            });
+                        });
+                    }
+                }
+            });
+
+
+            //下移
+            var $down = $(".down");
+            var $len = $down.length;
+            $down.click(function() {
+                var $tr = $(this).parents("tr");
+                if ($tr.index() != $len + 1) {
+                    if (falg[0] && falg[1]) {
+                        falg[0] = falg[1] = false;
+                        var $my_name = $(this).parents("td").prev().children().attr('name');
+                        var $up_name = $tr.next().find('input').attr('name');
+                        $tr.next().find('input').attr('name', $my_name);
+                        $(this).parents("td").prev().children().attr('name', $up_name);
+
+                        var $my_class = $(this).parents("td").prev().children().attr('class');
+                        var $up_class = $tr.next().find('input').attr('class');
+                        $tr.next().find('input').attr('class', $my_class);
+                        $(this).parents("td").prev().children().attr('class', $up_class);
+
+                        $tr.next().after($tr);
+                        $tr.fadeOut("fast", function () {
+                            console.log('1.1');
+                            $tr.fadeIn("fast", function () {
+                                console.log('1.2');
+                                falg[0] = true;
+                            });
+                        });
+                        $tr.prev().fadeOut("fast", function () {
+                            console.log('2.1');
+                            $tr.prev().fadeIn("fast", function () {
+                                console.log('2.2');
+                                falg[1] = true;
+                            });
+                        });
+                    }
+                }
+            });
+
+            $(".batch_bz").click(function() {
+                $.ajax({
+                    url:"__APP__/Food/dispose",
+                    type:'post',
+                    dataType:'json',
+                    data:$("#form_dispose_bz").serialize(),
+                    success: function(msg) {
+                        if(msg != '') {
+                            $.each(msg,function (i,item) {
+                                if(i == 'buzhou') {
+                                    var $a = '';
+                                    for($i = 0; $i<=24; $i++) {
+                                        $('.class_buzhou'+$i).val($a);
+                                        $('.class_buzhou'+$i+'_td').html($a);
+                                    }
+                                    $.each(item,function(key,value) {
+                                        var $clname = 'class_buzhou' + key;
+                                        $("." + $clname).val(value);
+                                    })
+                                }
+                            });
+                        }
+                    },
+                    error: function () {
+                        alert('error');
+                    }
+                });
+            });
+
+            $(".batch_bz_zj").click(function() {
+                $.ajax({
+                    url:"__APP__/Food/dispose",
+                    type:'post',
+                    dataType:'json',
+                    data:$("#form_dispose_bz").serialize(),
+                    success: function(msg) {
+                        if(msg != '') {
+                            $.each(msg,function (i,item) {
+                                if(i == 'buzhou') {
+                                    var $n = '';
+                                    for($i = 0; $i<=24; $i++) {
+                                        var $v = $('.class_buzhou'+$i).val();
+                                        if($v === '') {
+                                            $n = $i;
+                                            break;
+                                        }
+                                        console.log($v);
+                                    }
+//                                    console.log($a);
+                                    $.each(item,function(key,value) {
+                                        var $clname = 'class_buzhou' + $n;
+                                        $("." + $clname).val(value);
+                                        $n++;
+                                    })
+                                }
+                            });
+                        }
+                    },
+                    error: function () {
+                        alert('error');
+                    }
+                });
+            });
+
+        $(".batch_cl").click(function() {
+            $.ajax({
+                url:"__APP__/Food/dispose",
+                type:'post',
+                dataType:'json',
+                data:$("#form_dispose_cl").serialize(),
+                success: function(msg) {
+                    if(msg != '') {
+                        var $a = '';
+                        for($i = 0; $i<=24; $i++) {
+                            $('.class_yongliang'+$i).val($a);
+                            $('.class_cailiao'+$i).val($a);
+                            $('.class_cailiao'+$i+'_td').html($a);
+                        }
+                        $.each(msg,function (i,item) {
+                            if(i == 'cailiao') {
+                                $.each(item,function(key,value) {
+                                    var $clname = 'class_cailiao' + key;
+                                    $("." + $clname).val(value);
+                                })
+                            }else if(i == 'yongliang') {
+                                $.each(item,function(key,value) {
+                                    var $clname = 'class_yongliang' + key;
+                                    $("." + $clname).val(value);
+                                })
+                            }
+                        });
+                    }
+
+                },
+                error: function () {
+                    alert('error');
+                }
+            });
         });
+
+            $(".batch_cl_zj").click(function() {
+                $.ajax({
+                    url:"__APP__/Food/dispose",
+                    type:'post',
+                    dataType:'json',
+                    data:$("#form_dispose_cl").serialize(),
+                    success: function(msg) {
+                        if(msg != '') {
+                            var $n = '';
+                            for($i = 0; $i<=24; $i++) {
+                                var $y = $('.class_yongliang'+$i).val();
+                                var $c = $('.class_cailiao'+$i).val();
+                                if($y ==='' && $c === '') {
+                                    $n = $i;
+                                    break;
+                                }
+                            }
+                            $.each(msg,function (i,item) {
+                                if(i == 'cailiao') {
+                                    $n = $i;
+                                    $.each(item,function(key,value) {
+                                        var $clname = 'class_cailiao' + $n;
+                                        $("." + $clname).val(value);
+                                        $n++;
+                                    })
+                                }else if(i == 'yongliang') {
+                                    $n = $i;
+                                    $.each(item,function(key,value) {
+                                        var $clname = 'class_yongliang' + $n;
+                                        $("." + $clname).val(value);
+                                        $n++;
+                                    })
+                                }
+                            });
+                        }
+
+                    },
+                    error: function () {
+                        alert('error');
+                    }
+                });
+            });
+
+    });
+
     </script>
 </head>
 
@@ -61,145 +379,226 @@
 
 
 <a href="__APP__/Video/index{$echourl}" class="yubutton yuwhite">返回视频列表</a>
-<br/>
-<br/>
 
-<form action="__APP__/Food/addfood_do" method="post" style=" width: 1280px;height: 1000px;" >
+<form id="add_form" action="__APP__/Food/addfood_do" method="post" style=" width:1320px;" >
 
     <br/><br/>
-    <table class="table-edit" style="display: inline-block; float: left;">
+    <table id="buzhou_list" class="table-edit" style="display: inline-block; float: left; width: 850px;">
         <tr>
-            <td colspan="3">
+            <td colspan="4">
                 <b>编辑制作步骤</b>
             </td>
         </tr>
         <tr>
-            <td width="20" align="left"><b>ID</b></td>
-            <td width="50" align="left"><b>步骤顺序</b></td>
-            <td width="600">
+            <td style="width: 50px;" align="left"><b>ID</b></td>
+            <td width="40" align="left"><b>原步骤</b></td>
+            <td width="580">
                 <b>具体方法</b>
             </td>
+            <td width="101" align="left"><b>操作</b></td>
         </tr>
-        <volist name="list_buzhou8" id="vo">
-            <tr class="class_buzhou8">
-                <td width="50">
+        <volist name="list_buzhou_8" id="vo">
+            <tr class="class_buzhou_8">
+                <td class="{$vo.class_buzhou}_td" width="50">
                     {$vo.id}
                 </td>
-                <td width="50">
+                <td>
                     <!--<input value="{$vo.buzhouid}" name="{$vo.bu}" type="text" maxlength="3" size="4">-->
                     {$vo.buzhouid}
                 </td>
-                <td width="60" align="left">
-                    <input value="{$vo.buzhoucontent}" name="{$vo.bz_flag}" type="text" maxlength="100" size="80">
+                <td align="left">
+                    <input class="{$vo.class_buzhou}" value="{$vo.buzhoucontent}" name="{$vo.bz_flag}" type="text" maxlength="100" size="80">
+                </td>
+                <td align="left">
+                    <button class="up" type="button">上移</button>
+                    <button class="down" type="button">下移</button>
                 </td>
             </tr>
         </volist>
-        <volist name="list_buzhou16" id="vo">
-            <tr class="class_buzhou16">
-                <td>
+        <volist name="list_buzhou_16" id="vo">
+            <tr class="class_buzhou_16">
+                <td class="{$vo.class_buzhou}_td">
                     {$vo.id}
                 </td>
-                <td width="50">
+                <td>
                     <!--<input value="{$vo.buzhouid}" name="{$vo.bu}" type="text" maxlength="3" size="4">-->
                     {$vo.buzhouid}
                 </td>
                 <td>
-                    <input value="{$vo.buzhoucontent}" name="buzhou{$vo.buid}" type="text" maxlength="100" size="80">
+                    <input class="{$vo.class_buzhou}" value="{$vo.buzhoucontent}" name="{$vo.bz_flag}" type="text" maxlength="100" size="80">
+                </td>
+                <td align="left">
+                    <button class="up" type="button">上移</button>
+                    <button class="down" type="button">下移</button>
                 </td>
             </tr>
         </volist>
-        <volist name="list_buzhou24" id="vo">
-            <tr class="class_buzhou24">
-                <td>
+        <volist name="list_buzhou_24" id="vo">
+            <tr class="class_buzhou_24">
+                <td class="{$vo.class_buzhou}_td">
                     {$vo.id}
                 </td>
-                <td width="50">
+                <td>
                     <!--<input value="{$vo.buzhouid}" name="{$vo.bu}" type="text" maxlength="3" size="4">-->
                     {$vo.buzhouid}
                 </td>
                 <td>
-                    <input value="{$vo.buzhoucontent}" name="buhzou{$vo.buid}" type="text" maxlength="100" size="80">
+                    <input class="{$vo.class_buzhou}" value="{$vo.buzhoucontent}" name="{$vo.bz_flag}" type="text" maxlength="100" size="80">
+                </td>
+                <td align="left">
+                    <button class="up" type="button">上移</button>
+                    <button class="down" type="button">下移</button>
                 </td>
             </tr>
         </volist>
         <tr>
-            <td colspan="3">
-                <input type="submit" id="button_add" class="yubutton yuwhite" value="提交本页所有数据"
-                       style="margin-left:50px;margin-top:0px;" />
+            <td colspan="4">
+
                 <input type="hidden" value="{$video_id}" name="video_id" />
                 <button type="button" id="add_b_16" class="yubutton yuwhite" style="margin-left: 400px;">显示更多</button>
                 <button type="button" id="add_b_24" class="yubutton yuwhite" style="margin-left: 400px;">显示更多</button>
+                <font color="orange" size="-2" style="margin-left: 10px;">
+                    最多添加24条数据
+                </font>
             </td>
         </tr>
     </table>
 
-    <br/><br/>
-    <table class="table-edit" style="float: left;display: inline-block;position: relative;top:-36px;" >
+    <table class="table-edit" style="float: right;display: inline-block;position: relative;width: 450px;" >
         <tr>
-            <td colspan="3">
+            <td colspan="4">
                 <b>编辑制作食材</b>
             </td>
         </tr>
-        <tr class="class_buzhou10">
+        <tr class="">
             <td width="50" align="left"><b>ID</b></td>
             <td width="50" align="left"><b>食材名称</b></td>
-            <td width="100">
-                食材用量
+            <td width="60">
+                <b>食材用量</b>
+            </td>
+            <td width="103">
+                <b>操作</b>
             </td>
         </tr>
         <volist name="list_cailiao_8" id="vo">
-            <tr class="class_cailiao8">
-                <td width="50">
+            <tr class="class_cailiao_8">
+                <td class="{$vo.class_shicai}_td" width="50">
                     {$vo.id}
                 </td>
-                <td width="60">
-                    <input value="{$vo.name}" name="{$vo.cl_name}" type="text" maxlength="20" size="22">
+                <td width="50">
+                    <input class="{$vo.class_shicai}" value="{$vo.name}" name="{$vo.cl_name}" type="text" maxlength="15" size="15">
                 </td>
-                <td width="60" align="left">
-                    <input value="{$vo.yongliang}" name="{$vo.cl_flag}" type="text" maxlength="20" size="22">
+                <td width="50" align="left">
+                    <input class="{$vo.class_yongliang}" value="{$vo.yongliang}" name="{$vo.cl_flag}" type="text" maxlength="10" size="10">
+                </td>
+                <td width="50" align="left">
+                    <button class="up_c" type="button">上移</button>
+                    <button class="down_c" type="button">下移</button>
                 </td>
             </tr>
         </volist>
         <volist name="list_cailiao_16" id="vo" >
-            <tr class="class_cailiao16">
-                <td width="50">
+            <tr class="class_cailiao_16">
+                <td width="50" class="{$vo.class_shicai}_td">
                     {$vo.id}
                 </td>
                 <td>
-                    <input value="{$vo.id}" name="{$vo.have}" type="text" maxlength="20" size="22">
+                    <input class="{$vo.class_shicai}" value="{$vo.id}" name="{$vo.have}" type="text" maxlength="15" size="15">
                 </td>
                 <td>
-                    <input value="{$vo.id}" name="{$vo.have}" type="text" maxlength="20" size="22">
+                    <input class="{$vo.class_yongliang}" value="{$vo.id}" name="{$vo.have}" type="text" maxlength="10" size="10">
+                </td>
+                <td width="50" align="left">
+                    <button class="up_c" type="button">上移</button>
+                    <button class="down_c" type="button">下移</button>
                 </td>
             </tr>
         </volist>
         <volist name="list_cailiao_24" id="vo">
-            <tr class="class_cailiao24">
-                <td>
+            <tr class="class_cailiao_24">
+                <td class="{$vo.class_shicai}_td">
                     {$vo.id}
                 </td>
                 <td>
-                    <input value="{$vo.id}" name="{$vo.have}" type="text" maxlength="20" size="22">
+                    <input class="{$vo.class_shicai}" value="{$vo.id}" name="{$vo.have}" type="text" maxlength="15" size="15">
                 </td>
                 <td>
-                    <input value="{$vo.id}" name="{$vo.have}" type="text" maxlength="20" size="22">
+                    <input class="{$vo.class_yongliang}" value="{$vo.id}" name="{$vo.have}" type="text" maxlength="10" size="10">
+                </td>
+                <td width="50" align="left">
+                    <button class="up_c" type="button">上移</button>
+                    <button class="down_c" type="button">下移</button>
                 </td>
             </tr>
         </volist>
         <tr>
-            <td colspan="3">
-                <!--<input type="submit" id="button_add" class="yubutton yuwhite" value="提交添加" style="margin-left:10px;margin-top:0px;" />-->
+            <td colspan="4">
                 <input type="hidden" value="{$video_id}" name="video_id" />
-                <button type="button" id="add_c_16" class="yubutton yuwhite" style="margin-left: 300px;">显示更多</button>
-                <button type="button" id="add_c_24" class="yubutton yuwhite" style="margin-left: 300px;">显示更多</button>
+                <button type="button" id="add_c_16" class="yubutton yuwhite" style="margin-left: 150px;">显示更多</button>
+                <button type="button" id="add_c_24" class="yubutton yuwhite" style="margin-left: 150px;">显示更多</button>
+                <font color="orange" size="-2" style="margin-left: 10px;">
+                    最多添加24条数据
+                </font>
                 <!--{$video_id}-->
             </td>
         </tr>
+    </table>
+    <br/>
 
+    <div style="width: 800px; float: left; height: 50px;"><input type="button" id="button_add" class="yubutton yuwhite" value="提交本页所有数据"
+    style="margin-left:50px;margin-top:10px;" /></div>
+</form>
+
+<div style="width: 1320px; float: left;">
+<form id="form_dispose_bz" action="__APP__/Food/dispose" method="post" style=" width: 850px; " >
+
+    <table class="table-edit" style="display: inline-block; float: left;position: relative; top:10px;width: 851px;">
+        <tr>
+            <td>
+                <b>批量录入步骤</b>
+            </td>
+        </tr>
+
+            <tr class="">
+                <td>
+                    <textarea rows="10" cols="116" name="batch_buzhou" placeholder="输入格式：每行输入一条步骤，一条输入完成后回车换行输入下一条。"></textarea>
+                </td>
+            </tr>
+
+            <tr>
+                <td>
+                    <!--<input type="submit" id="" class="yubutton yuwhite batch" value="提交批量数据"
+                           style="margin-left:50px;margin-top:0px;" />-->
+                    <button type="button" class="yubutton yuwhite batch_bz" style="margin-left:50px;margin-top:0px;">覆盖提交步骤</button>
+                    <button type="button" class="yubutton yuwhite batch_bz_zj" style="margin-left:100px;margin-top:0px;">追加提交步骤</button>
+                    <!--<button  class="yubutton yuwhite " style="margin-left:50px;margin-top:0px;">提交批量数据</button>-->
+                </td>
+            </tr>
+     </table>
+</form>
+<form id="form_dispose_cl" action="" >
+
+    <table class="table-edit" style="float: right;display: inline-block;position: relative; width: 450px;" >
+        <tr>
+            <td>
+                <b>批量录入食材</b>
+            </td>
+        </tr>
+
+            <tr class="">
+                <td>
+                    <textarea placeholder="输入格式：每行输入一种食材的名称和用量，用空格隔开，一条输入完成后回车换行。例如：鸡肉 500克 回车换行" rows="10" cols="58" name="batch_shicai"></textarea>
+                </td>
+        <tr>
+            <td>
+                <button type="button"  class="yubutton yuwhite batch_cl" style="margin-left:50px;margin-top:0px;">覆盖提交食材</button>
+                <button type="button"  class="yubutton yuwhite batch_cl_zj" style="margin-left:50px;margin-top:0px;">追加提交食材</button>
+            </td>
+        </tr>
     </table>
 
 </form>
-
+</div>
 </body>
 </html>
 

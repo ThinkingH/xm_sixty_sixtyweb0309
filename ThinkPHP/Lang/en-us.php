@@ -6,15 +6,15 @@
 // +----------------------------------------------------------------------
 // | Licensed ( http://www.apache.org/licenses/LICENSE-2.0 )
 // +----------------------------------------------------------------------
-// | Author: liu21st <liu21st@gmail.com>
+
 // +----------------------------------------------------------------------
 
 /**
  * ThinkPHP English language package
  * @category   Think
  * @package  Lang
- * @author   liu21st <liu21st@gmail.com>
- * @version  $Id: zh-cn.php 3034 2012-10-17 21:14:00Z yangweijiester@gmail.com $
+
+
   */
 return array(
 	//  core

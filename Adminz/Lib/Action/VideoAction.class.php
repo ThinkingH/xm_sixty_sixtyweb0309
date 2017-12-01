@@ -252,7 +252,7 @@ class VideoAction extends Action{
         //执行数据查询
         $list = $Model->table('sixty_video')
             ->field('id, flag, sflag, classify1, classify2, classify3, classify4, msgjihe, showimg, videosavename, biaoti,
-             biaotichild, fenshu, jieshao, maketime, huafeimoney, tishishuoming, create_datetime')
+             biaotichild, fenshu, jieshao, maketime, huafeimoney, tishishuoming, shicaititle, create_datetime')
             -> where($condition) -> order('id desc') -> limit($Page->firstRow . ',' . $Page->listRows) ->select();
         //判断是否有数据取出
         $num = count($list);
