@@ -114,7 +114,7 @@ function hy_getfiletype($filepathname='') {
  * @param string $filepathname 图片名称，包含路径
  * @param int    $quality  图片品质，0到100，默认90，100为最高品质
  */
-function hy_resave2jpg($filepathname='', $quality = 90) {
+function hy_resave2jpg($filepathname='', $quality = 100) {
 	if(''==$filepathname) {
 		return false;
 	}else {

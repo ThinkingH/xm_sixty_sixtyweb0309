@@ -78,6 +78,13 @@
             </td>
         </tr>
         <tr>
+            <td align="right" style="width: 110px;">是否开启此合集<font color="red" size="-2">*</font>：</td>
+            <td width="450">
+                <select name="flag">
+                    {$rootflag_show}
+                </select>
+            </td>
+        </tr>
         <tr>
             <td align="right">填写合集名称<font color="red" size="-2">*</font>：</td>
             <td width="450">
@@ -85,6 +92,16 @@
                        maxlength="30" name="edit_name" id="edit_name" onkeydown="if(event.keyCode=='32'){return false;}" />
                 <font color="orange" size="-2">
                     合集名称最多30字
+                </font>
+            </td>
+        </tr>
+
+        <tr>
+            <td align="right" style="">填写排序值<font color="red" size="-2">*</font>：</td>
+            <td width="450">
+                <input size="40" value="{$list.orderby}" type="text" maxlength="30" name="orderby" id="orderby" onkeydown="if(event.keyCode=='32'){return false;}" />
+                <font color="orange" size="-2">
+                    数值越大，排序越靠前
                 </font>
             </td>
         </tr>

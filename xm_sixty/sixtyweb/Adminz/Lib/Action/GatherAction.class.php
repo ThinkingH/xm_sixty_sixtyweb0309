@@ -27,6 +27,7 @@ class GatherAction extends Action{
         //获取查询信息
         $gat_id = trim($this->_get('find_id'));
         $gat_name = trim($this->_get('find_name'));
+        $gat_flag = trim($this->_get('find_flag'));
         $gat_find_sta_date = trim($this->_get('find_sta_date'));
         $gat_find_end_date = trim($this->_get('find_end_date'));
 
@@ -58,13 +59,26 @@ class GatherAction extends Action{
         if($gat_name != ''){
             $where .= "and name like '%" . $gat_name . "%'";
         }
+        //判断状态是否不为空
+        if($gat_flag != ''){
+            $where .= "and flag = '" . $gat_flag . "'";
+        }
 
+        //下拉菜单
+        $flagarr = array(
+            ''  => '0-全选',
+            '1' => '1-已开启',
+            '9' => '9-已关闭',
+        );
+
+        $find_flag = $this ->downlist($flagarr, $gat_flag);
         //返回查询条件
         $find_where = array(
             'find_id' => $gat_id,
             'find_name' => $gat_name,
             'find_sta_date' => $gat_find_sta_date,
             'find_end_date' => $gat_find_end_date,
+            'find_flag' => $find_flag,
         );
         $this->assign('find_where', $find_where);
 
@@ -84,8 +98,8 @@ class GatherAction extends Action{
 
 
         //查询集合数据表
-        $list = $Model -> table('sixty_jihemsg') -> field('id, name, showimg, content, remark, create_datetime')
-            -> where($where) -> order('create_datetime desc') -> limit($Page->firstRow . ',' . $Page->listRows)
+        $list = $Model -> table('sixty_jihemsg') -> field('id, name, showimg, content, flag, orderby, remark, create_datetime')
+            -> where($where) -> order('orderby desc,create_datetime desc') -> limit($Page->firstRow . ',' . $Page->listRows)
             -> select();
 
         foreach($list as $key_li => $val_li) {
@@ -94,8 +108,13 @@ class GatherAction extends Action{
             $imgwidth = '100';
             $imgheight = '100';
             $addressimg = hy_qiniuimgurl('sixty-jihemsg',$showimg,$imgwidth,$imgheight);
-//            var_dump($addressimg);die;
             $list[$key_li]['showimg'] = "<img src='" . $addressimg . "' />";
+
+            if($list[$key_li]['flag'] == 1) {
+                $list[$key_li]['flag'] = "<span style=\"background-color:#33FF66;padding:3px;\">1-开启</span>";
+            }else if($list[$key_li]['flag'] == 9) {
+                $list[$key_li]['flag'] = '<span style="background-color:#FF82A5;padding:3px;">2-关闭</span>';
+            }
         }
         $this->assign('list',$list);
         $this->display();
@@ -109,6 +128,19 @@ class GatherAction extends Action{
         $echourl = func_baseurlcreate($_GET);
         $this->assign('echourl',$echourl);
         //=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
+
+        //下拉菜单
+        $flagarr = array(
+            '1' => '1-开启',
+            '9' => '9-关闭',
+        );
+
+        $rootflag_show = $this -> downlist($flagarr,'1');
+        $this -> assign('rootflag_show',$rootflag_show);
+
+
+        $orderby = 100;
+        $this -> assign('orderby',$orderby);
         //输出模板
         $this->display();
     }
@@ -127,6 +159,8 @@ class GatherAction extends Action{
         $content = trim($this->_post('content'));
         $remark = trim($this->_post('remark'));
         $submit = trim($this->_post('submit'));
+        $orderby = trim($this->_post('orderby'));
+        $flag = trim($this->_post('flag'));
 
         //判断上传数据是否为空
         if($submit == ''){
@@ -140,6 +174,14 @@ class GatherAction extends Action{
         if($content == ''){
             echo "<script>alert('合集描述不能为空!');history.go(-1);</script>";
             $this -> error('合集描述不能为空!');
+        }
+        if($orderby == ''){
+            echo "<script>alert('排序值不能为空!');history.go(-1);</script>";
+            $this -> error('排序值不能为空!');
+        }
+        if($flag == ''){
+            echo "<script>alert('非法进入此页面!');history.go(-1);</script>";
+            $this -> error('非法进入此页面!');
         }
 
         //实例化方法
@@ -212,12 +254,13 @@ class GatherAction extends Action{
         $create_timedate = date('Y-m-d H:i:s', time());
         $data = array(
             'name' => $name,
+            'flag' => $flag,
+            'orderby' => $orderby,
             'content' => $content,
             'remark' => $remark,
             'showimg' => $showimg,
             'create_datetime' => $create_timedate,
         );
-
 
         //执行插入
         $res = $Model -> table('sixty_jihemsg') -> add($data);
@@ -228,11 +271,12 @@ class GatherAction extends Action{
         //判断插入结果
         if($res){
             //返回成功
+            @unlink(BASEDIR.'tmpimage/'.$showimg);
             echo "<script>alert('合集添加成功!');window.location.href='".__APP__.'/Gather/index'. $echourl ."';</script>";
             $this -> success('合集添加成功!','__APP__'.$echourl);
 
         }else{
-            unlink(BASEDIR.'tmpimage/'.$showimg);
+            @unlink(BASEDIR.'tmpimage/'.$showimg);
             echo "<script>alert('合集添加失败!');history.go(-1);</script>";
             $this -> error('合集添加失败!');
         }
@@ -254,7 +298,7 @@ class GatherAction extends Action{
             $this -> error('非法进入此页面!');
         }
         $Model = new Model();
-        $list = $Model -> table('sixty_jihemsg') -> field('id, name, showimg, content, remark')
+        $list = $Model -> table('sixty_jihemsg') -> field('id, orderby, flag, name, showimg, content, remark')
             -> where("id='".$id."'") -> find();
 
         //获取七牛云图片
@@ -263,6 +307,15 @@ class GatherAction extends Action{
         $imgheight = '100';
         $addressimg = hy_qiniuimgurl('sixty-jihemsg',$showimg,$imgwidth,$imgheight);
         $list['showimg'] = "<img src='" . $addressimg . "' />";
+
+        //下拉菜单
+        $flagarr = array(
+            '1' => '1-开启',
+            '9' => '9-关闭',
+        );
+
+        $rootflag_show = $this -> downlist($flagarr,$list['flag']);
+        $this -> assign('rootflag_show',$rootflag_show);
 
         $this->assign('list', $list);
         $this->display();
@@ -283,6 +336,8 @@ class GatherAction extends Action{
         $content = trim($this->_post('edit_content'));
         $remark = trim($this->_post('edit_remark'));
         $submit = trim($this->_post('submit'));
+        $flag = trim($this->_post('flag'));
+        $orderby = trim($this->_post('orderby'));
 
         //判断上传数据是否为空
         if($submit == ''){
@@ -300,6 +355,14 @@ class GatherAction extends Action{
         if($content == ''){
             echo "<script>alert('合集描述不能为空!');history.go(-1);</script>";
             $this -> error('合集描述不能为空!');
+        }
+        if($flag == ''){
+            echo "<script>alert('非法进入此页面!');history.go(-1);</script>";
+            $this -> error('非法进入此页面!');
+        }
+        if($orderby == ''){
+            echo "<script>alert('排序值不能为空!');history.go(-1);</script>";
+            $this -> error('排序值不能为空!');
         }
 
         //根据ID 查找数据
@@ -374,6 +437,8 @@ class GatherAction extends Action{
                     'content' => $content,
                     'remark' => $remark,
                     'showimg' => $showimg_new,
+                    'flag' => $flag,
+                    'orderby' => $orderby,
                 );
             }
         }else{
@@ -382,6 +447,8 @@ class GatherAction extends Action{
                 'name' => $name,
                 'content' => $content,
                 'remark' => $remark,
+                'flag' => $flag,
+                'orderby' => $orderby,
             );
         }
 
@@ -470,5 +537,26 @@ class GatherAction extends Action{
             exit('系统错误，为确保系统安全，禁止登入系统');
         }
         //=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
+    }
+
+    //动态下拉列表
+    public function downlist($arr, $lock=''){
+
+        //动态生成权限下拉选项
+        //$lock为空时，关联数组array[0]未默认选项
+        $res_arr = '';
+        if($arr != '') {
+            foreach ($arr as $keyr => $valr) {
+                $res_arr .= '<option value="' . $keyr . '" ';
+                if ($keyr == $lock) {
+                    $res_arr .= ' selected="selected"';
+                }
+                $res_arr .= '>' . $valr . '</option>';
+            }
+        }else{
+            $res_arr = "<option selected='selected'>无</option>";
+        }
+        return $res_arr;
+
     }
 }
