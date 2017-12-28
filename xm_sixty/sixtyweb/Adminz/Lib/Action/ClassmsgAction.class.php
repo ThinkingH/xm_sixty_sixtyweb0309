@@ -92,9 +92,23 @@ class ClassmsgAction extends Action{
         $this->assign('page', $show);// 赋值分页输出
 
         //查询集合数据表
-        $list = $Model -> table('sixty_classifymsg') -> field('id, level, name, childname, content, remark')
+        $list = $Model -> table('sixty_classifymsg') -> field('id, level, name, childname, content, remark, flag, showimg')
             -> where($where) -> order('level asc, id desc') -> limit($Page->firstRow . ',' . $Page->listRows) ->  select();
 
+        $imgwidth = '100';
+        $imgheight = '100';
+        foreach($list as $k_l => $v_l){
+            if($v_l['flag'] == 1){
+                $list[$k_l]['flag'] = '<span style="background-color:#33FF66;padding:3px;">1-已开启</span>';
+            }else if($v_l['flag'] == 2){
+                $list[$k_l]['flag'] = '<span style="background-color:#FF82A5;padding:3px;">2-已关闭</span>';
+            }
+
+            //获取七牛云图片
+            $showimg = $v_l['showimg'];
+            $addressimg = hy_qiniuimgurl('sixty-jihemsg',$showimg,$imgwidth,$imgheight);
+            $list[$k_l]['showimg'] = "<img src='" . $addressimg . "' />";
+        }
 
         $this->assign('list',$list);
         $this->display();
@@ -119,16 +133,18 @@ class ClassmsgAction extends Action{
             '4' => '四级',
         );
 
-        $level_show = '';
-        foreach($levelarr as $keyr => $valr) {
-            $level_show .= '<option value="'.$keyr.'" ';
-            if($keyr==$flag) {
-                $level_show .= ' selected="selected"';
-            }
-            $level_show .= '>'.$valr.'</option>';
+        $level_show = $this->downlist($levelarr);
 
-        }
+        //
+        $openarr = array(
+            '1' => '开启',
+            '2' => '关闭',
+        );
+
+        $open_show = $this->downlist($openarr,'2');
+
         $this -> assign('level_show',$level_show);
+        $this -> assign('open_show',$open_show);
         //end--------------------------------------------------------------
         //输出模板
         $this->display();
@@ -149,6 +165,7 @@ class ClassmsgAction extends Action{
         $content = trim($this->_post('content'));
         $level = trim($this->_post('level'));
         $remark = trim($this->_post('remark'));
+        $flag = trim($this->_post('flag'));
 
         //判断传值是否为空
         if($name == ''){
@@ -185,7 +202,60 @@ class ClassmsgAction extends Action{
             $this -> error('此子分类名已存在，请使用其他名称!');
         }
 
+        //判断文件是否上传
+        $file = $_FILES['showimg']['name'];
+        if($file != ''){
+            import('ORG.UploadFile');
+            $upload = new UploadFile();// 实例化上传类
+            $upload->maxSize  = 2097152 ;// 设置附件上传大小
+            $upload->saveRule  = date('YmdHis',time()) . mt_rand();// 设置附件上传文件名
+            $upload->allowExts  = array('jpg','gif','png');// 设置附件上传类型
+            $upload->savePath =  BASEDIR.'Public/Images/sixty-jihemsg/';// 设置附件上传目录
+            if(!$upload->upload()) {// 上传错误提示错误信息
+                echo "<script>alert('图片上传失败!');history.go(-1);</script>";
+                $this -> error('图片上传失败!');
+            }else{// 上传成功 获取上传文件信息
+                $info =  $upload->getUploadFileInfo();
+                $showimg = $info['0']['savename'];
 
+                //上传七牛云
+                //上传图片存储绝对路径
+                $cz_filepathname  = BASEDIR.'Public/Images/sixty-jihemsg/'.$showimg;
+
+                if(false===func_isImage($cz_filepathname)) {
+                    //解析失败，非正常图片---后台图片上传时本函数可不使用
+                    @unlink($cz_filepathname); //删除文件
+                    //非正常图片
+                    $showimg = '';
+                }else {
+                    //上传到七牛云之前先进行图片格式转换，统一使用jpg格式,图片格式转换
+                    $r = hy_resave2jpg($cz_filepathname);
+                    if($r!==false) {
+                        //图片格式转换成功，赋值新名称
+                        $cz_filepathname = $r;
+                        $cz_filepathname = str_replace('\\','/',$cz_filepathname);
+                    }
+                    //上传到七牛云
+                    //参数，bucket，文件绝对路径名称，存储名称，是否覆盖同名文件
+                    $r = upload_qiniu('sixty-jihemsg',$cz_filepathname,$showimg,'yes');
+
+                    if(false===$r) {
+                        @unlink($cz_filepathname); //删除文件
+                        //上传失败
+                        $showimg = '';
+                    }else {
+                        @unlink($cz_filepathname); //删除文件
+                        //上传成功
+
+                    }
+                }
+            }
+
+        }else {
+            $showimg = '';
+        }
+
+//var_dump($showimg);die;
         //准备插入数组
         $data = array(
             'name' => $name,
@@ -193,6 +263,8 @@ class ClassmsgAction extends Action{
             'content' => $content,
             'remark' => $remark,
             'level' => $level,
+            'flag' => $flag,
+            'showimg' => $showimg,
         );
 
 
@@ -236,17 +308,22 @@ class ClassmsgAction extends Action{
         $Model = new Model();
 
         //查询此ID是否存在
-        $list = $Model -> table('sixty_classifymsg') -> field('id, name, childname, level, content, remark')
+        $list = $Model -> table('sixty_classifymsg') -> field('id, name, childname, level, content, remark, flag, showimg')
             -> where("id='".$id."'") -> find();
         if($list == ''){
             echo "<script>alert('非法进入此页面');history.go(-1);</script>";
             $this -> error('非法进入此页面');
         }
 
-        //=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
-        // 动态下拉列表
-        //start--------------------------------------------------------------
-        //动态生成权限下拉选项
+        //获取七牛云图片
+        $imgwidth = '100';
+        $imgheight = '100';
+
+
+        $addressimg = hy_qiniuimgurl('sixty-jihemsg',$list['showimg'],$imgwidth,$imgheight);
+        $list['showimg'] =  "<img src='" . $addressimg . "' />";
+
+
         $levelarr = array(
             '1' => '一级',
             '2' => '二级',
@@ -254,16 +331,19 @@ class ClassmsgAction extends Action{
             '4' => '四级',
         );
 
-        $level_show = '';
-        foreach($levelarr as $keyr => $valr) {
-            $level_show .= '<option value="'.$keyr.'" ';
-            if($keyr==$list['level']) {
-                $level_show .= ' selected="selected"';
-            }
-            $level_show .= '>'.$valr.'</option>';
+        $level_show = $this->downlist($levelarr, $list['level']);
 
-        }
+        //
+        $openarr = array(
+            '1' => '开启',
+            '2' => '关闭',
+        );
+
+        $open_show = $this->downlist($openarr,$list['flag']);
+
         $this -> assign('level_show',$level_show);
+        $this -> assign('open_show',$open_show);
+
         //end--------------------------------------------------------------
 
         //输出模板
@@ -287,6 +367,7 @@ class ClassmsgAction extends Action{
         $content = trim($this->_post('edit_content'));
         $remark = trim($this->_post('edit_remark'));
         $level = trim($this->_post('edit_level'));
+        $flag = trim($this->_post('edit_flag'));
 
         //判断传值是否为空
         if($name == ''){
@@ -303,8 +384,19 @@ class ClassmsgAction extends Action{
         }
 
 
+
         //实例化模型
         $Model = new Model();
+
+
+        //判断分类名是否存在
+        $res_old = $Model -> table('sixty_classifymsg') -> field('id, showimg')
+            -> where("id =" . $id) ->find();
+//        var_dump($id);die;
+        if($res_old == ''){
+            echo "<script>alert('非法进入此页面!');history.go(-1);</script>";
+            $this -> error('非法进入此页面!');
+        }
 
         //判断分类名是否存在
         $res_name = $Model -> table('sixty_classifymsg') -> field('id')
@@ -323,14 +415,78 @@ class ClassmsgAction extends Action{
             $this -> error('此子分类名已存在，请使用其他名称!');
         }
 
-        //准备插入数组
-        $data = array(
-            'name' => $name,
-            'childname' => $childname,
-            'content' => $content,
-            'remark' => $remark,
-            'level' => $level,
-        );
+        //判断文件是否上传
+        $file = $_FILES['showimg']['name'];
+        if($file != ''){
+            import('ORG.UploadFile');
+            $upload = new UploadFile();// 实例化上传类
+            $upload->maxSize  = 2097152 ;// 设置附件上传大小
+            $upload->saveRule  = date('YmdHis',time()) . mt_rand();// 设置附件上传大小
+            $upload->allowExts  = array('jpg','gif','png');// 设置附件上传类型
+            $upload->savePath =  BASEDIR.'Public/Images/sixty-jihemsg/';// 设置附件上传目录
+            if(!$upload->upload()) {// 上传错误提示错误信息
+                echo "<script>alert('图片上传失败!');history.go(-1);</script>";
+                $this -> error('图片上传失败!');
+            }else{// 上传成功 获取上传文件信息
+                $info =  $upload->getUploadFileInfo();
+                $showimg = $info['0']['savename'];
+
+                //上传七牛云
+                //上传图片存储绝对路径
+                $cz_filepathname  = BASEDIR.'Public/Images/sixty-jihemsg/'.$showimg;
+
+                if(false===func_isImage($cz_filepathname)) {
+                    //解析失败，非正常图片---后台图片上传时本函数可不使用
+                    @unlink($cz_filepathname); //删除文件
+                    //非正常图片
+                }else {
+                    //上传到七牛云之前先进行图片格式转换，统一使用jpg格式,图片格式转换
+                    $r = hy_resave2jpg($cz_filepathname);
+                    if($r!==false) {
+                        //图片格式转换成功，赋值新名称
+                        $cz_filepathname = $r;
+                        $cz_filepathname = str_replace('\\','/',$cz_filepathname);
+                    }
+                    //上传到七牛云
+                    //参数，bucket，文件绝对路径名称，存储名称，是否覆盖同名文件
+                    $r = upload_qiniu('sixty-jihemsg',$cz_filepathname,$showimg,'yes');
+
+                    if(false===$r) {
+                        @unlink($cz_filepathname); //删除文件
+                        //上传失败
+                    }else {
+                        @unlink($cz_filepathname); //删除文件
+                        //上传成功
+                    }
+
+                    //删除七牛云旧图片
+                    delete_qiniu('sixty-jihemsg', $res_old['showimg']);
+                    //准备更新数组
+                    //准备插入数组
+                    $data = array(
+                        'name' => $name,
+                        'childname' => $childname,
+                        'content' => $content,
+                        'remark' => $remark,
+                        'level' => $level,
+                        'flag' => $flag,
+                        'showimg' => $showimg,
+                    );
+
+                }
+            }
+        }else{
+            //准备更新数组
+            $data = array(
+                'name' => $name,
+                'childname' => $childname,
+                'content' => $content,
+                'remark' => $remark,
+                'level' => $level,
+                'flag' => $flag,
+            );
+        }
+
 
         $result = $Model -> table('sixty_classifymsg') -> where("id='".$id."'") -> save($data);
 
@@ -372,10 +528,22 @@ class ClassmsgAction extends Action{
             $this -> error('非法进入此页面');
         }
 
-        $Model = new Model();
-        //执行删除
-        $result = $Model -> table('sixty_classifymsg') -> where("id='".$id."'") -> delete();
 
+        $Model = new Model();
+
+        //
+        $result = $Model -> table('sixty_classifymsg') -> where("id='".$id."'") -> find();
+        if($result == ''){
+            echo "<script>alert('非法进入此页面');history.go(-1);</script>";
+            $this -> error('非法进入此页面');
+        }
+
+
+        if($result['showimg'] != ''){
+            $a = delete_qiniu('sixty-jihemsg', $result['showimg']);
+        }
+
+        $result = $Model -> table('sixty_classifymsg') -> where("id='".$id."'") -> delete();
         //写入日志
         $templogs = $Model->getlastsql();
         hy_caozuo_logwrite($templogs,__CLASS__.'---'.__FUNCTION__);

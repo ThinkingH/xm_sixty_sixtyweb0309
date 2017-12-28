@@ -452,7 +452,7 @@ class VideoAction extends Action{
 
         //查询合集
         $Model = new Model();
-        $list_heji = $Model -> table('sixty_jihemsg') -> field('id, name') -> order('id DESC') -> limit('0','100') -> select();
+        $list_heji = $Model -> table('sixty_jihemsg') -> field('id, name') -> where('flag = 1') -> order('id DESC') -> limit('0','100') -> select();
 
         $heji_arr = array();
         foreach($list_heji as $key_heji => $val_heji){
@@ -461,7 +461,7 @@ class VideoAction extends Action{
 
         //查询分类
         $Model = new Model();
-        $list_class = $Model -> table('sixty_classifymsg') -> field('id, name, level') -> select();
+        $list_class = $Model -> table('sixty_classifymsg') -> field('id, name, level') -> where('flag = 1') -> select();
         $class_arr_one = array();
         $class_arr_two = array();
         $class_arr_three = array();
@@ -732,7 +732,7 @@ class VideoAction extends Action{
 
         //查询合集
         $Model = new Model();
-        $list_heji = $Model -> table('sixty_jihemsg') -> field('id, name') -> order('id DESC') -> limit('0','100') -> select();
+        $list_heji = $Model -> table('sixty_jihemsg') -> field('id, name') -> where('flag = 1') -> order('id DESC') -> limit('0','100') -> select();
         //合集数组
         $heji_arr = array();
         foreach($list_heji as $key_heji => $val_heji){
@@ -742,7 +742,7 @@ class VideoAction extends Action{
 
         //查询分类
         $Model = new Model();
-        $list_class = $Model -> table('sixty_classifymsg') -> field('id, name, level') -> select();
+        $list_class = $Model -> table('sixty_classifymsg') -> where('flag = 1') -> field('id, name, level') -> select();
 
         //准备分类数组
         $class_arr_one = array();
