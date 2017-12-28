@@ -49,6 +49,16 @@
             });
 
         });
+        function localImgLoad() {
+            var src = this.files[0];
+            var self = $(this);
+            var read = new FileReader();
+            read.onload = function(e) {
+                $("#showimg").attr('src',e.target.result);
+                document.getElementById('localBase64StrContainer').value = e.target.result;
+            }
+            read.readAsDataURL(src)
+        };
 
     </script>
 </head>
@@ -73,6 +83,13 @@
             </td>
         </tr>
         <tr>
+            <td align="right" style="width: 100px;">是否开启视频<font color="red" size="-2">*</font>：</td>
+            <td width="470">
+                <select name="edit_flag">
+                    {$open_show}
+                </select>
+            </td>
+        </tr>
         <tr>
             <td align="right">填写分类名称<font color="red" size="-2">*</font>：</td>
             <td>
@@ -119,6 +136,22 @@
                        id="edit_remark" onkeydown="if(event.keyCode=='32'){return false;}" />
                 <font color="orange" size="-2">
                     分类名称最多30字
+                </font>
+            </td>
+        </tr>
+        <tr style="height: 200px;">
+            <td align="right">上传视频图片：</td>
+            <td>
+                <img id="showimg" src="" style="width: 100px; height: 100px; margin-right: 200px;">
+                {$list.showimg}
+                <br/>
+                <input type="file" id="fileshowimg" name="showimg" onchange="localImgLoad.call(this)"/>
+                <BR/>
+                <font color="orange" size="-2">
+                    上传图片格式必须为JPG，PNG，GIF格式
+                </font>
+                <font color="orange" size="-2" style="margin-left: 100px;">
+                    当前图片
                 </font>
             </td>
         </tr>

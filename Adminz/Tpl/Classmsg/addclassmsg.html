@@ -41,6 +41,15 @@
             });
         });
 
+        function localImgLoad() {
+            var src = this.files[0];
+            var read = new FileReader();
+            read.onload = function(e) {
+                $("#showimg").attr('src',e.target.result);
+                document.getElementById('localBase64StrContainer').value = e.target.result;
+            }
+            read.readAsDataURL(src)
+        };
     </script>
 </head>
 
@@ -56,6 +65,14 @@
 <form name="form1" method="post" action="__APP__/Classmsg/addclassmsg_do{$echourl}" enctype="multipart/form-data">
     <br/><br/>
     <table class="table-edit" width="">
+        <tr>
+            <td align="right" style="width: 100px;">是否开启视频<font color="red" size="-2">*</font>：</td>
+            <td width="470">
+                <select name="flag">
+                    {$open_show}
+                </select>
+            </td>
+        </tr>
         <tr>
             <td align="right" style="width: 100px;">填写分类名称<font color="red" size="-2">*</font>：</td>
             <td width="470">
@@ -102,6 +119,18 @@
                 <input size="40" type="text" maxlength="30" name="remark" id="remark" onkeydown="if(event.keyCode=='32'){return false;}" />
                 <font color="orange" size="-2">
                     分类名称最多30字
+                </font>
+            </td>
+        </tr>
+        <tr>
+            <td width="120" align="right">上传视频图片<font color="red" size="-2">*</font>：</td>
+            <td>
+                <img id="showimg" src="" style="width: 100px; height: 100px;">
+                <br/>
+                <input type="file" id="fileshowimg" onchange="localImgLoad.call(this)"name="showimg"/>
+                <font color="orange" size="-2">
+                    <br/>
+                    图片格式必须为JPG,PNG,GIF格式
                 </font>
             </td>
         </tr>

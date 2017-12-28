@@ -32,11 +32,6 @@
                 if(!checkForm(arr)){
                     return false;
                 }
-                if(confirm("您确认要添加此版本信息吗？")) {
-
-                }else {
-                    return false;
-                }
                 if(confirm("您确认要添加此视频吗？")) {
 
                 }else {
@@ -45,7 +40,27 @@
             });
 
             $("#submitandshicai").click(function(){
+                function checkForm(arr){
+                    for(var i=0;i<arr.length;i++){
+                        if($("#"+arr[i][0]).val()==''){
+                            alert(arr[i][1]);
+                            $("#"+arr[i][0]).focus();
+                            return false;
+                        }
+                    }
+                    return true;
+                };
+                //调用方式
+                var arr=new Array(
+                    new Array('biaoti','视频标题不可为空!'),
+                    new Array('biaotichildne','视频子标题不可为空!'),
+                    new Array('classify2','视频分类2不可为空!'),
+                    new Array('fileshowimg','展示图片不可为空!'),
+                );
 
+                if(!checkForm(arr)){
+                    return false;
+                }
                 if(confirm("您确认要添加此视频吗？")) {
 
                 }else {
