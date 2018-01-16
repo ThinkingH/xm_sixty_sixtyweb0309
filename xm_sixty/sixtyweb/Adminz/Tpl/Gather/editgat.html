@@ -54,6 +54,15 @@
             }
             read.readAsDataURL(src);
         };
+        function localImgLoad2() {
+            var src = this.files[0];
+            var read = new FileReader();
+            read.onload = function(e) {
+                $("#edit_detailimg").attr('src',e.target.result);
+                document.getElementById('localBase64StrContainer').value = e.target.result;
+            }
+            read.readAsDataURL(src);
+        };
 
     </script>
 </head>
@@ -127,7 +136,7 @@
             </td>
         </tr>
         <tr>
-            <td align="right">上传集合图片：</td>
+            <td align="right">上传展示图片：</td>
             <td>
                 <img id="edit_showimg" src="" style="width: 100px; height: 100px;margin-right: 200px;" />
                 {$list.showimg}
@@ -141,6 +150,27 @@
                 </font>
                 <font color="orange" size="-2" style="margin-left: 100px;">
                  当前图片
+                </font>
+                <!--{$list.showimg}-->
+                <br/>
+
+            </td>
+        </tr>
+        <tr>
+            <td align="right">上传详情图片：</td>
+            <td>
+                <img id="edit_detailimg" src="" style="width: 100px; height: 100px;margin-right: 200px;" />
+                {$list.detailimg}
+                <br/>
+
+                <input type="file" onchange="localImgLoad2.call(this)" name="edit_showimg2" id="edit_detailimg"/>
+
+                <BR/>
+                <font color="orange" size="-2">
+                    上传图片格式必须为JPG，PNG，GIF格式
+                </font>
+                <font color="orange" size="-2" style="margin-left: 100px;">
+                    当前图片
                 </font>
                 <!--{$list.showimg}-->
                 <br/>

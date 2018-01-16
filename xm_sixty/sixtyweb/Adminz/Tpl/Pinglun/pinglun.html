@@ -26,8 +26,8 @@
 <div class="hy_daohangtiao">
     当前位置&nbsp;#&nbsp;评论管理&nbsp;#&nbsp;评论列表&nbsp;#&nbsp;评论浏览页面
 </div>
-<a href="javascript:history.go(-1);" class="yubutton yuwhite">后退</a>
-<br/>
+
+
 <br/>
     <form action="__APP__/Pinglun/pinglun{$echourl}" method="get">
         <table class="table-head">
@@ -55,6 +55,7 @@
             <td width="700"><b>评论内容</b></td>
             <td width="150"><b>评论时间</b></td>
             <td width="50"><b>点赞次数</b></td>
+            <td width="50">删除</td>
         </tr>
         </thead>
 
@@ -62,10 +63,10 @@
         <volist name="list" id="vo" empty="没有对应数据" >
             <tr>
                 <td>
-                    <form action="__APP__/Pinglun/delpinglun_do{$echourl}" method="post" style="margin:0px" onsubmit="return submitdel();">
-                        <input type="hidden" name="pinglun_id" value="{$vo.id}" />
-                        <input type="hidden" name="pinglun_type" value="{$vo.type}" />
-                        <input type="submit" class="yubuttons yuwhite" name="delpinglunbutton" value="删除"/>
+                    <form action="__APP__/Reply/detail{$echourl}" method="get" style="margin:0px">
+                        <input type="hidden" name="fplid" value="{$vo.id}" />
+                        <input type="hidden" name="vid" value="{$vo.vid}" />
+                        <input type="submit" class="yubuttons yuwhite" name="delpinglunbutton" value="查看"/>
                     </form>
                 </td>
                 <td >{$vo.id}</td>
@@ -75,8 +76,27 @@
                 <td >{$vo.content}</td>
                 <td>{$vo.create_datetime}</td>
                 <td>{$vo.dianzan}</td>
+                <td>
+                    <form action="__APP__/Pinglun/delpinglun_do{$echourl}" method="post" style="margin:0px" onsubmit="return submitdel();">
+                        <input type="hidden" name="pinglun_id" value="{$vo.id}" />
+                        <input type="hidden" name="pinglun_type" value="{$vo.type}" />
+                        <input type="submit" class="yubuttons yuwhite" name="delpinglunbutton" value="删除"/>
+                    </form>
+                </td>
             </tr>
         </volist>
+        <form action="__APP__/Pinglun/pinglun{$echourl}" method="get">
+            <table class="table-head">
+                <tr>
+                    <td>查询评论ID:<input style="width:100px;" type="text" name="find_id" value="{$find_where.find_id}" /></td>
+                    <td>查询视频ID:<input style="width:100px;" type="text" name="video_id" value="{$find_where.video_id}" /></td>
+                    <td>查询评论用户ID:<input style="width: 100px;" type="text" name="find_user_id" value="{$find_where.find_user_id}" /></td>
+                    <td>起始搜索日期:<input style="width:90px;" type="text" name="find_sta_date" onclick="WdatePicker()" value="{$find_where.find_sta_date}" /></td>
+                    <td>结束搜索日期:<input style="width:90px;" type="text" name="find_end_date" onclick="WdatePicker()" value="{$find_where.find_end_date}" /></td>
+                    <td><input type="submit" class="yubuttons yuwhite" name="submit_select" value="查询" /></td>
+                </tr>
+            </table>
+        </form>
         </tbody>
 
     </table>
