@@ -195,6 +195,22 @@
             </td>
         </tr>
         <tr>
+            <td align="right">选择小贴士：</td>
+            <td>
+                <volist name="tips_show" id="vo">
+                    <select name="{$vo.num}">
+                        {$vo.sel}
+                    </select>
+                    &nbsp;
+                    &nbsp;
+                </volist>
+
+                <font color="orange" size="-2">
+                    视频小贴士
+                </font>
+            </td>
+        </tr>
+        <tr>
             <td align="right">填写视频介绍：</td>
             <td>
                 <textarea rows=6" cols="90" style=""

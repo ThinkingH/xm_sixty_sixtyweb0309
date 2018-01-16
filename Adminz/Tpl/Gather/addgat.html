@@ -54,6 +54,16 @@
             }
             read.readAsDataURL(src);
         };
+
+        function localImgLoad2() {
+            var src = this.files[0];
+            var read = new FileReader();
+            read.onload = function(e) {
+                $("#detailimg").attr('src',e.target.result);
+                document.getElementById('localBase64StrContainer').value = e.target.result;
+            }
+            read.readAsDataURL(src);
+        };
     </script>
 </head>
 
@@ -117,7 +127,7 @@
             </td>
         </tr>
         <tr>
-            <td align="right">上传集合图片<font color="red" size="-2">*</font>：</td>
+            <td align="right">上传集合展示图片<font color="red" size="-2">*</font>：</td>
             <td>
                 <img id="showimg" src="" style="width: 100px; height: 100px;" />
                 <br/>
@@ -125,6 +135,18 @@
                 <font color="orange" size="-2">
                     <br/>
                         上传图片格式必须为JPG，PNG，GIF格式
+                </font>
+            </td>
+        </tr>
+        <tr>
+            <td align="right">上传详情页图片<font color="red" size="-2">*</font>：</td>
+            <td>
+                <img id="detailimg" src="" style="width: 100px; height: 100px;" />
+                <br/>
+                <input type="file" onchange="localImgLoad2.call(this)" name="showimg2" id="filedetailimg"/>
+                <font color="orange" size="-2">
+                    <br/>
+                    上传图片格式必须为JPG，PNG，GIF格式
                 </font>
             </td>
         </tr>

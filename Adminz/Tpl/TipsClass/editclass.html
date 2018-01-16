@@ -1,0 +1,122 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <load href="__PUBLIC__/Css/main.css" />
+    <script type="text/javascript" src="__PUBLIC__/Js/jquery.min.js"></script>
+    <script type="text/javascript" src="__PUBLIC__/Js/themain.js"></script>
+    <script type="text/javascript" src="__PUBLIC__/Js/md5.js"></script>
+    <script language="javascript" type="text/javascript" src="__PUBLIC__/Js/datexxx/WdatePicker.js"></script>
+    <script type="text/javascript">
+        $("document").ready(function(){
+
+            $("#submit_add").click(function() {
+                var name = $("#name").val();
+                var abstract = $("#abstract").val();
+
+                name = $.trim(name);
+                abstract = $.trim(abstract);
+
+
+                if (name == '') {
+                    alert('名称不能为空！');
+                    return false;
+                }
+
+                if (abstract == '') {
+                    alert('介绍不能为空！');
+                    return false;
+                }
+
+                if(confirm("您确认要提交修改吗？")) {
+
+                }else {
+                    return false;
+                }
+            });
+        });
+
+    </script>
+</head>
+
+<body>
+<div class="hy_daohangtiao">
+    当前位置&nbsp;#&nbsp;贴士管理&nbsp;#&nbsp;贴士分类&nbsp;#&nbsp;编辑贴士分类页面
+</div>
+
+
+<a href="javascript:history.go(-1);" class="yubutton yuwhite">返回贴士分类列表</a>
+<br/>
+
+<form name="form1" method="post" action="__APP__/TipsClass/editclass_do{$echourl}" enctype="multipart/form-data">
+    <br/><br/>
+    <table class="table-edit" width="">
+        <tr>
+            <td align="right" style="width: 100px;">ID<font color="red" size="-2">*</font>：</td>
+            <td width="470">
+                {$data.id}
+            </td>
+        </tr>
+        <tr>
+        <tr>
+            <td align="right" style="width: 100px;">填写分类名称<font color="red" size="-2">*</font>：</td>
+            <td width="470">
+                <input size="40" type="text" maxlength="30" name="name" id="name" value="{$data.name}" onkeydown="if(event.keyCode=='32'){return false;}" />
+                <font color="orange" size="-2">
+                    分类名称最多30字
+                </font>
+            </td>
+        </tr>
+        <tr>
+            <td align="right">填写分类介绍<font color="red" size="-2">*</font>：</td>
+            <td>
+                <textarea rows="6" cols="60" style="" onchange="this.value=this.value.substring(0, 200)"
+                          onkeydown="this.value=this.value.substring(0, 200)" onkeyup="this.value=this.value.substring(0, 200)"
+                          id="abstract" name="abstract">{$data.abstract}</textarea>
+                <font color="orange" size="-2">
+                    <br/>分类备注最多200字,填写分类的简介
+                </font>
+            </td>
+        </tr>
+        <tr>
+            <td align="right" style="width: 90px;">填写分类备注：</td>
+            <td>
+                <input value="{$data.remark}" size="40" type="text" maxlength="50" name="remark" id="remark" onkeydown="if(event.keyCode=='32'){return false;}" />
+                <font color="orange" size="-2">
+                    分类名称最多50字
+                </font>
+            </td>
+        </tr>
+        <tr>
+            <td align="right" style="width: 90px;"></td>
+            <td>
+                <font color="red" size="-2">
+                    注意：带 * 的选项为必填项目！
+                </font>
+            </td>
+        </tr>
+
+        <tr>
+            <td colspan="2">
+                <input type="hidden" name="edit_id" value="{$data.id}"/>
+                <input type="submit" name="submit" id="submit_edit" class="yubutton yuwhite" value="提交修改" style="margin-left:50px;" />
+</form>
+                <form method="post" action="__APP__/TipsClass/delclass_do{$echourl}" style="display:inline;margin:0px;padding:0px; width: 100px; height: 50px;">
+                    <input type="hidden" name="del_id" value="{$data.id}" />
+                    <input type="submit" name="submitdel" id="submitdel" class="yubuttons yuwhite" value="删除此合集" style="margin-left: 250px;margin-top:10px; "/>
+                </form>
+            </td>
+        </tr>
+
+    </table>
+
+
+
+<br/><br/><br/><br/><br/><br/>
+End!
+
+
+</body>
+</html>
+
+
