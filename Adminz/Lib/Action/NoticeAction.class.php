@@ -12,7 +12,9 @@ class NoticeAction extends Action {
     private $lock_editnotice   = '97';
     private $lock_editnotice_do   = '97';
     private $lock_delnotice_do   = '97';
+    private $fabu   = '97';
 
+    protected $JiPush;
     //显示通知列表
     public function index() {
         //=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
@@ -36,14 +38,60 @@ class NoticeAction extends Action {
         $this->assign('page', $show);// 赋值分页输出
 
         //执行查询通知表数据
-        $list = $Model -> table('sixty_tongzhi') -> field('id, message, create_datetime')
+        $list = $Model -> table('sixty_tongzhi') -> field('id, sex, message, create_datetime, flag')
             -> order('create_datetime desc') -> limit($Page->firstRow . ',' . $Page->listRows) -> select();
+
+        foreach($list as $k_l => $v_l){
+
+            if($v_l['flag'] == 1){
+                $list[$k_l]['flag'] = '<span style="background-color:#33FF66;padding:3px;">1-已发送</span>';
+            }else if($v_l['flag'] == 2){
+
+                $list[$k_l]['flag'] = '<span style="background-color:#FF82A5;padding:3px;">2-未发送</span>';
+            }
+
+            if($v_l['sex'] == 1){
+                $list[$k_l]['sex'] = '男';
+            }else if($v_l['sex'] == 2){
+                $list[$k_l]['sex'] = '女';
+            }else if($v_l['sex'] == 0){
+                $list[$k_l]['sex'] = '全部';
+            }
+
+        }
 
         //输出到模板
         $this -> assign('list', $list);
         $this -> display();
 
     }
+
+    public function addnotice(){
+        //=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
+        //判断用户是否登陆
+        $this->loginjudgeshow($this->lock_addnotice_do);
+        //返回URL地址
+        $echourl = func_baseurlcreate($_GET);
+        $this->assign('echourl',$echourl);
+        //=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
+
+        //准备下拉列表
+        $arr_sex = array(
+            '0' => '全选',
+            '1' => '男',
+            '2' => '女',
+            '3' => '保密',
+        );
+
+        $list_sex = $this->downlist($arr_sex,'0');
+
+        $this->assign('list_sex',$list_sex);
+        $this->display();
+
+
+
+    }
+
 
 
     //执行系统通知添加
@@ -58,6 +106,9 @@ class NoticeAction extends Action {
 
         //接收上传数据
         $message = trim($this->_post('message'));
+        $sex = trim($this->_post('sex'));
+        $vid = trim($this->_post('vid'));
+        $videoname = trim($this->_post('videoname'));
 
         //判断数据是否为空
         if($message == '') {
@@ -73,6 +124,9 @@ class NoticeAction extends Action {
         $arr = array(
             'message' => $message,
             'create_datetime' => $create_datetime,
+            'sex' => $sex,
+            'vid' => $vid,
+            'videoname' => $videoname,
             );
 
         //写入日志
@@ -115,7 +169,7 @@ class NoticeAction extends Action {
         $Model = new Model();
 
         //执行查询
-        $list = $Model -> table('sixty_tongzhi') -> field('id, message, create_datetime')
+        $list = $Model -> table('sixty_tongzhi') -> field('vid, videoname, id, sex, message, create_datetime')
             -> where("id='" . $id . "'") -> find();
 
         //如果没查出数据返回非法进入
@@ -123,6 +177,18 @@ class NoticeAction extends Action {
             echo "<script>alert('非法进入此页面！');history.go(-1);</script>";
             $this -> error('非法进入此页面！');
         }
+
+        //准备下拉列表
+        $arr_sex = array(
+            '0' => '全选',
+            '1' => '男',
+            '2' => '女',
+        );
+
+        $list_sex = $this->downlist($arr_sex,$list['sex']);
+
+        $this->assign('list_sex',$list_sex);
+
 
         //输出模板
         $this -> assign('list', $list);
@@ -146,6 +212,9 @@ class NoticeAction extends Action {
         $id = trim($this->_post('editnotice_id'));
         $message = trim($this->_post('message'));
         $submitedit = trim($this->_post('submitedit'));
+        $sex = trim($this->_post('sex'));
+        $videoname = trim($this->_post('videoname'));
+        $vid = trim($this->_post('vid'));
 
         //判断数据来源
         if ($id == '') {
@@ -163,7 +232,12 @@ class NoticeAction extends Action {
         $Model = new Model();
 
         //准备更新数组
-        $arr = array('message' => $message);
+        $arr = array(
+            'message' => $message,
+            'sex' => $sex,
+            'videoname' => $videoname,
+            'vid' => $vid,
+            );
 
         //执行编辑
         $res = $Model->table('sixty_tongzhi')->where("id='" . $id . "'")->save($arr);
@@ -233,6 +307,94 @@ class NoticeAction extends Action {
         }
     }
 
+
+    public function fabu(){
+//        var_dump(THINK_PATH);die;
+        include(THINK_PATH.'Common/JiPush.php');
+        $this->JiPush = new JiPush();
+        //=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
+        //判断用户是否登陆
+        $this->loginjudgeshow($this->fabu);
+        //返回URL地址
+        $echourl = func_baseurlcreate($_GET);
+        $this->assign('echourl', $echourl);
+        //=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
+
+        //接收上传数据
+        $id = trim($this->_post('notice_id'));
+
+        if($id == ''){
+            echo "<script>alert('非法进入！');history.go(-1);</script>";
+            $this->error('非法进入！');
+        }
+
+
+        //取出通知内容
+        $Model = new Model();
+        $res_tongzhi = $Model -> table('sixty_tongzhi') -> field('id,message,create_datetime,sex, vid, videoname') -> where("id='".$id."' and id != 1") -> find();
+
+        if(count($res_tongzhi) <= 0){
+            echo "<script>alert('非法进入！');history.go(-1);</script>";
+            $this->error('非法进入！');
+        }
+
+
+        $where_user = 'push_state = 1 ';
+        //性别查询
+        if($res_tongzhi['sex'] == 1){
+            $where_user .= 'and sex in (1,3)';
+        }else if($res_tongzhi['sex'] == 2){
+            $where_user .= 'and sex in (2,3)';
+        }
+
+        //取出用户极光ID
+        $res_user = $Model -> table('sixty_user') -> field('jiguangid') -> where($where_user) -> select();
+
+        if(count($res_user) <= 0){
+            echo "<script>alert('通知失败，用户未找到!');window.location.href='" . __APP__ . '/Notice/index' . $echourl . "';</script>";
+            $this->success('通知失败，用户未找到!', '__APP__' . $echourl);
+        }
+
+        //把极光id放入一个数组
+        $jg_arr = array();
+        foreach($res_user as $k_r => $v_r){
+            if($v_r['jiguangid'] != ''){
+                $jg_arr[] = $v_r['jiguangid'];
+            }
+
+        }
+
+
+        //判断极光ID是否为空
+        if(count($jg_arr) >0){
+            //判断视频id是否保存
+            if($res_tongzhi['vid'] > 0){//保存
+                //把视频id和视频名称放入输出数组
+                $txt = array(
+                    'vtitle'=>$res_tongzhi['videoname'],
+                    'vid' =>$res_tongzhi['vid']
+                );
+                //执行推送
+                $res_push = $this->func_jgpush($jg_arr,$res_tongzhi['message'],'details',$txt);
+            }else{//不存在
+                //执行推送
+                $res_push = $this->func_jgpush($jg_arr,$res_tongzhi['message'],'tongzhi');
+            }
+
+        }
+
+
+        //修改通知状态，改为已发送
+        $update = array( 'flag' => 1);
+        $res_flag = $Model -> table('sixty_tongzhi') -> where("id='".$id."'") -> save($update);
+
+
+
+        echo "<script>alert('通知已发送!');window.location.href='" . __APP__ . '/Notice/index' . $echourl . "';</script>";
+        $this->success('通知已发送!', '__APP__' . $echourl);
+
+    }
+
     //判断用户是否登陆的前台展现封装模块
     private function loginjudgeshow($lock_key) {
 
@@ -250,5 +412,103 @@ class NoticeAction extends Action {
             exit('系统错误，为确保系统安全，禁止登入系统');
         }
         //=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
+    }
+
+    //极光推送
+    public function func_jgpush($jiguangid,$messagee,$m_type='',$m_txt='',$m_time='86400'){
+
+
+//        var_dump(THINK_PATH);die;
+        //极光推送的设置
+        /* $m_type = '';//推送附加字段的类型
+        $m_txt = '';//推送附加字段的类型对应的内容(可不填) 可能是url,可能是一段文字。
+        $m_time = '86400';//离线保留时间 */
+//        $receive = array('alias'=>array($jiguangid));//别名
+        $receive = array();//别名
+        $receive['alias'] = $jiguangid;//别名
+        //$receive = array('alias'=>array('073dc8672c25d8d023328d06dbbd1230'));//别名
+
+        $content = $messagee;
+        //$message="";//存储推送状态
+        $result = $this->JiPush->push($receive,$content,$m_type,$m_txt,$m_time);
+
+        if($result){
+            $res_arr = json_decode($result, true);
+
+            if(isset($res_arr['error'])){                       //如果返回了error则证明失败
+                echo $res_arr['error']['message'];          //错误信息
+                $error_code=$res_arr['error']['code'];             //错误码
+                switch ($error_code) {
+                    case 200:
+                        $message= '发送成功！';
+                        break;
+                    case 1000:
+                        $message= '失败(系统内部错误)';
+                        break;
+                    case 1001:
+                        $message = '失败(只支持 HTTP Post 方法，不支持 Get 方法)';
+                        break;
+                    case 1002:
+                        $message= '失败(缺少了必须的参数)';
+                        break;
+                    case 1003:
+                        $message= '失败(参数值不合法)';
+                        break;
+                    case 1004:
+                        $message= '失败(验证失败)';
+                        break;
+                    case 1005:
+                        $message= '失败(消息体太大)';
+                        break;
+                    case 1008:
+                        $message= '失败(appkey参数非法)';
+                        break;
+                    case 1020:
+                        $message= '失败(只支持 HTTPS 请求)';
+                        break;
+                    case 1030:
+                        $message= '失败(内部服务超时)';
+                        break;
+                    default:
+                        $message= '失败(返回其他状态，目前不清楚额，请联系开发人员！)';
+                        break;
+                }
+            }else{
+                $message="ok";
+            }
+        }else{//接口调用失败或无响应
+            $message='接口调用失败或无响应';
+        }
+
+        //return $message;
+    }
+
+
+    public function downlist($arr, $lock='', $flag=''){
+
+        //        动态下拉列表、
+        //start--------------------------------------------------------------
+        //动态生成权限下拉选项
+//        var_dump($arr);die;
+        $res_arr = '';
+        if($arr != '') {
+            foreach ($arr as $keyr => $valr) {
+                $res_arr .= '<option value="' . $keyr . '" ';
+                if($flag) {
+                    $con = $valr;
+                } else {
+                    $con = $keyr;
+                }
+                if($con == $lock) {
+                    $res_arr .= ' selected="selected"';
+                }
+                $res_arr .= '>' . $valr . '</option>';
+            }
+        }else{
+            $res_arr = "<option selected='selected'>无</option>";
+        }
+        return $res_arr;
+
+        //end--------------------------------------------------------------
     }
 }

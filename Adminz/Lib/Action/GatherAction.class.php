@@ -4,6 +4,7 @@
  * User: Administrator
  * Date: 2017/11/2
  * Time: 11:46
+ * 合集表
  */
 
 class GatherAction extends Action{
@@ -98,17 +99,22 @@ class GatherAction extends Action{
 
 
         //查询集合数据表
-        $list = $Model -> table('sixty_jihemsg') -> field('id, name, showimg, content, flag, orderby, remark, create_datetime')
+        $list = $Model -> table('sixty_jihemsg') -> field('id, detailimg, name, showimg, content, flag, orderby, remark, create_datetime')
             -> where($where) -> order('orderby desc,create_datetime desc') -> limit($Page->firstRow . ',' . $Page->listRows)
             -> select();
 
         foreach($list as $key_li => $val_li) {
             //获取七牛云图片
             $showimg = $list[$key_li]['showimg'];
+            $detailimg = $list[$key_li]['detailimg'];
+
             $imgwidth = '100';
             $imgheight = '100';
             $addressimg = hy_qiniuimgurl('sixty-jihemsg',$showimg,$imgwidth,$imgheight);
             $list[$key_li]['showimg'] = "<img src='" . $addressimg . "' />";
+
+            $addressimg = hy_qiniuimgurl('sixty-jihemsg',$detailimg,$imgwidth,$imgheight);
+            $list[$key_li]['detailimg'] = "<img src='" . $addressimg . "' />";
 
             if($list[$key_li]['flag'] == 1) {
                 $list[$key_li]['flag'] = "<span style=\"background-color:#33FF66;padding:3px;\">1-开启</span>";
@@ -195,50 +201,67 @@ class GatherAction extends Action{
             $this -> error('此合集名已存在，请使用其他名称');
         }
 
-
+//var_dump($_FILES['detailimg']['name']);die;
         //判断图片是否上传
-        if($_FILES['showimg']['name'] != '')
+        if($_FILES['showimg']['name'] != '' && $_FILES['showimg2']['name'] != '')
         {
             import('ORG.UploadFile');
             $upload = new UploadFile();// 实例化上传类
             $upload->maxSize  = 2097152 ;// 设置附件上传大小
-            $upload->saveRule  = date('YmdHis',time()) . mt_rand();// 设置附件上传文件名
+//            $upload->saveRule  = date('YmdHis',time()) . mt_rand();// 设置附件上传文件名
             $upload->allowExts  = array('jpg', 'png', 'jpeg');// 设置附件上传类型
             $upload->savePath =  BASEDIR.'Public/Images/sixty-jihemsg/';// 设置附件上传目录
             if(!$upload->upload()) {// 上传错误提示错误信息
+
                 echo "<script>alert('图片上传失败!');history.go(-1);</script>";
                 $this -> error('图片上传失败!');
             }else{// 上传成功 获取上传文件信息
                 $info =  $upload->getUploadFileInfo();
-                $showimg = $info['0']['savename'];
+//                var_dump($info);exit;
+                $showimgs = $info['0']['savename'];
+                $showimgd = $info['1']['savename'];
 
+                $showimg = date('YmdHis',time()) . mt_rand();
+                $detailimg = date('YmdHis',time()) . mt_rand();
                 //上传七牛云
                 //上传图片存储绝对路径
-                $cz_filepathname  = BASEDIR.'Public/Images/sixty-jihemsg/'.$showimg;
+                $cz_filepathname_s  = BASEDIR.'Public/Images/sixty-jihemsg/'.$showimgs;
+                $cz_filepathname_d  = BASEDIR.'Public/Images/sixty-jihemsg/'.$showimgd;
 
-                if(false===func_isImage($cz_filepathname)) {
+                if(false===func_isImage($cz_filepathname_s) || false===func_isImage($cz_filepathname_d)) {
                     //解析失败，非正常图片---后台图片上传时本函数可不使用
-                    @unlink($oldfile); //删除文件
+                    @unlink($cz_filepathname_s); //删除文件
+                    @unlink($cz_filepathname_d); //删除文件
                     //非正常图片
-                    echo'不正常';die;
+                    echo "<script>alert('图片上传失败!');history.go(-1);</script>";
+                    $this -> error('图片上传失败!');
                 }else {
                     //上传到七牛云之前先进行图片格式转换，统一使用jpg格式,图片格式转换
-                    $r = hy_resave2jpg($oldfile);
+                    $r = hy_resave2jpg($cz_filepathname_s);
                     if($r!==false) {
                         //图片格式转换成功，赋值新名称
-                        $cz_filepathname = $r;
-                        $cz_filepathname = str_replace('\\','/',$cz_filepathname);
+                        $cz_filepathname_s = $r;
+                        $cz_filepathname_s = str_replace('\\','/',$cz_filepathname_s);
+                    }
+                    $r2 = hy_resave2jpg($cz_filepathname_d);
+                    if($r2!==false) {
+                        //图片格式转换成功，赋值新名称
+                        $cz_filepathname_d = $r2;
+                        $cz_filepathname_d = str_replace('\\','/',$cz_filepathname_d);
                     }
                     //上传到七牛云
                     //参数，bucket，文件绝对路径名称，存储名称，是否覆盖同名文件
-                    $r = upload_qiniu('sixty-jihemsg',$cz_filepathname,$showimg,'yes');
+                    $r = upload_qiniu('sixty-jihemsg',$cz_filepathname_s,$showimg,'yes');
+                    $r2 = upload_qiniu('sixty-jihemsg',$cz_filepathname_d,$detailimg,'yes');
 
-                    if(false===$r) {
-                        @unlink($cz_filepathname); //删除文件
+                    if(false===$r || false===$r2) {
+                        @unlink($cz_filepathname_s); //删除文件
+                        @unlink($cz_filepathname_d); //删除文件
                         echo'失败';die;
                         //上传失败
                     }else {
-                        @unlink($cz_filepathname); //删除文件
+                        @unlink($cz_filepathname_s); //删除文件
+                        @unlink($cz_filepathname_d); //删除文件
                         //上传成功
 
                     }
@@ -249,7 +272,6 @@ class GatherAction extends Action{
             $this -> error('合集展示图不能为空！');
         }
 
-
         //准备插入数组
         $create_timedate = date('Y-m-d H:i:s', time());
         $data = array(
@@ -259,6 +281,7 @@ class GatherAction extends Action{
             'content' => $content,
             'remark' => $remark,
             'showimg' => $showimg,
+            'detailimg' => $detailimg,
             'create_datetime' => $create_timedate,
         );
 
@@ -298,15 +321,18 @@ class GatherAction extends Action{
             $this -> error('非法进入此页面!');
         }
         $Model = new Model();
-        $list = $Model -> table('sixty_jihemsg') -> field('id, orderby, flag, name, showimg, content, remark')
+        $list = $Model -> table('sixty_jihemsg') -> field('id, orderby, detailimg, flag, name, showimg, content, remark')
             -> where("id='".$id."'") -> find();
 
         //获取七牛云图片
         $showimg = $list['showimg'];
+        $detailimg = $list['detailimg'];
         $imgwidth = '100';
         $imgheight = '100';
         $addressimg = hy_qiniuimgurl('sixty-jihemsg',$showimg,$imgwidth,$imgheight);
+        $addressdetailimg = hy_qiniuimgurl('sixty-jihemsg',$detailimg,$imgwidth,$imgheight);
         $list['showimg'] = "<img src='" . $addressimg . "' />";
+        $list['detailimg'] = "<img src='" . $addressdetailimg . "' />";
 
         //下拉菜单
         $flagarr = array(
@@ -383,10 +409,96 @@ class GatherAction extends Action{
             $this -> error('此合集名已存在，请使用其他名称');
         }
 
+        //准备插入数组
+        $data = array(
+            'name' => $name,
+            'content' => $content,
+            'remark' => $remark,
+            'flag' => $flag,
+            'orderby' => $orderby,
+        );
 
-        //判断图片是否上传
-        if($_FILES['edit_showimg']['name'] != '')
+
+//        //判断图片是否上传
+        if($_FILES['edit_showimg']['name'] != '' && $_FILES['edit_showimg2']['name'] != '')
         {
+            import('ORG.UploadFile');
+            $upload = new UploadFile();// 实例化上传类
+            $upload->maxSize  = 2097152 ;// 设置附件上传大小
+//            $upload->saveRule  = date('YmdHis',time()) . mt_rand();// 设置附件上传文件名
+            $upload->allowExts  = array('jpg', 'png', 'jpeg');// 设置附件上传类型
+            $upload->savePath =  BASEDIR.'Public/Images/sixty-jihemsg/';// 设置附件上传目录
+            if(!$upload->upload()) {// 上传错误提示错误信息
+
+                echo "<script>alert('图片上传失败!');history.go(-1);</script>";
+                $this -> error('图片上传失败!');
+            }else{// 上传成功 获取上传文件信息
+                $info =  $upload->getUploadFileInfo();
+//                var_dump($info);exit;
+                $showimgs = $info['0']['savename'];
+                $showimgs_e = $info['0']['extension'];
+                $showimgd = $info['1']['savename'];
+                $showimgd_e = $info['1']['extension'];
+//                var_dump($info);die;
+//                $showimg = date('YmdHis',time()) . mt_rand().$showimgs_e;
+//                $detailimg = date('YmdHis',time()) . mt_rand().$showimgd_e;
+                //上传七牛云
+                //上传图片存储绝对路径
+                $cz_filepathname_s  = BASEDIR.'Public/Images/sixty-jihemsg/'.$showimgs;
+                $cz_filepathname_d  = BASEDIR.'Public/Images/sixty-jihemsg/'.$showimgd;
+
+                if(false===func_isImage($cz_filepathname_s) || false===func_isImage($cz_filepathname_d)) {
+                    //解析失败，非正常图片---后台图片上传时本函数可不使用
+                    @unlink($cz_filepathname_s); //删除文件
+                    @unlink($cz_filepathname_d); //删除文件
+                    //非正常图片
+                    echo "<script>alert('图片上传失败!');history.go(-1);</script>";
+                    $this -> error('图片上传失败!');
+                }else {
+                    //上传到七牛云之前先进行图片格式转换，统一使用jpg格式,图片格式转换
+                    $r = hy_resave2jpg($cz_filepathname_s);
+                    if($r!==false) {
+                        //图片格式转换成功，赋值新名称
+                        $cz_filepathname_s = $r;
+                        $cz_filepathname_s = str_replace('\\','/',$cz_filepathname_s);
+                        $showimg = date('YmdHis',time()) . mt_rand().'.jpg';
+                    }else{
+                        $showimg = date('YmdHis',time()) . mt_rand().'.'.$showimgs_e;
+                    }
+                    $r2 = hy_resave2jpg($cz_filepathname_d);
+                    if($r2!==false) {
+                        //图片格式转换成功，赋值新名称
+                        $cz_filepathname_d = $r2;
+                        $cz_filepathname_d = str_replace('\\','/',$cz_filepathname_d);
+                        $detailimg = date('YmdHis',time()) . mt_rand().'.jpg';
+                    }else{
+                        $detailimg = date('YmdHis',time()) . mt_rand().'.'.$showimgd_e;
+                    }
+                    //上传到七牛云
+                    //参数，bucket，文件绝对路径名称，存储名称，是否覆盖同名文件
+                    $r = upload_qiniu('sixty-jihemsg',$cz_filepathname_s,$showimg,'yes');
+                    $r2 = upload_qiniu('sixty-jihemsg',$cz_filepathname_d,$detailimg,'yes');
+
+                    if(false===$r || false===$r2) {
+                        @unlink($cz_filepathname_s); //删除文件
+                        @unlink($cz_filepathname_d); //删除文件
+                        echo'失败';die;
+                        //上传失败
+                    }else {
+                        @unlink($cz_filepathname_s); //删除文件
+                        @unlink($cz_filepathname_d); //删除文件
+                        //上传成功
+                        $data['showimg'] = $showimg;
+                        $data['detailimg'] = $detailimg;
+//                        var_dump($data);
+                        //删除七牛云旧图片
+                        $a = delete_qiniu('sixty-jihemsg', $res_old['showimg']);
+                        $a = delete_qiniu('sixty-jihemsg', $res_old['detailmimg']);
+                    }
+                }
+            }
+
+        }else if($_FILES['edit_showimg']['name'] != '' || $_FILES['edit_showimg2']['name'] != ''){
             import('ORG.UploadFile');
             $upload = new UploadFile();// 实例化上传类
             $upload->maxSize  = 2097152 ;// 设置附件上传大小
@@ -399,21 +511,29 @@ class GatherAction extends Action{
             }else{// 上传成功 获取上传文件信息
                 $info =  $upload->getUploadFileInfo();
                 $showimg_new = $info['0']['savename'];
+                $showimg_new_e = $info['0']['extension'];
+//                var_dump($showimg_new);die;
+//                var_dump($info);die;
                 //上传七牛云
                 //上传图片存储绝对路径
                 $cz_filepathname  = BASEDIR.'Public/Images/sixty-jihemsg/'.$showimg_new;
 
                 if(false===func_isImage($cz_filepathname)) {
                     //解析失败，非正常图片---后台图片上传时本函数可不使用
-                    @unlink($oldfile); //删除文件
+                    @unlink($cz_filepathname); //删除文件
                     //非正常图片
                 }else {
                     //上传到七牛云之前先进行图片格式转换，统一使用jpg格式,图片格式转换
-                    $r = hy_resave2jpg($oldfile);
+                    $r = hy_resave2jpg($cz_filepathname);
+
                     if($r!==false) {
                         //图片格式转换成功，赋值新名称
                         $cz_filepathname = $r;
                         $cz_filepathname = str_replace('\\','/',$cz_filepathname);
+                        $showimg_new = date('YmdHis',time()) . mt_rand().'.jpg';
+//                        var_dump($showimg_new);die;
+                    }else{
+                        $showimg_new = date('YmdHis',time()) . mt_rand().$showimg_new_e;
                     }
                     //上传到七牛云
                     //参数，bucket，文件绝对路径名称，存储名称，是否覆盖同名文件
@@ -425,34 +545,25 @@ class GatherAction extends Action{
                     }else {
                         @unlink($cz_filepathname); //删除文件
                         //上传成功
+     
+                        if($_FILES['edit_showimg']['name'] != ''){
+                            $data['showimg'] = $showimg_new;
+//                    var_dump($data);die;
+                            //删除七牛云旧图片
+                            $a = delete_qiniu('sixty-jihemsg', $res_old['showimg']);
+                        }else if($_FILES['edit_showimg2']['name'] != ''){
+                            $data['detailimg'] = $showimg_new;
+//                    var_dump($data);die;
+                            //删除七牛云旧图片
+                            $a = delete_qiniu('sixty-jihemsg', $res_old['detailimg']);
+                        }
                     }
                 }
 
-                //删除七牛云旧图片
-                $a = delete_qiniu('sixty-jihemsg', $res_old['showimg']);
-
-                //准备插入数组
-                $data = array(
-                    'name' => $name,
-                    'content' => $content,
-                    'remark' => $remark,
-                    'showimg' => $showimg_new,
-                    'flag' => $flag,
-                    'orderby' => $orderby,
-                );
             }
-        }else{
-            //准备插入数组
-            $data = array(
-                'name' => $name,
-                'content' => $content,
-                'remark' => $remark,
-                'flag' => $flag,
-                'orderby' => $orderby,
-            );
         }
 
-
+//        var_dump($data);die;
         //执行插入
         $Model = new Model();
         $res = $Model -> table('sixty_jihemsg') -> where("id='".$id."'") -> save($data);
@@ -492,7 +603,7 @@ class GatherAction extends Action{
 
         $Model = new Model();
         //查询ID是否存在
-        $res_showimg = $Model -> table('sixty_jihemsg') -> field('showimg') -> where("id='".$id."'") -> find();
+        $res_showimg = $Model -> table('sixty_jihemsg') -> field('showimg,detailimg') -> where("id='".$id."'") -> find();
         if($res_showimg == '')
         {
             echo "<script>alert('非法进入此页面!');history.go(-1);</script>";
@@ -502,6 +613,7 @@ class GatherAction extends Action{
         //删除七牛云旧图片
 
         delete_qiniu('sixty-jihemsg', $res_showimg['showimg']);
+        delete_qiniu('sixty-jihemsg', $res_showimg['detailimg']);
 
         //删除数据库数据
         $res = $Model -> table('sixty_jihemsg') -> where("id='".$id."'") -> delete();
