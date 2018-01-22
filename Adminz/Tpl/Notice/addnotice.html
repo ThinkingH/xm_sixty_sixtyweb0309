@@ -49,6 +49,20 @@
     <br/><br/>
     <table class="table-edit" >
         <tr>
+            <td width="65" align="right">接收用户性别<font color="red" size="-2">*</font>:</td>
+            <td width="400">
+                <select name="sex">
+                    {$list_sex}
+                </select>
+            </td>
+        </tr>
+        <tr>
+            <td width="65" align="right">接收用户地域<font color="red" size="-2">*</font>:</td>
+            <td width="400">
+
+            </td>
+        </tr>
+        <tr>
             <td width="65" align="right">通知内容<font color="red" size="-2">*</font>:</td>
             <td width="400">
 
@@ -58,6 +72,28 @@
                 <br/>
                 <font color="orange" size="-2">
                     通知内容最多100字
+                </font>
+            </td>
+        </tr>
+        <tr>
+            <td width="65" align="right">视频ID<font color="red" size="-2">*</font>:</td>
+            <td width="400">
+
+            <input name="vid" type="text"/>
+                <br/>
+                <font color="orange" size="-2">
+                    视频id（若是文字通知可不填）
+                </font>
+            </td>
+        </tr>
+        <tr>
+            <td width="65" align="right">视频名称<font color="red" size="-2">*</font>:</td>
+            <td width="400">
+
+                <input name="videoname" type="text"/>
+                <br/>
+                <font color="orange" size="-2">
+                    视频标题（若是文字通知可不填）
                 </font>
             </td>
         </tr>

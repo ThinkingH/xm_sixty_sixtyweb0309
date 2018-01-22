@@ -33,10 +33,10 @@
     <table class="table-head">
         <tr>
             <td>查询评论ID:<input style="width:100px;" type="text" name="find_id" value="{$find_where.find_id}" /></td>
-            <td>查询视频ID:<input style="width:100px;" type="text" name="video_id" value="{$find_where.video_id}" /></td>
-            <td>查询评论用户ID:<input style="width: 100px;" type="text" name="find_user_id" value="{$find_where.find_user_id}" /></td>
-            <td>起始搜索日期:<input style="width:90px;" type="text" name="find_sta_date" onclick="WdatePicker()" value="{$find_where.find_sta_date}" /></td>
-            <td>结束搜索日期:<input style="width:90px;" type="text" name="find_end_date" onclick="WdatePicker()" value="{$find_where.find_end_date}" /></td>
+            <td>查询视频ID:<input style="width:100px;" type="text" name="find_vid" value="{$find_where.find_vid}" /></td>
+            <td>查询评论用户ID:<input style="width: 100px;" type="text" name="find_uid" value="{$find_where.find_uid}" /></td>
+            <td>起始搜索日期:<input style="width:90px;" type="text" name="find_date_sta" onclick="WdatePicker()" value="{$find_where.find_date_sta}" /></td>
+            <td>结束搜索日期:<input style="width:90px;" type="text" name="find_date_end" onclick="WdatePicker()" value="{$find_where.find_date_end}" /></td>
             <td><input type="submit" class="yubuttons yuwhite" name="submit_select" value="查询" /></td>
         </tr>
     </table>
@@ -49,7 +49,9 @@
     <tr>
         <td width="50">操作</td>
         <td width="50"><b>回复ID</b></td>
+        <td width="50"><b>视频ID</b></td>
         <td width="100"><b>视频标题</b></td>
+        <td width="50"><b>用户ID</b></td>
         <td width="70"><b>用户昵称</b></td>
         <td width="700"><b>评论内容</b></td>
         <td width="150"><b>评论时间</b></td>
@@ -70,7 +72,9 @@
                 </form>
             </td>
             <td >{$vo.id}</td>
+            <td >{$vo.vid}</td>
             <td>{$vo.biaoti}</td>
+            <td>{$vo.userid}</td>
             <td>{$vo.nickname}</td>
             <td >{$vo.content}</td>
             <td>{$vo.create_datetime}</td>
