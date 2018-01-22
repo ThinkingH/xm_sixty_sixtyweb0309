@@ -85,22 +85,23 @@
                 </td>
             </tr>
         </volist>
-        <form action="__APP__/Pinglun/pinglun{$echourl}" method="get">
-            <table class="table-head">
-                <tr>
-                    <td>查询评论ID:<input style="width:100px;" type="text" name="find_id" value="{$find_where.find_id}" /></td>
-                    <td>查询视频ID:<input style="width:100px;" type="text" name="video_id" value="{$find_where.video_id}" /></td>
-                    <td>查询评论用户ID:<input style="width: 100px;" type="text" name="find_user_id" value="{$find_where.find_user_id}" /></td>
-                    <td>起始搜索日期:<input style="width:90px;" type="text" name="find_sta_date" onclick="WdatePicker()" value="{$find_where.find_sta_date}" /></td>
-                    <td>结束搜索日期:<input style="width:90px;" type="text" name="find_end_date" onclick="WdatePicker()" value="{$find_where.find_end_date}" /></td>
-                    <td><input type="submit" class="yubuttons yuwhite" name="submit_select" value="查询" /></td>
-                </tr>
-            </table>
-        </form>
+
         </tbody>
 
     </table>
-
+<br/>
+<form action="__APP__/Pinglun/pinglun{$echourl}" method="get">
+    <table class="table-head">
+        <tr>
+            <td>查询评论ID:<input style="width:100px;" type="text" name="find_id" value="{$find_where.find_id}" /></td>
+            <td>查询视频ID:<input style="width:100px;" type="text" name="video_id" value="{$find_where.video_id}" /></td>
+            <td>查询评论用户ID:<input style="width: 100px;" type="text" name="find_user_id" value="{$find_where.find_user_id}" /></td>
+            <td>起始搜索日期:<input style="width:90px;" type="text" name="find_sta_date" onclick="WdatePicker()" value="{$find_where.find_sta_date}" /></td>
+            <td>结束搜索日期:<input style="width:90px;" type="text" name="find_end_date" onclick="WdatePicker()" value="{$find_where.find_end_date}" /></td>
+            <td><input type="submit" class="yubuttons yuwhite" name="submit_select" value="查询" /></td>
+        </tr>
+    </table>
+</form>
     <br/><br/>
 
     <center>{$page}</center>

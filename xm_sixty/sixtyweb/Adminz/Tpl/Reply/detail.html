@@ -101,8 +101,8 @@
                 <form action="__APP__/Reply/reply_do{$echourl}" method="post" style="margin:0px">
                     <input type="text" name="reply_con" maxlength="200"/>
                     <input type="hidden" name="p_id" value="{$vo.id}" />
-                    <input type="hidden" name="u_id" value="{$vo.userdata}" />
-                    <input type="hidden" name="f_id" value="{$list_c.id}}" />
+                    <input type="hidden" name="u_id" value="{$vo.userid}" />
+                    <input type="hidden" name="f_id" value="{$list_c.id}" />
                     <input type="hidden" name="v_id" value="{$list_v.id}" />
                     <input type="submit" class="yubuttons yuwhite" value="回复"/>
                 </form>
