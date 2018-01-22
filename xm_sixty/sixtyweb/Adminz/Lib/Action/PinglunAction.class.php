@@ -192,6 +192,9 @@ class PinglunAction extends Action{
         $this->assign('list', $list);
         $this->display();
     }
+
+
+
     /*
      * 删除评论
      * */
@@ -235,6 +238,9 @@ class PinglunAction extends Action{
             echo "<script>alert('非法进入！');history.go(-1);</script>";
             $this -> error('非法进入！');
         }
+
+        //执行删除操作
+        $result = $Model -> table('sixty_pinglun_back') -> where("fplid = '" . $id . "'") -> delete();
 
         //删除七牛云旧图片
         delete_qiniu('sixty-imgpinglun', $res['showimg']);

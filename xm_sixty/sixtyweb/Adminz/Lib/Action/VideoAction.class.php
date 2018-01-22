@@ -460,7 +460,6 @@ class VideoAction extends Action{
         }
 
         //查询分类
-        $Model = new Model();
         $list_class = $Model -> table('sixty_classifymsg') -> field('id, name, level') -> where('flag = 1') -> select();
         $class_arr_one = array();
         $class_arr_two = array();
@@ -482,11 +481,21 @@ class VideoAction extends Action{
             }
         }
 
-        //插入不选选项
+        //查询小贴士表
+        $list_tips = $Model -> table('sixty_tieshi_video') -> field('id, biaoti') -> where('flag = 1') -> select();
+        $tips_arr = array();
+        foreach($list_tips as $key_tips => $val_tips){
 
+            $tips_arr[$val_tips['id'] ]= $val_tips['biaoti'];
+
+        }
+
+
+        //插入不选选项
         $class_arr_three = Array('' => '不选') + $class_arr_three;
         $class_arr_four = Array('' => '不选') + $class_arr_four;
         $heji_arr = Array('' => '不选') + $heji_arr;
+        $tips_arr = Array('' => '不选') + $tips_arr;
 
         //生成下拉菜单
         $one_select = $this->downlist2($class_arr_one);
@@ -494,9 +503,19 @@ class VideoAction extends Action{
         $three_select = $this->downlist2($class_arr_three);
         $four_select = $this->downlist2($class_arr_four);
         $heji_arr = $this->downlist($heji_arr);
-        $this -> assign('videoheji_show',$heji_arr);
+        $tips_arr = $this->downlist($tips_arr);
+
+        $tips_show = array();
+        for($i = 1; $i <=10; $i++){
+            $tips_show[$i]['sel'] = $tips_arr;
+            $tips_show[$i]['num'] = 'tips'.$i;
+//            $this -> assign('tips'.$i,$tips_arr);
+        }
 
         //传递到模板
+        $this -> assign('videoheji_show',$heji_arr);
+        $this -> assign('tips_show',$tips_show);
+
         $this -> assign('one_select',$one_select);
         $this -> assign('two_select',$two_select);
         $this -> assign('three_select',$three_select);
@@ -530,6 +549,7 @@ class VideoAction extends Action{
         $msgjihe = trim($this->_post('msgjihe'));
         $tiaozhaun = trim($this->_post('submitandshicai'));
         $sflag = trim($this->_post('sflag'));
+
 
         //判断是否提交视频标题
         if($biaoti == '')
@@ -661,6 +681,15 @@ class VideoAction extends Action{
             $this -> error('视频展示图片不能为空！');
         }
 
+        //接收小贴士
+        $tips = '';
+        for($i=1; $i <= 10; $i++){
+            $tips .= trim($this->_post('tips'.$i)) . ',';
+        }
+
+        if($tips != ''){
+            $tips = rtrim($tips,',');
+        }
 
         //准备SQL数据数组
         $create_datetime = date('Y-m-d H:i:s',time());
@@ -682,8 +711,10 @@ class VideoAction extends Action{
             'flag' => $flag,
             'sflag' => $sflag,
             'fenshu' => $fenshu,
+            'tips' => $tips,
             );
 
+//        var_dump($data);die;
         //执行添加
         $result = $Model -> table('sixty_video') -> add($data);
 
@@ -727,7 +758,7 @@ class VideoAction extends Action{
         //执行视频表查询
         $Model = new Model();
         $list = $Model -> table('sixty_video') -> field('id, fenshu, sflag, flag, biaoti, biaotichild, videosavename,
-        classify1, classify2, classify3, classify4, jieshao, msgjihe, maketime, huafeimoney, tishishuoming, showimg')
+        classify1, classify2, classify3, classify4, jieshao, msgjihe, maketime, huafeimoney, tishishuoming, showimg, tips')
             -> where("id = '".$id."'") -> find();
 
         //查询合集
@@ -781,10 +812,44 @@ class VideoAction extends Action{
         );
         $sflag = $list['sflag'];
 
+
+        //查询小贴士表
+        $list_tips = $Model -> table('sixty_tieshi_video') -> field('id, biaoti') -> where('flag = 1') -> select();
+
+        //把字符串遍数组
+        $tips_v = explode(',',$list['tips']);
+
+        //遍历数组，整理为生成下拉列表格式
+        $tips_arr = array();
+        foreach($list_tips as $key_tips => $val_tips){
+
+            $tips_arr[$val_tips['id'] ]= $val_tips['biaoti'];
+
+        }
+
+
         //插入不选选项
         $class_arr_three = Array('' => '不选') + $class_arr_three;
         $class_arr_four = Array('' => '不选') + $class_arr_four;
         $heji_arr = Array('' => '不选') + $heji_arr;
+        $tips_arr = Array('' => '不选') + $tips_arr;
+
+        //生成10个小贴士下拉列表
+        $tips_show = array();
+        for($i = 1; $i <=10; $i++){
+            foreach($tips_arr as $k_ta => $v_ta){
+                if($k_ta == $tips_v[$i-1]){
+                    $tips_change = $this->downlist($tips_arr,$tips_v[$i-1]);
+                    $tips_show[$i]['sel'] = $tips_change;
+                    $tips_show[$i]['num'] = 'tips'.$i;
+//                    var_dump($tips_change);die;
+                    break;
+                }
+            }
+
+
+        }
+
 
         //执行生成下拉菜单
         $heji_arr = $this->downlist($heji_arr,$list['msgjihe']);
@@ -811,6 +876,7 @@ class VideoAction extends Action{
         $this -> assign('heji_arr',$heji_arr);
         $this -> assign('videoflag_show',$videoflag_show);
         $this -> assign('sflag_show',$sflag_show);
+        $this -> assign('tips_show',$tips_show);
 
 
         //输出到模板
@@ -918,6 +984,15 @@ class VideoAction extends Action{
             $this -> error('此视频子标题名已存在！');
         }
 
+        //接收小贴士
+        $tips = '';
+        for($i=1; $i <= 10; $i++){
+            $tips .= trim($this->_post('tips'.$i)) . ',';
+        }
+
+        if($tips != ''){
+            $tips = rtrim($tips,',');
+        }
 
         //获取旧数据信息
         $Model = new Model();
@@ -927,7 +1002,7 @@ class VideoAction extends Action{
             echo "<script>alert('非法进入该页面！');history.go(-1);</script>";
             $this -> error('非法进入该页面！');
         }
-        $show_old = $show_old['showimg'];
+        $show_old = $res_old['showimg'];
 
 
         //准备SQL数据数组
@@ -998,6 +1073,7 @@ class VideoAction extends Action{
                         'fenshu' => $fenshu,
                         'flag' => $flag,
                         'sflag' => $sflag,
+                        'tips' => $tips,
                     );
                 }
             }
@@ -1020,6 +1096,7 @@ class VideoAction extends Action{
                 'fenshu' => $fenshu,
                 'flag' => $flag,
                 'sflag' => $sflag,
+                'tips' => $tips,
             );
         }
 

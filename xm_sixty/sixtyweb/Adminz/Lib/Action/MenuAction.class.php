@@ -57,6 +57,7 @@ class MenuAction extends Action {
                     'curl_name' => array(
                         array('f', '分类信息', '/Classmsg/index'),
                         array('f', '合集信息', '/Gather/index'),
+
                     ),
                 ),
                 array(
@@ -66,13 +67,33 @@ class MenuAction extends Action {
                         array('f', '收藏统计', '/Collect/statistics'),
                     ),
                 ),
+            array(
+                'murl_name' => '贴士管理',
+                'curl_name' => array(
+                    array('f', '贴士视频', '/TipsVideo/index'),
+                    array('f', '贴士分类', '/TipsClass/index'),
+                ),
+            ),
                 array(
                     'murl_name' => '评论管理',
                     'curl_name' => array(
                         array('f', '评论列表', '/Pinglun/pinglun'),
                         array('f', '投稿列表', '/Pinglun/tougao'),
+                        array('f', '回复列表', '/Reply/index'),
                     ),
                 ),
+            array(
+                'murl_name' => '食谱管理',
+                'curl_name' => array(
+                    array('f', '食谱列表', '/CookBook/index'),
+                ),
+            ),
+            array(
+                'murl_name' => '图标管理',
+                'curl_name' => array(
+                    array('f', '图标列表', '/Icon/index'),
+                ),
+            ),
                 array(
                     'murl_name' => '网站配置',
                     'curl_name' => array(
@@ -146,11 +167,32 @@ class MenuAction extends Action {
                     array('f', '收藏统计', '/Collect/statistics'),
                 ),
             ),
+
+            array(
+                'murl_name' => '贴士管理',
+                'curl_name' => array(
+                    array('f', '贴士视频', '/TipsVideo/index'),
+                    array('f', '贴士分类', '/TipsClass/index'),
+                ),
+            ),
             array(
                 'murl_name' => '评论管理',
                 'curl_name' => array(
                     array('f', '评论列表', '/Pinglun/pinglun'),
                     array('f', '投稿列表', '/Pinglun/tougao'),
+                    array('f', '回复列表', '/Reply/index'),
+                ),
+            ),
+            array(
+                'murl_name' => '食谱管理',
+                'curl_name' => array(
+                    array('f', '食谱列表', '/CookBook/index'),
+                ),
+            ),
+            array(
+                'murl_name' => '图标管理',
+                'curl_name' => array(
+                    array('f', '图标列表', '/Icon/index'),
                 ),
             ),
 
