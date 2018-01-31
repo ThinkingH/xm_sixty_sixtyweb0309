@@ -26,6 +26,22 @@
                 }
             });
 
+
+            $('#top').change(function(){
+                $.ajax({
+                    type:"post",
+                    url:"{:U('Notice/linkage')}",
+                    data:'top='+$('#top').val(),
+                    dataType:"json",
+                    success:function(data){
+//                        console.log(data);
+                        $('#middle').html(data);
+                    }
+                });
+            });
+
+
+
         });
 
     </script>
@@ -49,7 +65,7 @@
     <br/><br/>
     <table class="table-edit" >
         <tr>
-            <td width="65" align="right">接收用户性别<font color="red" size="-2">*</font>:</td>
+            <td width="65" align="right">接收人群<font color="red" size="-2">*</font>:</td>
             <td width="400">
                 <select name="sex">
                     {$list_sex}
@@ -75,25 +91,28 @@
                 </font>
             </td>
         </tr>
+
         <tr>
-            <td width="65" align="right">视频ID<font color="red" size="-2">*</font>:</td>
+            <td width="65" align="right">视频内容:</td>
             <td width="400">
 
-            <input name="vid" type="text"/>
+                <!--<input name="vid" type="text"/>-->
+                <select id="top" name="type">{$list_top}</select>
+                <select id="middle" name="up_id">{$list_middle}</select>
                 <br/>
                 <font color="orange" size="-2">
-                    视频id（若是文字通知可不填）
+                    选择要推送的内容类型和内容
                 </font>
             </td>
         </tr>
         <tr>
-            <td width="65" align="right">视频名称<font color="red" size="-2">*</font>:</td>
+            <td width="65" align="right">备注<font color="red" size="-2">*</font>:</td>
             <td width="400">
 
-                <input name="videoname" type="text"/>
+                <input name="remark" type="text" maxlength="200" size="70"/>
                 <br/>
                 <font color="orange" size="-2">
-                    视频标题（若是文字通知可不填）
+                    备注
                 </font>
             </td>
         </tr>

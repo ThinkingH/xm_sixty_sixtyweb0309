@@ -100,6 +100,7 @@ class MenuAction extends Action {
                         array('f', '网站配置', '/Webconfig/index'),
                         array('f', 'APP版本', '/Versioninfo/index'),
                         array('f', '系统通知', '/Notice/index'),
+                        array('f', '开关设置', '/Onoff/index'),
                     ),
                 ),
 
@@ -202,6 +203,7 @@ class MenuAction extends Action {
                     array('f', '网站配置', '/Webconfig/index'),
                     array('f', 'APP版本', '/Versioninfo/index'),
                     array('f', '系统通知', '/Notice/index'),
+                    array('f', '开关设置', '/Onoff/index'),
                 ),
             ),
             array(
