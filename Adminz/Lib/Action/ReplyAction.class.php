@@ -285,7 +285,7 @@ class ReplyAction extends Action{
         include(THINK_PATH.'Common/JiPush.php');
         $this->JiPush = new JiPush();
         $message = $user_1['nickname'].'回复了您的评论';
-        $res_push = $this->func_jgpush($res_user['jiguangid'],$message,'liuyan');
+        $res_push = $this->func_jgpush($res_user['jiguangid'],$message,'messagebox');
 
         if($res){
 

@@ -139,7 +139,7 @@ class WebconfigAction extends Action{
         }
 
         //判断是否重名
-        $res_name= $Model -> table('sixty_config') -> field('name') -> where("name='".$name."'") -> find();
+        $res_name= $Model -> table('sixty_config') -> field('name') -> where("name='".$name."' and id != '".$id."'") -> find();
         //判断是否查询到配置名
         if($res_name != '')
         {

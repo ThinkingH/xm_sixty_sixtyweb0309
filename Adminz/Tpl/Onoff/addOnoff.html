@@ -1,0 +1,120 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <load href="__PUBLIC__/Css/main.css" />
+
+    <script type="text/javascript" src="__PUBLIC__/Js/jquery.min.js"></script>
+    <script type="text/javascript" src="__PUBLIC__/Js/themain.js"></script>
+    <script type="text/javascript" src="__PUBLIC__/Js/md5.js"></script>
+    <script type="text/javascript">
+        $("document").ready(function(){
+
+            $("#submit_add").click(function(){
+
+                var name = $("#name").val();
+                var version = $("#version").val();
+
+                if(name == '') {
+                    alert('开关字段名不能为空！');
+                    return false;
+                }
+
+                if(version == '') {
+                    alert('版本号不能为空！');
+                    return false;
+                }
+
+                if(confirm("您确认要添加此配置吗？")) {
+
+                }else {
+                    return false;
+                }
+
+            });
+
+        });
+
+    </script>
+</head>
+
+
+<body>
+<div class="hy_daohangtiao">
+    当前位置&nbsp;#&nbsp;网站管理&nbsp;#&nbsp;网站配置&nbsp;#&nbsp;网站配置添加页面
+</div>
+
+<a href="javascript:history.go(-1);" class="yubutton yuwhite">返回网站配置列表</a>
+<br/>
+<br/>
+
+<form action="__APP__/Onoff/addOnoff_do" method="post" >
+
+    &nbsp;&nbsp;&nbsp;
+
+
+    <br/><br/>
+    <table class="table-edit" >
+        <tr>
+            <td width="60" align="right">是否开启<font color="red" size="-2">*</font>:</td>
+            <td width="450">
+                <select name="flag">
+                    {$list_flag}
+                </select>
+                <br/>
+                <font color="orange" size="-1">是否开启此选项</font>
+            </td>
+        </tr>
+        <tr>
+            <td width="60" align="right">开关字段名<font color="red" size="-2">*</font>:</td>
+            <td width="450">
+                <input type="text" name="name" id="name" maxlength="30" style="width: 300px;"/>
+                <br/>
+                <font color="orange" size="-1">请选用英文</font>
+            </td>
+        </tr>
+        <tr>
+            <td align="right">适用版本号<font color="red" size="-2">*</font>:</td>
+            <td>
+                <input type="text" name="version" id="version" maxlength="50" size="50"/>
+                <br/>
+                <font color="orange" size="-1">填写适用于此设置的版本号</font>
+            </td>
+        </tr>
+        <tr>
+            <td align="right">备注:</td>
+            <td>
+                <!--<input type="text" name="addconfig_val1" id="val1" maxlength="100" size="80"/>-->
+                <textarea rows="6" cols="70" style=""
+                  onchange="this.value=this.value.substring(0, 200)"
+                  onkeydown="this.value=this.value.substring(0, 200)"
+                  onkeyup="this.value=this.value.substring(0, 200)"
+                  id="val1" name="remark"></textarea>
+                <br/>
+                <font color="orange" size="-1">填写备注，最多300字</font>
+            </td>
+        </tr>
+        <tr>
+            <td align="right" style="width: 90px;"></td>
+            <td>
+                <font color="red" size="-2">
+                    注意：带 * 的选项为必填项目！
+                </font>
+            </td>
+        </tr>
+        <tr>
+            <td colspan="2">
+                <input type="submit" name="submit" id="submit_add" class="yubutton yuwhite" value="添加配置" style="margin-left:50px;margin-top:0px;" />
+            </td>
+        </tr>
+    </table>
+
+</form>
+
+<br/><br/><br/><br/><br/><br/>
+End!
+
+</body>
+</html>
+
+

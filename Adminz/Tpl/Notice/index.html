@@ -36,9 +36,13 @@
         <td width="50">操作</td>
         <td width="50">ID</td>
         <td width="60">状态</td>
-        <td width="60">性别</td>
-        <td width="600"><b>通知内容</b></td>
+        <td width="50">类型</td>
+        <td width="150"><b>发布时间</b></td>
+        <td width="40">性别</td>
+        <td width="400"><b>通知内容</b></td>
         <td width="150"><b>创建时间</b></td>
+        <td width="150"><b>备注</b></td>
+
         <td width="50">发布</td>
     </tr>
     </thead>
@@ -54,10 +58,14 @@
             </td>
             <!--<td>{$vo.name}</td>-->
             <td>{$vo.id}</td>
+            <td>{$vo.name}</td>
             <td>{$vo.flag}</td>
+            <td>{$vo.push_datetime}</td>
             <td>{$vo.sex}</td>
             <td>{$vo.message}</td>
             <td>{$vo.create_datetime}</td>
+            <td>{$vo.remark}</td>
+
             <td>
                 <form action="__APP__/Notice/fabu" method="post" style="margin:0px" onsubmit="return fabusubmit();">
                 <input type="hidden" name="notice_id" value="{$vo.id}"  />

@@ -38,24 +38,42 @@ class NoticeAction extends Action {
         $this->assign('page', $show);// 赋值分页输出
 
         //执行查询通知表数据
-        $list = $Model -> table('sixty_tongzhi') -> field('id, sex, message, create_datetime, flag')
+        $list = $Model -> table('sixty_tongzhi') -> field('id, type, remark, sex, message, create_datetime, push_datetime, flag')
             -> order('create_datetime desc') -> limit($Page->firstRow . ',' . $Page->listRows) -> select();
 
+        //遍历结果集
         foreach($list as $k_l => $v_l){
 
+            //把发送状态值改为文字显示
             if($v_l['flag'] == 1){
                 $list[$k_l]['flag'] = '<span style="background-color:#33FF66;padding:3px;">1-已发送</span>';
             }else if($v_l['flag'] == 2){
-
                 $list[$k_l]['flag'] = '<span style="background-color:#FF82A5;padding:3px;">2-未发送</span>';
             }
 
+            //把接收人群改为文字显示
             if($v_l['sex'] == 1){
                 $list[$k_l]['sex'] = '男';
             }else if($v_l['sex'] == 2){
                 $list[$k_l]['sex'] = '女';
             }else if($v_l['sex'] == 0){
                 $list[$k_l]['sex'] = '全部';
+            }
+
+            //把接收人群改为文字显示
+            if($v_l['type'] == 1){
+                $list[$k_l]['type'] = '文字';
+            }else if($v_l['type'] == 2){
+                $list[$k_l]['type'] = '视频';
+            }else if($v_l['type'] == 3){
+                $list[$k_l]['type'] = '小贴士';
+            }else if($v_l['type'] == 4){
+                $list[$k_l]['type'] = '合集';
+            }
+
+            //判断最后发送时间，如果是默认值 0000-00-00 00:00:00，显示未发送。否则显示发送时间
+            if($v_l['push_datetime'] == '0000-00-00 00:00:00'){
+                $list[$k_l]['push_datetime'] = '<span style="background-color:#FF82A5;padding:3px;">尚未发送</span>';
             }
 
         }
@@ -85,7 +103,22 @@ class NoticeAction extends Action {
 
         $list_sex = $this->downlist($arr_sex,'0');
 
+
+        //三级联动显示
+        //获取所有视频和小贴士
+        $arr_top = array(
+            '1' => '文字',
+            '2' => '视频',
+            '3' => '小贴士',
+            '4' => '合集',
+        );
+        $list_top = $this->downlist($arr_top);
+
+        $list_middle = "<option value=''>无</option>>";
+
         $this->assign('list_sex',$list_sex);
+        $this->assign('list_top',$list_top);
+        $this->assign('list_middle',$list_middle);
         $this->display();
 
 
@@ -107,8 +140,9 @@ class NoticeAction extends Action {
         //接收上传数据
         $message = trim($this->_post('message'));
         $sex = trim($this->_post('sex'));
-        $vid = trim($this->_post('vid'));
-        $videoname = trim($this->_post('videoname'));
+        $type = trim($this->_post('type'));
+        $up_id = trim($this->_post('up_id'));
+        $remark = trim($this->_post('remark'));
 
         //判断数据是否为空
         if($message == '') {
@@ -116,8 +150,34 @@ class NoticeAction extends Action {
             $this -> error('系统通知不能为空!');
         }
 
+        if($type == '' || ($type != 1 && $up_id == '')){
+            echo "<script>alert('类型选择不正确');history.go(-1);</script>";
+            $this -> error('类型选择不正确!');
+        }
+
+
         //实例化方法
         $Model = new Model();
+
+        //判断通知类型
+        if($type == 1){//文字
+            $up_name['name'] = '';
+        }else{
+            if($type == 2){//视频
+                $up_name = $Model -> table('sixty_video') -> field('biaoti as name') -> where("id = '".$up_id."'") -> find();
+            }else if($type == 3){//小贴士
+                $up_name = $Model -> table('sixty_tieshi_video') -> field('biaoti as name') -> where("id = '".$up_id."'") -> find();
+            }else if($type == 4){//合集
+                $up_name = $Model -> table('sixty_jihemsg') -> field('name') -> where("id = '".$up_id."'") -> find();
+            }
+
+
+            if($up_name['name'] == ''){
+                echo "<script>alert('素材未找到');history.go(-1);</script>";
+                $this -> error('素材未找到!');
+            }
+        }
+
 
         //准备添加数组
         $create_datetime = date('Y-m-d H:i:s', time());
@@ -125,8 +185,10 @@ class NoticeAction extends Action {
             'message' => $message,
             'create_datetime' => $create_datetime,
             'sex' => $sex,
-            'vid' => $vid,
-            'videoname' => $videoname,
+            'vid' => $up_id,
+            'type' => $type,
+            'videoname' => $up_name['name'],
+            'remark' => $remark,
             );
 
         //写入日志
@@ -169,7 +231,7 @@ class NoticeAction extends Action {
         $Model = new Model();
 
         //执行查询
-        $list = $Model -> table('sixty_tongzhi') -> field('vid, videoname, id, sex, message, create_datetime')
+        $list = $Model -> table('sixty_tongzhi') -> field('vid, type, remark, videoname, id, sex, message, create_datetime')
             -> where("id='" . $id . "'") -> find();
 
         //如果没查出数据返回非法进入
@@ -188,6 +250,40 @@ class NoticeAction extends Action {
         $list_sex = $this->downlist($arr_sex,$list['sex']);
 
         $this->assign('list_sex',$list_sex);
+
+        //分类下拉菜单
+        $arr_top = array(
+            '1' => '文字',
+            '2' => '视频',
+            '3' => '小贴士',
+            '4' => '合集',
+        );
+        $list_top = $this->downlist($arr_top, $list['type']);
+
+
+
+        if($list['type'] == 2){
+            $middle_arr = $Model -> table('sixty_video') -> field('id,biaoti') -> select();
+        }else if($list['type'] == 3){
+            $middle_arr = $Model -> table('sixty_tieshi_video') -> field('id, biaoti') -> select();
+        }else if($list['type'] == 4){
+            $middle_arr = $Model -> table('sixty_jihemsg') -> field('id, name as biaoti') -> select();
+        }
+
+        if($list['type'] == 1){
+            $list_middle = "<option value=''>无</option>>";
+        }else{
+            $middle = array();
+            foreach($middle_arr as $k_m => $v_m){
+                $middle[$v_m['id']] = $v_m['biaoti'];
+            }
+            $list_middle = $this->downlist($middle, $list['vid']);
+        }
+
+
+
+        $this->assign('list_top',$list_top);
+        $this->assign('list_middle',$list_middle);
 
 
         //输出模板
@@ -209,39 +305,60 @@ class NoticeAction extends Action {
         //=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
 
         //接收上传数据
-        $id = trim($this->_post('editnotice_id'));
         $message = trim($this->_post('message'));
-        $submitedit = trim($this->_post('submitedit'));
         $sex = trim($this->_post('sex'));
-        $videoname = trim($this->_post('videoname'));
-        $vid = trim($this->_post('vid'));
+        $type = trim($this->_post('type'));
+        $up_id = trim($this->_post('up_id'));
+        $remark = trim($this->_post('remark'));
+        $id = trim($this->_post('editnotice_id'));
 
-        //判断数据来源
-        if ($id == '') {
-            echo "<script>alert('非法进入此页面！');history.go(-1);</script>";
-            $this->error('非法进入此页面！');
+        //判断数据是否为空
+        if($message == '') {
+            echo "<script>alert('系统通知不能为空');history.go(-1);</script>";
+            $this -> error('系统通知不能为空!');
         }
 
-        if ($submitedit == '') {
-            echo "<script>alert('非法进入此页面！');history.go(-1);</script>";
-            $this->error('非法进入此页面！');
+        if($type == '' || ($type != 1 && $up_id == '')){
+            echo "<script>alert('类型选择不正确');history.go(-1);</script>";
+            $this -> error('类型选择不正确!');
         }
 
 
         //实例化方法
         $Model = new Model();
 
-        //准备更新数组
+        //判断通知类型
+        if($type == 1){//文字
+            $up_name['name'] = '';
+        }else{
+            if($type == 2){//视频
+                $up_name = $Model -> table('sixty_video') -> field('biaoti as name') -> where("id = '".$up_id."'") -> find();
+            }else if($type == 3){//小贴士
+                $up_name = $Model -> table('sixty_tieshi_video') -> field('biaoti as name') -> where("id = '".$up_id."'") -> find();
+            }else if($type == 4){//合集
+                $up_name = $Model -> table('sixty_jihemsg') -> field('name') -> where("id = '".$up_id."'") -> find();
+            }
+
+            if($up_name['name'] == ''){
+                echo "<script>alert('素材未找到');history.go(-1);</script>";
+                $this -> error('素材未找到!');
+            }
+        }
+
+        //准备添加数组
         $arr = array(
             'message' => $message,
             'sex' => $sex,
-            'videoname' => $videoname,
-            'vid' => $vid,
-            );
+            'vid' => $up_id,
+            'type' => $type,
+            'videoname' => $up_name['name'],
+            'remark' => $remark,
+        );
+
 
         //执行编辑
         $res = $Model->table('sixty_tongzhi')->where("id='" . $id . "'")->save($arr);
-
+//        var_dump($Model->getLastSql());die;
         //写入日志
         $templogs = $Model->getlastsql();
         hy_caozuo_logwrite($templogs,__CLASS__.'---'.__FUNCTION__);
@@ -331,12 +448,14 @@ class NoticeAction extends Action {
 
         //取出通知内容
         $Model = new Model();
-        $res_tongzhi = $Model -> table('sixty_tongzhi') -> field('id,message,create_datetime,sex, vid, videoname') -> where("id='".$id."' and id != 1") -> find();
+        $res_tongzhi = $Model -> table('sixty_tongzhi') -> field('id, type,message,create_datetime,sex, vid, videoname') -> where("id='".$id."' and id != 1") -> find();
 
         if(count($res_tongzhi) <= 0){
             echo "<script>alert('非法进入！');history.go(-1);</script>";
             $this->error('非法进入！');
         }
+
+        //根据id
 
 
         $where_user = 'push_state = 1 ';
@@ -367,8 +486,8 @@ class NoticeAction extends Action {
 
         //判断极光ID是否为空
         if(count($jg_arr) >0){
-            //判断视频id是否保存
-            if($res_tongzhi['vid'] > 0){//保存
+            //判断视频id是否存在
+            if($res_tongzhi['type'] == 2){//存在
                 //把视频id和视频名称放入输出数组
                 $txt = array(
                     'vtitle'=>$res_tongzhi['videoname'],
@@ -376,16 +495,19 @@ class NoticeAction extends Action {
                 );
                 //执行推送
                 $res_push = $this->func_jgpush($jg_arr,$res_tongzhi['message'],'details',$txt);
-            }else{//不存在
+            }else if($res_tongzhi['type'] == 1){//不存在
                 //执行推送
-                $res_push = $this->func_jgpush($jg_arr,$res_tongzhi['message'],'tongzhi');
+                $res_push = $this->func_jgpush($jg_arr,$res_tongzhi['message'],'message');
             }
 
         }
 
 
-        //修改通知状态，改为已发送
-        $update = array( 'flag' => 1);
+        //修改通知状态，改为已发送，并修改最后发送时间
+        $update = array(
+            'flag' => 1,
+            'push_datetime' => date('Y-m-d H:i:s', time()),
+        );
         $res_flag = $Model -> table('sixty_tongzhi') -> where("id='".$id."'") -> save($update);
 
 
@@ -511,4 +633,61 @@ class NoticeAction extends Action {
 
         //end--------------------------------------------------------------
     }
+
+
+    public function linkage(){
+        //接收上传数据
+        $top = trim($this->_post('top'));
+        $Model = new Model();
+        //如果等于1，是文字，二级菜单为空
+        if($top == 1){
+            $list_middle = json_encode('<option selected=\'selected\'>无</option>');
+            echo $list_middle;
+        }else if($top == 2){//等于2，是视频
+            //获取全部视频名及id
+            $res_video = $Model -> table('sixty_video') -> field('id, biaoti') -> select();
+
+            $video_arr = array();
+            //遍历结果集，以id为键名，标题为键值，把数据存入新数组
+            if(count($res_video) > 0){
+                foreach($res_video as $k_v => $v_v){
+                    $video_arr[$v_v['id']] = $v_v['biaoti'];
+                }
+            }
+
+            $video_arr = $this->downlist($video_arr);
+            print_r(json_encode($video_arr));
+        }else if($top == 3){
+            //获取全部视频名及id
+            $res_video = $Model -> table('sixty_tieshi_video') -> field('id, biaoti') -> select();
+
+            $video_arr = array();
+            //遍历结果集，以id为键名，标题为键值，把数据存入新数组
+            if(count($res_video) > 0){
+                foreach($res_video as $k_v => $v_v){
+                    $video_arr[$v_v['id']] = $v_v['biaoti'];
+                }
+            }
+
+            $video_arr = $this->downlist($video_arr);
+            print_r(json_encode($video_arr));
+        }else if($top == 4){
+            //获取全部视频名及id
+            $res_video = $Model -> table('sixty_jihemsg') -> field('id, name as biaoti') -> select();
+
+            $video_arr = array();
+            //遍历结果集，以id为键名，标题为键值，把数据存入新数组
+            if(count($res_video) > 0){
+                foreach($res_video as $k_v => $v_v){
+                    $video_arr[$v_v['id']] = $v_v['biaoti'];
+                }
+            }
+
+            $video_arr = $this->downlist($video_arr);
+            print_r(json_encode($video_arr));
+        }
+
+
+    }
+
 }

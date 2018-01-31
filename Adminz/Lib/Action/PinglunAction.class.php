@@ -185,6 +185,7 @@ class PinglunAction extends Action{
             //判断评论类型，替换类型内容
             if($list[$key_li]['type'] == 1) {
                 $list[$key_li]['type'] = '评论';
+                $list[$key_li]['content'] = base64_decode($val_l['content']);
             }
         }
 
