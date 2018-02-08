@@ -25,7 +25,7 @@
                     return false;
                 }
 
-                if(confirm("您确认要编辑此条网站配置吗？此编辑涉及到重要数据，请小心操作。")) {
+                if(confirm("您确认要编辑此条开关配置吗？此编辑涉及到重要数据，请小心操作。")) {
 
                 }else {
                     return false;
@@ -35,7 +35,7 @@
 
 
             $("#submitdel").click(function(){
-                if(confirm("您确认要删除此条网站配置吗？删除后无法恢复！")) {
+                if(confirm("您确认要删除此条开关配置吗？删除后无法恢复！")) {
                     //alert('ok');
 
                 }else {
@@ -92,6 +92,16 @@
             </td>
         </tr>
         <tr>
+            <td width="60" align="right">适用系统<font color="red" size="-2">*</font>:</td>
+            <td width="450">
+                <select name="type">
+                    {$list.type}
+                </select>
+                <br/>
+                <font color="orange" size="-1">是否开启此选项</font>
+            </td>
+        </tr>
+        <tr>
             <td align="right">适用版本号<font color="red" size="-2">*</font>:</td>
             <td>
                 <input type="text" name="version" id="version" value="{$list.version}" maxlength="50" size="50"/>
@@ -126,8 +136,8 @@
                 <input type="hidden" name="id" value="{$list['id']}" />
                 <input type="submit" name="submitedit" id="submitedit" class="yubutton yuwhite" value="提交修改" style="margin-left:50px;margin-top:0px;" />
             </form>
-            <form method="post" action="__APP__/delOnoff/delOnoff_do" style="margin:0px;padding:0px; display: inline;">
-                <input type="hidden" name="delconfig_id" value="{$list['id']}" />
+            <form method="post" action="__APP__/Onoff/delOnoff_do" style="margin:0px;padding:0px; display: inline;">
+                <input type="hidden" name="id" value="{$list['id']}" />
                 <input type="submit" name="submitdel" id="submitdel" class="yubuttons yuwhite" value="删除此配置" style="margin-left: 150px;px;margin-top:0px;"/>
             </form>
             </td>
