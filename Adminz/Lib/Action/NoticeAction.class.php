@@ -499,9 +499,16 @@ class NoticeAction extends Action {
                 //执行推送
                 $res_push = $this->func_jgpush($jg_arr,$res_tongzhi['message'],'message');
             }
-
+//            var_dump($res_push);die;
         }
 
+//        if(!is_dir(LOGPATH.'jiguang.log')) {
+//            //创建该目录
+//            mkdir(LOGPATH.'jiguang.log', 0777, true);
+//        }
+//
+//        $fp = fopen(LOGPATH.'jiguang.log','a'); //打开句柄
+//        fwrite($fp, $res_push);  //将文件内容写入字符串
 
         //修改通知状态，改为已发送，并修改最后发送时间
         $update = array(
@@ -603,6 +610,7 @@ class NoticeAction extends Action {
         }
 
         //return $message;
+
     }
 
 

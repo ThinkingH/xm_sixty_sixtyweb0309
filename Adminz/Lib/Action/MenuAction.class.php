@@ -57,7 +57,6 @@ class MenuAction extends Action {
                     'curl_name' => array(
                         array('f', '分类信息', '/Classmsg/index'),
                         array('f', '合集信息', '/Gather/index'),
-
                     ),
                 ),
                 array(
@@ -70,8 +69,8 @@ class MenuAction extends Action {
             array(
                 'murl_name' => '贴士管理',
                 'curl_name' => array(
-                    array('f', '贴士视频', '/TipsVideo/index'),
                     array('f', '贴士分类', '/TipsClass/index'),
+                    array('f', '贴士视频', '/TipsVideo/index'),
                 ),
             ),
                 array(
@@ -172,8 +171,8 @@ class MenuAction extends Action {
             array(
                 'murl_name' => '贴士管理',
                 'curl_name' => array(
-                    array('f', '贴士视频', '/TipsVideo/index'),
                     array('f', '贴士分类', '/TipsClass/index'),
+                    array('f', '贴士视频', '/TipsVideo/index'),
                 ),
             ),
             array(

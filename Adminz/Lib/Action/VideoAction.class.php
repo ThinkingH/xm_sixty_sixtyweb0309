@@ -71,16 +71,16 @@ class VideoAction extends Action{
         foreach($list_class as $key_class => $val_class){
             $level = $val_class['level'];
             if($level == 1){
-                $class_arr_one[$val_class['id']] = $val_class['name'];
+                $class_arr_one[$val_class['name']] = $val_class['name'];
             }
             if($level == 2){
-                $class_arr_two[$val_class['id']] = $val_class['name'];
+                $class_arr_two[$val_class['name']] = $val_class['name'];
             }
             if($level == 3){
-                $class_arr_three[$val_class['id']] = $val_class['name'];
+                $class_arr_three[$val_class['name']] = $val_class['name'];
             }
             if($level == 4){
-                $class_arr_four[$val_class['id']] = $val_class['name'];
+                $class_arr_four[$val_class['name']] = $val_class['name'];
             }
         }
 

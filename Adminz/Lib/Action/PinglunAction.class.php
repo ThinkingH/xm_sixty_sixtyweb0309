@@ -97,7 +97,7 @@ class PinglunAction extends Action{
             $showimg = $list[$key_li]['showimg'];
             $imgwidth = '100';
             $imgheight = '100';
-            $addressimg = hy_qiniuimgurl('sixty-jihemsg',$showimg,$imgwidth,$imgheight);
+            $addressimg = hy_qiniuimgurl('sixty-imgpinglun',$showimg,$imgwidth,$imgheight);
             $list[$key_li]['showimg'] = "<img src='" . $addressimg . "' />";
         }
 

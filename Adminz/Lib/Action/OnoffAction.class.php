@@ -32,7 +32,7 @@ class OnoffAction extends Action {
         $Model = new Model();
 
         //获取开关表数据
-        $list_on = $Model -> table('sixty_on_off') -> field('id, name, flag, remark, version, create_datetime') -> select();
+        $list_on = $Model -> table('sixty_on_off') -> field('id, name, flag, remark, version, create_datetime, type') -> select();
 
         foreach($list_on as $k_l => $v_l){
             if($v_l['flag'] == 2){
@@ -67,7 +67,15 @@ class OnoffAction extends Action {
 
         $list_flag = $this->downlist($flag_arr,2);
 
+        $type_arr = array(
+            '全部' => '全部',
+            'Android' => 'Android',
+            'IOS' => 'IOS',
+        );
+
+        $list_type = $this->downlist($type_arr,1);
         $this->assign('list_flag',$list_flag);
+        $this->assign('list_type',$list_type);
         $this->display();
 
 
@@ -91,6 +99,7 @@ class OnoffAction extends Action {
         $flag = trim($this->_post('flag'));
         $version = trim($this->_post('version'));
         $remark = trim($this->_post('remark'));
+        $type = trim($this->_post('type'));
 
         if($name == ''){
             echo "<script>alert('配置名不能为空！');history.go(-1);</script>";
@@ -126,12 +135,15 @@ class OnoffAction extends Action {
             'flag' => $flag,
             'version' => $version,
             'remark' => $remark,
+            'type' => $type,
             'create_datetime' => date('Y-m-d H:i:s', time()),
         );
 
         //添加数据到数据库
         $res = $Model -> table('sixty_on_off') -> add($ins_arr);
-//var_dump($Model->getLastSql());die;
+        //写入日志
+        $templogs = $Model->getlastsql();
+        hy_caozuo_logwrite($templogs,__CLASS__.'---'.__FUNCTION__);
         if($res){
             echo "<script>alert('添加成功！');window.location.href=window.location.href='".__APP__."/Onoff/index".$echourl."';</script>";
             $this -> error('添加成功！');
@@ -170,7 +182,7 @@ class OnoffAction extends Action {
         $Model = new Model();
 
         //根据ID查询开关表数据
-        $res_on = $Model -> table('sixty_on_off') -> field('id, name, flag, remark, version, create_datetime')
+        $res_on = $Model -> table('sixty_on_off') -> field('id, name, flag, remark, version, create_datetime, type')
             -> where("id = '".$id."'") -> find();
 
         if(!$res_on){
@@ -187,6 +199,14 @@ class OnoffAction extends Action {
 
         $res_on['flag'] = $this->downlist($flag_arr,$res_on['flag']);
 
+
+        $type_arr = array(
+            '全部' => '全部',
+            'Android' => 'Android',
+            'IOS' => 'IOS',
+        );
+
+        $res_on['type'] = $this->downlist($type_arr,$res_on['type']);
 
         //输出到模板
         $this->assign('list',$res_on);
@@ -213,6 +233,7 @@ class OnoffAction extends Action {
         $flag = trim($this->_post('flag'));
         $remark = trim($this->_post('remark'));
         $version = trim($this->_post('version'));
+        $type = trim($this->_post('type'));
 
 
         //判断上传数据
@@ -243,6 +264,7 @@ class OnoffAction extends Action {
             'flag' => $flag,
             'name' => $name,
             'remark' => $remark,
+            'type' => $type,
         );
 
         //实例化方法
@@ -250,7 +272,9 @@ class OnoffAction extends Action {
 
         //根据id执行更新开关表数据
         $res = $Model -> table('sixty_on_off') -> where("id = '".$id."'") -> save($date_arr);
-
+        //写入日志
+        $templogs = $Model->getlastsql();
+        hy_caozuo_logwrite($templogs,__CLASS__.'---'.__FUNCTION__);
 
         //判断更新结果
         if($res){
@@ -262,6 +286,59 @@ class OnoffAction extends Action {
         }
 
 
+    }
+
+
+    /*
+    * 删除配置信息
+    * */
+    public function delOnoff_do(){
+        //=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
+        //判断用户是否登陆
+        $this->loginjudgeshow($this->lock_delOnoff_do);
+        //拼接URL地址，并返回到页面
+        $echourl = func_baseurlcreate($_GET);
+        $this->assign('echourl',$echourl);
+        //=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
+
+
+        //接收上传数据
+        $id = trim($this->_post('id'));
+
+        $Model = new Model();
+
+
+        //判断用于id是否为空
+        if(empty($id))
+        {
+            echo "<script>alert('非法进入此页面');history.go(-1);</script>";
+            $this -> error('非法进入此页面');
+        }
+
+        //判断ID是否存在
+        $res_id= $Model -> table('sixty_on_off') -> field('id') -> where("id='".$id."'") -> find();
+
+        //判断id是否存在
+        if(!$res_id) {
+            echo "<script>alert('非法进入此页面');history.go(-1);</script>";
+            $this -> error('非法进入此页面');
+        }
+
+        //执行删除操作
+        $del_result = $Model -> table('sixty_on_off') -> where("id='".$id."'") -> delete();
+
+        //写入日志
+        $templogs = $Model->getlastsql();
+        hy_caozuo_logwrite($templogs,__CLASS__.'---'.__FUNCTION__);
+
+        //判断删除结果
+        if($del_result) {
+            echo "<script>alert('数据删除成功!');window.location.href='".__APP__."/Onoff/index';</script>";
+            $this -> success('数据删除成功!','__APP__/Onoff/index');
+        }else {
+            echo "<script>alert('数据删除失败，系统错误!');history.go(-1);</script>";
+            $this -> error('数据删除失败，系统错误!');
+        }
     }
 
 
