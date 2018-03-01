@@ -457,36 +457,54 @@ class NoticeAction extends Action {
 
         //根据id
 
-
-        $where_user = 'push_state = 1 ';
-        //性别查询
-        if($res_tongzhi['sex'] == 1){
-            $where_user .= 'and sex in (1,3)';
-        }else if($res_tongzhi['sex'] == 2){
-            $where_user .= 'and sex in (2,3)';
-        }
-
-        //取出用户极光ID
-        $res_user = $Model -> table('sixty_user') -> field('jiguangid') -> where($where_user) -> select();
-
-        if(count($res_user) <= 0){
-            echo "<script>alert('通知失败，用户未找到!');window.location.href='" . __APP__ . '/Notice/index' . $echourl . "';</script>";
-            $this->success('通知失败，用户未找到!', '__APP__' . $echourl);
-        }
-
-        //把极光id放入一个数组
-        $jg_arr = array();
-        foreach($res_user as $k_r => $v_r){
-            if($v_r['jiguangid'] != ''){
-                $jg_arr[] = $v_r['jiguangid'];
+        if($res_tongzhi['sex'] != 0){
+            $where_user = 'push_state = 1 ';
+            //性别查询
+            if($res_tongzhi['sex'] == 1){
+                $where_user .= 'and sex in (1,3)';
+            }else if($res_tongzhi['sex'] == 2){
+                $where_user .= 'and sex in (2,3)';
             }
 
-        }
+            //取出用户极光ID
+            $res_user = $Model -> table('sixty_user') -> field('jiguangid') -> where($where_user) -> select();
+
+            if(count($res_user) <= 0){
+                echo "<script>alert('通知失败，用户未找到!');window.location.href='" . __APP__ . '/Notice/index' . $echourl . "';</script>";
+                $this->success('通知失败，用户未找到!', '__APP__' . $echourl);
+            }
+
+            //把极光id放入一个数组
+            $jg_arr = array();
+            foreach($res_user as $k_r => $v_r){
+                if($v_r['jiguangid'] != ''){
+                    $jg_arr[] = $v_r['jiguangid'];
+                }
+
+            }
 
 
-        //判断极光ID是否为空
-        if(count($jg_arr) >0){
-            //判断视频id是否存在
+            //判断极光ID是否为空
+            if(count($jg_arr) >0){
+                //判断视频id是否存在
+                if($res_tongzhi['type'] == 2){//存在
+                    //把视频id和视频名称放入输出数组
+                    $txt = array(
+                        'vtitle'=>$res_tongzhi['videoname'],
+                        'vid' =>$res_tongzhi['vid']
+                    );
+                    //执行推送
+                    $res_push = $this->func_jgpush($jg_arr,$res_tongzhi['message'],'details',$txt);
+                }else if($res_tongzhi['type'] == 1){//不存在
+                    //执行推送
+                    $res_push = $this->func_jgpush($jg_arr,$res_tongzhi['message'],'message');
+                }
+//            var_dump($res_push);die;
+            }
+        }else{
+
+//            $res_push = $this->func_jgpush($jg_arr,$res_tongzhi['message'],'details',$txt);
+//            $res_push = $this->JiPush->push('all',$res_tongzhi['message'],$m_type,$m_txt,$m_time);
             if($res_tongzhi['type'] == 2){//存在
                 //把视频id和视频名称放入输出数组
                 $txt = array(
@@ -494,13 +512,13 @@ class NoticeAction extends Action {
                     'vid' =>$res_tongzhi['vid']
                 );
                 //执行推送
-                $res_push = $this->func_jgpush($jg_arr,$res_tongzhi['message'],'details',$txt);
+                $res_push = $this->JiPush->push('all',$res_tongzhi['message'],'details',$txt);
             }else if($res_tongzhi['type'] == 1){//不存在
                 //执行推送
-                $res_push = $this->func_jgpush($jg_arr,$res_tongzhi['message'],'message');
+                $res_push = $this->JiPush->push('all',$res_tongzhi['message'],'message');
             }
-//            var_dump($res_push);die;
         }
+
 
 //        if(!is_dir(LOGPATH.'jiguang.log')) {
 //            //创建该目录
