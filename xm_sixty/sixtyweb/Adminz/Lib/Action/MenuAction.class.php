@@ -93,6 +93,13 @@ class MenuAction extends Action {
                     array('f', '图标列表', '/Icon/index'),
                 ),
             ),
+            array(
+                'murl_name' => '推送管理',
+                'curl_name' => array(
+                    array('f', '定时推送', '/Notice/indextiming'),
+                    array('f', '即时推送', '/Notice/index'),
+                ),
+            ),
                 array(
                     'murl_name' => '网站配置',
                     'curl_name' => array(
@@ -195,7 +202,13 @@ class MenuAction extends Action {
                     array('f', '图标列表', '/Icon/index'),
                 ),
             ),
-
+            array(
+                'murl_name' => '推送管理',
+                'curl_name' => array(
+                    array('f', '定时推送', '/Notice/indextiming'),
+                    array('f', '即时推送', '/Notice/index'),
+                ),
+            ),
             array(
                 'murl_name' => '网站配置',
                 'curl_name' => array(
